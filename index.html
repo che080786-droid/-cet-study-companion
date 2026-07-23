@@ -479,23 +479,45 @@
     }
 
     async function loadVocabulary(){
+      const files = [
+        "./data/CET4_1.json",
+        "./data/CET4_2.json",
+        "./data/CET4_3.json"
+      ];
+
       try{
-        toast("正在加载四级词书…");
-        const response = await fetch(`./data/CET4_1.json?v=${Date.now()}`);
-        if(!response.ok) throw new Error(`HTTP ${response.status}`);
+        toast("正在加载完整四级词书…");
 
-        const data = await response.json();
-        const source = Array.isArray(data)
-          ? data
-          : Array.isArray(data.words)
-            ? data.words
-            : Array.isArray(data.data)
-              ? data.data
-              : [data];
+        const responses = await Promise.all(
+          files.map(path => fetch(`${path}?v=${Date.now()}`))
+        );
 
-        const normalized = source
+        const failed = responses.find(response => !response.ok);
+        if(failed) throw new Error(`HTTP ${failed.status}`);
+
+        const books = await Promise.all(
+          responses.map(response => response.json())
+        );
+
+        const mergedSource = books.flatMap(data => {
+          if(Array.isArray(data)) return data;
+          if(Array.isArray(data.words)) return data.words;
+          if(Array.isArray(data.data)) return data.data;
+          return [data];
+        });
+
+        const unique = new Map();
+
+        mergedSource
           .filter(item => item && item.word)
-          .map(normalizeVocabularyEntry);
+          .forEach(item => {
+            const key = String(item.word).trim().toLowerCase();
+            if(key && !unique.has(key)) unique.set(key, item);
+          });
+
+        const normalized = [...unique.values()]
+          .map(normalizeVocabularyEntry)
+          .filter(item => item.word && item.word !== "unknown");
 
         if(!normalized.length) throw new Error("词书中没有可识别的单词");
 
@@ -503,15 +525,15 @@
         vocabularyLoaded = true;
         state.index = state.index % WORDS.length;
         renderAll();
-        toast(`四级词书加载成功：${WORDS.length} 个词 (≧▽≦)`);
+        toast(`完整四级词书加载成功：${WORDS.length} 个词 (≧▽≦)`);
       }catch(error){
         console.error("Vocabulary load failed:", error);
         WORDS = [...DEMO_WORDS];
         vocabularyLoaded = false;
         renderAll();
         openModal(
-          "词书没有加载成功",
-          "请确认仓库里的文件路径正好是 data/CET4_1.json，文件名末尾没有隐藏的 .txt。页面暂时使用 20 个演示词。"
+          "完整词书没有加载成功",
+          "请确认 data 文件夹里同时存在 CET4_1.json、CET4_2.json、CET4_3.json，文件名没有空格或隐藏的 .txt。页面暂时使用 20 个演示词。"
         );
       }
     }
@@ -536,7 +558,7 @@
       $("dailyGoal").value = String(state.dailyGoal);
       $("bookSelect").value = state.book;
       $("bookLoadHint").textContent = vocabularyLoaded
-        ? `已连接 CET4_1：${WORDS.length} 个词`
+        ? `已连接完整 CET4：${WORDS.length} 个词`
         : "正在读取四级词书…";
       renderWord();
       renderRewards();
