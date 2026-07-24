@@ -169,34 +169,212 @@
       background:var(--pink-soft);color:var(--pink-deep);font-size:11px;font-weight:800;
       position:relative;z-index:1;
     }
-    .room-card{padding:18px;overflow:hidden;position:relative}
-    .room-scene{
-      min-height:150px;border-radius:22px;padding:16px;
-      background:linear-gradient(180deg,#fff1f6 0 58%,#f7dfd2 58% 100%);
-      position:relative;overflow:hidden;
+    .room-card{padding:16px;overflow:hidden;position:relative}
+    .dream-room{
+      height:292px;border-radius:26px;position:relative;overflow:hidden;
+      background:
+        radial-gradient(circle at 16% 12%,rgba(255,255,255,.9) 0 2px,transparent 3px),
+        radial-gradient(circle at 42% 19%,rgba(255,255,255,.72) 0 2px,transparent 3px),
+        radial-gradient(circle at 72% 10%,rgba(255,255,255,.8) 0 2px,transparent 3px),
+        linear-gradient(180deg,#ffdfe9 0 62%,#efd5c6 62% 100%);
+      box-shadow:inset 0 0 0 1px rgba(244,217,227,.72);
     }
-    .room-window{
-      position:absolute;right:18px;top:14px;width:76px;height:66px;
-      display:grid;place-items:center;border-radius:18px;
-      background:linear-gradient(180deg,#dce8ff,#fff3dc);
-      border:5px solid rgba(255,255,255,.85);font-size:28px;
+    .dream-room:before{
+      content:"";position:absolute;left:0;right:0;top:61%;height:7px;
+      background:#fff7f9;box-shadow:0 3px 0 rgba(209,170,157,.14);
     }
-    .room-shelf{position:absolute;left:18px;top:24px;font-size:28px}
-    .room-desk{position:absolute;left:28px;bottom:16px;font-size:43px}
-    .room-plant{position:absolute;right:28px;bottom:13px;font-size:38px}
-    .room-cat{
-      position:absolute;left:50%;bottom:15px;transform:translateX(-50%);
-      border:0;background:transparent;font-size:38px;padding:4px;
+    .dream-room:after{
+      content:"";position:absolute;left:-10%;right:-10%;bottom:-42px;height:112px;
+      background:repeating-linear-gradient(
+        90deg,#e9cbbb 0 46px,#f1d8ca 46px 92px
+      );
+      transform:perspective(180px) rotateX(8deg);
+      opacity:.92;
     }
-    .room-caption{font-size:13px;color:var(--muted);line-height:1.65;margin-top:12px}
-    .daily-root{
-      display:flex;align-items:center;justify-content:space-between;gap:12px;
-      margin-top:12px;padding:13px 14px;border-radius:17px;background:#fff6f9;
+    .room-stars{position:absolute;inset:0 0 39% 0;pointer-events:none}
+    .room-stars span{
+      position:absolute;color:rgba(255,255,255,.82);font-size:12px;
+      text-shadow:0 2px 8px rgba(239,136,175,.35)
     }
-    .daily-root strong{display:block;font-size:15px}
-    .daily-root span{font-size:12px;color:var(--muted)}
+    .room-stars span:nth-child(1){left:12%;top:14%}
+    .room-stars span:nth-child(2){left:35%;top:8%;font-size:8px}
+    .room-stars span:nth-child(3){left:58%;top:22%;font-size:10px}
+    .room-stars span:nth-child(4){left:84%;top:12%}
+    .room-stars span:nth-child(5){left:25%;top:42%;font-size:9px}
+    .pretty-window{
+      position:absolute;right:17px;top:18px;width:103px;height:103px;
+      border:7px solid rgba(255,255,255,.94);border-radius:24px;
+      background:linear-gradient(180deg,#cadcff 0%,#e8dcff 52%,#ffe8c9 100%);
+      box-shadow:0 10px 22px rgba(106,84,124,.13);
+      overflow:hidden;z-index:2;
+    }
+    .pretty-window:before,.pretty-window:after{
+      content:"";position:absolute;background:rgba(255,255,255,.78);z-index:2;
+    }
+    .pretty-window:before{width:5px;height:100%;left:50%;transform:translateX(-50%)}
+    .pretty-window:after{height:5px;width:100%;top:50%;transform:translateY(-50%)}
+    .window-moon{
+      position:absolute;right:12px;top:9px;font-size:31px;filter:drop-shadow(0 4px 8px rgba(255,222,133,.42));
+    }
+    .curtain{
+      position:absolute;top:9px;width:31px;height:115px;z-index:3;
+      background:linear-gradient(90deg,#ffb9d0,#ffe3ed);
+      box-shadow:inset -5px 0 rgba(255,255,255,.26);
+    }
+    .curtain.left{right:107px;border-radius:20px 7px 22px 12px;transform:rotate(3deg)}
+    .curtain.right{right:-4px;border-radius:7px 20px 12px 22px;transform:rotate(-3deg)}
+    .curtain-tie{
+      position:absolute;top:67px;width:33px;height:10px;border-radius:999px;
+      background:#f489ad;z-index:4;
+    }
+    .curtain-tie.left{right:105px;transform:rotate(-9deg)}
+    .curtain-tie.right{right:-3px;transform:rotate(9deg)}
+    .room-shelf-new{
+      position:absolute;left:18px;top:22px;width:108px;height:103px;z-index:3;
+      border:0;background:transparent;padding:0;
+    }
+    .shelf-board{
+      position:absolute;left:0;width:108px;height:10px;border-radius:7px;
+      background:#fff8f4;box-shadow:0 4px 0 #dcae9a;
+    }
+    .shelf-board.one{top:44px}.shelf-board.two{top:91px}
+    .book-row{position:absolute;left:9px;display:flex;align-items:flex-end;gap:5px}
+    .book-row.top{top:9px}.book-row.bottom{top:57px}
+    .mini-book{width:13px;border-radius:4px 4px 2px 2px;box-shadow:inset -3px 0 rgba(255,255,255,.28)}
+    .mini-book:nth-child(1){height:31px;background:#f68daf}
+    .mini-book:nth-child(2){height:26px;background:#b7d8c4}
+    .mini-book:nth-child(3){height:34px;background:#ffd27c}
+    .mini-book:nth-child(4){height:28px;background:#b8c9f2}
+    .star-jar{
+      width:31px;height:31px;margin-left:4px;border-radius:9px 9px 12px 12px;
+      display:grid;place-items:center;background:rgba(255,255,255,.74);
+      border:2px solid #fff;font-size:16px
+    }
+    .pretty-bed{
+      position:absolute;left:17px;bottom:28px;width:177px;height:87px;z-index:4;
+      border:0;background:transparent;padding:0;
+    }
+    .bed-head{
+      position:absolute;left:0;bottom:5px;width:36px;height:82px;border-radius:18px 18px 8px 8px;
+      background:#f39abc;box-shadow:inset -7px 0 rgba(255,255,255,.18);
+    }
+    .bed-base{
+      position:absolute;left:25px;right:0;bottom:7px;height:57px;border-radius:18px 20px 10px 8px;
+      background:#fff7fa;box-shadow:0 10px 13px rgba(116,72,87,.15);
+    }
+    .bed-blanket{
+      position:absolute;left:73px;right:0;bottom:13px;height:48px;border-radius:12px 18px 9px 9px;
+      background:linear-gradient(135deg,#ffb7d0,#f58eb4);
+      box-shadow:inset 0 8px rgba(255,255,255,.14);
+    }
+    .bed-blanket:after{
+      content:"";position:absolute;inset:10px 13px;border-radius:12px;
+      background:repeating-linear-gradient(45deg,transparent 0 12px,rgba(255,255,255,.16) 12px 15px);
+    }
+    .pillow{
+      position:absolute;left:38px;bottom:44px;width:55px;height:31px;border-radius:17px;
+      background:#fff;box-shadow:0 5px 12px rgba(130,89,104,.11);
+    }
+    .pillow:after{content:"♡";color:#f3a3bf;font-size:16px;line-height:31px}
+    .room-desk-new{
+      position:absolute;right:18px;bottom:34px;width:143px;height:88px;z-index:5;
+      border:0;background:transparent;padding:0;
+    }
+    .desk-top{
+      position:absolute;left:0;right:0;top:30px;height:14px;border-radius:8px;
+      background:#fff8f4;box-shadow:0 5px 0 #d7aa98;
+    }
+    .desk-leg{position:absolute;top:41px;width:10px;height:46px;background:#d7aa98;border-radius:0 0 6px 6px}
+    .desk-leg.left{left:12px}.desk-leg.right{right:12px}
+    .laptop{
+      position:absolute;left:49px;top:0;width:56px;height:37px;border-radius:7px 7px 4px 4px;
+      background:#fff;border:4px solid #807783;box-shadow:0 5px 10px rgba(70,59,69,.13);
+    }
+    .laptop:after{
+      content:"月";position:absolute;inset:4px;display:grid;place-items:center;
+      border-radius:3px;background:linear-gradient(135deg,#ffe2ed,#fff5da);
+      color:#f17ca6;font-weight:800;font-size:12px
+    }
+    .desk-lamp{
+      position:absolute;left:8px;top:-5px;width:36px;height:38px;
+    }
+    .desk-lamp:before{
+      content:"";position:absolute;width:25px;height:17px;border-radius:19px 19px 5px 5px;
+      background:#ffd775;transform:rotate(-12deg);
+    }
+    .desk-lamp:after{
+      content:"";position:absolute;left:16px;top:13px;width:5px;height:30px;
+      background:#c99f83;transform:rotate(8deg);border-radius:4px;
+    }
+    .pretty-chair{
+      position:absolute;right:51px;bottom:15px;width:47px;height:52px;z-index:4;
+      border:0;background:transparent;
+    }
+    .pretty-chair:before{
+      content:"";position:absolute;left:3px;top:0;width:41px;height:36px;
+      border-radius:18px 18px 9px 9px;background:#f497b9;
+      box-shadow:inset 0 -7px rgba(255,255,255,.13);
+    }
+    .pretty-chair:after{
+      content:"";position:absolute;left:20px;top:32px;width:8px;height:29px;background:#b88777;border-radius:5px;
+    }
+    .room-rug-new{
+      position:absolute;left:50%;bottom:8px;transform:translateX(-50%);
+      width:152px;height:51px;border-radius:50%;z-index:3;
+      display:grid;place-items:center;background:rgba(255,244,248,.86);
+      border:4px solid rgba(244,157,190,.28);color:#d786a5;
+      font-size:10px;font-weight:900;letter-spacing:1.7px;
+    }
+    .pretty-plant{
+      position:absolute;right:1px;bottom:23px;width:43px;height:74px;z-index:6;
+      border:0;background:transparent;padding:0;
+    }
+    .plant-pot{
+      position:absolute;bottom:0;left:7px;width:31px;height:30px;
+      background:#f1b995;border-radius:5px 5px 13px 13px;
+      box-shadow:inset -6px 0 rgba(158,102,79,.09);
+    }
+    .leaf{position:absolute;width:21px;height:34px;border-radius:80% 15% 80% 15%;background:#89bc92}
+    .leaf.a{left:2px;top:16px;transform:rotate(-34deg)}
+    .leaf.b{right:2px;top:12px;transform:rotate(45deg)}
+    .leaf.c{left:12px;top:0;transform:rotate(5deg)}
+    .pretty-cat{
+      position:absolute;left:52%;bottom:28px;z-index:8;border:0;background:transparent;
+      font-size:39px;padding:2px;filter:drop-shadow(0 5px 5px rgba(112,80,68,.18));
+    }
+    .room-panel{
+      display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;
+      padding:13px 14px;margin-top:13px;border-radius:20px;background:#fff6f9;
+    }
+    .room-level{
+      width:47px;height:47px;border-radius:16px;display:grid;place-items:center;
+      background:linear-gradient(145deg,#ffc1d6,#fff0d9);font-weight:900;color:#b85f82;
+    }
+    .room-panel strong{font-size:14px}
+    .room-panel p{font-size:12px;color:var(--muted);margin:4px 0 0;line-height:1.45}
+    .room-progress{
+      height:7px;margin-top:8px;border-radius:999px;background:#f0dfe6;overflow:hidden;
+    }
+    .room-progress > div{
+      height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#ff9cbd,#ef6e9d);
+      transition:.3s ease;
+    }
+    .room-shortcuts{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;
+    }
+    .room-shortcuts button{
+      border:1px solid var(--line);background:#fff;border-radius:15px;padding:10px 4px;
+      color:var(--ink);font-size:11px;font-weight:750;
+    }
+    .random-hint{
+      min-height:44px;padding:12px 13px;border-radius:15px;background:#fff6f9;
+      color:var(--muted);font-size:13px;line-height:1.55;
+    }
     @media(max-width:370px){
       .direction-grid{grid-template-columns:1fr}
+      .dream-room{height:275px}
+      .pretty-bed{transform:scale(.88);transform-origin:left bottom}
+      .room-desk-new{transform:scale(.88);transform-origin:right bottom}
     }
     .stat{padding:15px 8px;text-align:center}
     .stat strong{display:block;font-size:20px}
@@ -468,24 +646,63 @@
       </div>
 
       <div class="section-title">
-        <span>小屋角落</span>
-        <span class="tiny">点点看，有东西会回应你</span>
+        <span>月月的小屋</span>
+        <span id="roomMood" class="tiny">今日状态：软乎乎营业中</span>
       </div>
       <div class="card room-card">
-        <div class="room-scene">
-          <button class="room-shelf" type="button" style="border:0;background:transparent" onclick="tapRoomItem('books')">📚</button>
-          <button class="room-window" type="button" onclick="tapRoomItem('window')">🌙</button>
-          <button class="room-desk" type="button" style="border:0;background:transparent" onclick="tapRoomItem('desk')">🪑</button>
-          <button class="room-cat" type="button" onclick="tapRoomItem('cat')">🐈</button>
-          <button class="room-plant" type="button" style="border:0;background:transparent" onclick="tapRoomItem('plant')">🪴</button>
+        <div class="dream-room">
+          <div class="room-stars"><span>✦</span><span>✧</span><span>✦</span><span>✧</span><span>✦</span></div>
+
+          <button class="room-shelf-new" type="button" onclick="tapRoomItem('books')" aria-label="书架">
+            <span class="book-row top">
+              <i class="mini-book"></i><i class="mini-book"></i><i class="mini-book"></i><i class="mini-book"></i>
+              <i class="star-jar">⭐</i>
+            </span>
+            <span class="shelf-board one"></span>
+            <span class="book-row bottom">
+              <i class="mini-book"></i><i class="mini-book"></i><i class="mini-book"></i>
+            </span>
+            <span class="shelf-board two"></span>
+          </button>
+
+          <button class="pretty-window" type="button" onclick="tapRoomItem('window')" aria-label="窗户">
+            <span class="window-moon">🌙</span>
+          </button>
+          <span class="curtain left"></span><span class="curtain right"></span>
+          <span class="curtain-tie left"></span><span class="curtain-tie right"></span>
+
+          <button class="pretty-bed" type="button" onclick="tapRoomItem('bed')" aria-label="床">
+            <span class="bed-head"></span><span class="bed-base"></span>
+            <span class="pillow"></span><span class="bed-blanket"></span>
+          </button>
+
+          <button class="room-desk-new" type="button" onclick="tapRoomItem('desk')" aria-label="书桌">
+            <span class="desk-lamp"></span><span class="laptop"></span>
+            <span class="desk-top"></span><span class="desk-leg left"></span><span class="desk-leg right"></span>
+          </button>
+          <button class="pretty-chair" type="button" onclick="tapRoomItem('chair')" aria-label="椅子"></button>
+
+          <div class="room-rug-new">MOON STUDY</div>
+          <button class="pretty-cat" type="button" onclick="tapRoomItem('cat')" aria-label="小猫">🐈</button>
+          <button class="pretty-plant" type="button" onclick="tapRoomItem('plant')" aria-label="植物">
+            <span class="leaf a"></span><span class="leaf b"></span><span class="leaf c"></span><span class="plant-pot"></span>
+          </button>
         </div>
-        <div id="roomCaption" class="room-caption">书桌、窗户、小猫和植物都不是纯装饰。小屋总要有人住，才不会空。</div>
-        <div class="daily-root">
+
+        <div class="room-panel">
+          <div id="roomLevel" class="room-level">Lv.1</div>
           <div>
-            <strong id="dailyRootTitle">今日词根</strong>
-            <span id="dailyRootMeaning">正在挑选……</span>
+            <strong>学习小屋成长值</strong>
+            <p id="roomCaption">房间会跟着累计学习的单词慢慢升级。</p>
+            <div class="room-progress"><div id="roomLevelBar"></div></div>
           </div>
-          <button class="soft" type="button" onclick="showDailyRoot()">看看</button>
+          <span id="roomNextLevel" class="tiny">还差 50 词</span>
+        </div>
+
+        <div class="room-shortcuts">
+          <button type="button" onclick="showDailyRoot()">🧩 今日词根</button>
+          <button type="button" onclick="goPage('notebook')">📒 去看词本</button>
+          <button type="button" onclick="goPage('rewards')">🎁 奖励商店</button>
         </div>
       </div>
     </section>
@@ -594,9 +811,7 @@
         </div>
         <div class="field">
           <label>背词模式</label>
-          <div class="hint" style="padding:12px 13px;border-radius:15px;background:#fff6f9">
-            “英文→中文”和“中文→英文”已拆成首页两个独立入口，不再随机混在一起。
-          </div>
+          <div id="modeSettingHint" class="random-hint">正在整理今天的学习路线……</div>
         </div>
         <button class="primary" onclick="saveStudySettings()">保存并切换词书</button>
         <p id="bookProgressHint" class="hint" style="margin:12px 2px 0"></p>
@@ -607,8 +822,8 @@
           <span>复习与出题规则</span><span class="tiny">第一版</span>
         </div>
         <p class="hint">
-          不认识：本轮约 5 个词后再出现；模糊：明天复习；认识：3 天后复习；
-          同一单词连续答对 3 次进入已掌握，14 天后再复查；英→中与中→英分别进入，不会在一轮里突然切换。
+          每日任务内不会重复出同一个词；不认识和模糊会进入错题本，次日开始复习；
+          认识的词 3 天后复习，连续答对 3 次进入已掌握，14 天后再复查。
         </p>
       </div>
 
@@ -773,6 +988,54 @@
       "欢迎回来。这里不会因为你昨天偷懒就关门。"
     ];
 
+
+    const MODE_SETTING_HINTS = [
+      "认词像是在人群里认出一张脸，拼写则要把它完整叫出名字。",
+      "状态轻松时先走认词路线，精力充足时再挑战主动拼写。",
+      "两种训练会共用错题本，但每一轮只专注一种记忆方向。",
+      "看懂和写出是两项不同能力，分开练反而更容易看见进步。",
+      "今天想快速推进就选认词，想把记忆扎深就选拼写。",
+      "同一本词书有两扇门：一扇练辨认，一扇练主动回忆。",
+      "先把词认熟，再把它从脑海里完整写出来。",
+      "认词训练速度，拼写训练强度；按今天的状态选就好。"
+    ];
+
+    const MODE_HINTS = {
+      "en-zh":[
+        "别被“好像见过”骗了，真正认识应该能说出核心意思。",
+        "先看词形和发音，再判断它是熟人还是路人。",
+        "犹豫超过三秒就交给错题本，之后再慢慢收拾它。",
+        "这轮只练认词，专心把英文和含义连起来。",
+        "眼熟不算掌握，但诚实点“模糊”已经是进步。",
+        "看懂核心含义就够，不必一次背下所有中文释义。",
+        "让大脑先做判断，别急着掀开答案。",
+        "每个新词今天只来一次，错了明天再见。"
+      ],
+      "zh-en":[
+        "先在脑中把字母排一遍，再让手指落下。",
+        "主动回忆会有点费力，但它比眼熟更接近真正掌握。",
+        "别急着偷看音标，先试着把英文从记忆里叫回来。",
+        "拼错不可怕，错题本会替你记住这次缺口。",
+        "这轮只练中文到英文，答案不会突然换方向。",
+        "先想词首字母，再回忆中间结构和结尾。",
+        "能完整拼出来，才算把这个词真正带回家。",
+        "今天不会重复追问同一个词，明天再来验收。"
+      ]
+    };
+
+    const ROOM_IDLE_LINES = [
+      "窗帘被风吹开一点，书桌上的灯正好亮着。",
+      "小猫占了地毯正中央，看起来完全没有让座的打算。",
+      "书架上多了一颗星星，可能是今天的进度掉下来的。",
+      "电脑屏幕停在今日任务页，椅子已经替你拉好了。",
+      "床铺得很软，但完成任务之前不建议躺下。",
+      "窗外月光很好，适合安静背完下一组词。",
+      "植物和记忆一样，需要隔一段时间再浇一次水。",
+      "房间没有催你，只是一直把灯留着。",
+      "桌边那杯不存在的热牛奶，今天也在认真冒热气。",
+      "小屋会记录每次回来，不追究中间离开了多久。"
+    ];
+
     const PREFIXES = [
       ["counter","反；对抗"],["under","在下；不足"],["inter","在……之间"],["trans","横跨；转变"],
       ["super","超过；上方"],["anti","反对；抗"],["auto","自己"],["over","过度；在上"],
@@ -817,6 +1080,7 @@
     let sessionQueue = [];
     let currentItem = null;
     let vocabularyLoaded = false;
+    let vocabularyLoadPromise = null;
     let sessionCombo = 0;
     let moonTapCount = 0;
     let starTapCount = 0;
@@ -1151,7 +1415,36 @@
       return sessionDirection === "zh-en" ? "zh-en" : "en-zh";
     }
 
-    function startDirectionMode(direction){
+
+    async function ensureVocabularyReady(){
+      if(vocabularyLoaded && activeWords.length >= 20) return true;
+
+      toast("完整词书正在加载，请稍等一下…");
+
+      try{
+        if(vocabularyLoadPromise){
+          const result = await vocabularyLoadPromise;
+          return Boolean(result && vocabularyLoaded && activeWords.length >= 20);
+        }
+
+        vocabularyLoadPromise = activateBook(state.currentBookId, false);
+        const result = await vocabularyLoadPromise;
+        return Boolean(result && vocabularyLoaded && activeWords.length >= 20);
+      }finally{
+        vocabularyLoadPromise = null;
+      }
+    }
+
+    async function startDirectionMode(direction){
+      const ready = await ensureVocabularyReady();
+      if(!ready){
+        openModal(
+          "词书加载失败",
+          "三份四级词书暂时没有成功读取。请刷新页面后再试；你的学习进度不会丢失。"
+        );
+        return;
+      }
+
       sessionDirection = direction === "zh-en" ? "zh-en" : "en-zh";
       const book = getBook();
       book.lastDirection = sessionDirection;
@@ -1214,8 +1507,10 @@
 
       const due = [];
       const fresh = [];
+      const seenToday = new Set(book.today.wordKeys);
       activeWords.forEach(word => {
         const key = wordKey(word.word);
+        if(seenToday.has(key)) return;
         const progress = getWordProgress(key, false);
         if(progress){
           if(progress.nextReviewAt && progress.nextReviewAt <= todayKey){
@@ -1298,6 +1593,35 @@
       openModal(reward.name, reward.text);
     }
 
+
+    function renderRoom(){
+      if(!$("roomLevel")) return;
+      const learned = Object.values(getBook().words)
+        .filter(progress => Number(progress.reviewCount) > 0).length;
+      const levelSize = 50;
+      const level = Math.floor(learned / levelSize) + 1;
+      const withinLevel = learned % levelSize;
+      const remaining = levelSize - withinLevel;
+
+      $("roomLevel").textContent = `Lv.${level}`;
+      $("roomLevelBar").style.width = `${withinLevel / levelSize * 100}%`;
+      $("roomNextLevel").textContent = withinLevel === 0 && learned > 0
+        ? "新等级开始"
+        : `还差 ${remaining} 词`;
+      if(!$("roomCaption").dataset.touched){
+        $("roomCaption").textContent = pick(ROOM_IDLE_LINES);
+      }
+
+      const moods = [
+        "今日状态：月光刚好",
+        "今日状态：小猫值班",
+        "今日状态：书桌已开灯",
+        "今日状态：奖励墙有动静",
+        "今日状态：适合认真五分钟"
+      ];
+      $("roomMood").textContent = pick(moods);
+    }
+
     function renderAll(){
       const book = getBook();
       const count = getTodayCount(book);
@@ -1333,13 +1657,16 @@
       $("bookProgressHint").textContent =
         `${config.name}：累计接触 ${learnedUnique} 个，连续打卡 ${book.streak} 天；两个方向从首页分别进入。`;
       const test = book.vocabTest || {};
-      $("vocabTestDesc").textContent = test.lastEstimate
-        ? `上次估算掌握约 ${test.lastEstimate} / ${activeWords.length} 个`
-        : "20 题随机抽样，仅作小屋估算";
+      $("vocabTestDesc").textContent = !vocabularyLoaded
+        ? "完整词书加载中，点击后会自动等待"
+        : test.lastEstimate
+          ? `上次估算掌握约 ${test.lastEstimate} / ${activeWords.length} 个`
+          : "20 题随机抽样，仅作小屋估算";
 
       renderWord();
       renderNotebook();
       renderRewards();
+      renderRoom();
     }
 
     function renderWord(){
@@ -1390,13 +1717,13 @@
         phoneticEl.textContent = "看中文，猜对应英文";
         meaningEl.textContent = `${w.word}  ${w.phonetic}`;
         exampleEl.textContent = "答题后显示例句，避免提前泄露答案。";
-        $("modeHint").textContent = "不认识会直接揭晓；模糊可四选一；认识请自己拼写英文。";
+        $("modeHint").textContent = pick(MODE_HINTS["zh-en"]);
       }else{
         wordEl.textContent = w.word;
         phoneticEl.textContent = w.phonetic;
         meaningEl.textContent = w.meaning;
         exampleEl.textContent = String(w.example || "").split("｜")[0] || "答题后显示例句。";
-        $("modeHint").textContent = "不认识会直接揭晓；模糊可四选一；认识请自己输入中文释义。";
+        $("modeHint").textContent = pick(MODE_HINTS["en-zh"]);
       }
 
       meaningEl.classList.add("hidden");
@@ -1475,7 +1802,7 @@
         <div class="quiz-box">
           <div class="quiz-title">直接告诉你答案</div>
           <div class="quiz-answer">${escapeHTML(answerTextForCurrent())}</div>
-          <div class="quiz-result">已加入错题本，并安排本轮约 5 个词后再出现。</div>
+          <div class="quiz-result">已收入错题本。今天不重复追问，明天开始复习。</div>
           <button class="primary" style="margin-top:12px" onclick="advanceAfterAnswer()">记住了，下一词</button>
         </div>`;
     }
@@ -1634,15 +1961,7 @@
       }else{
         progress.correctStreak = 0;
         progress.status = "learning";
-        progress.nextReviewAt = todayKey;
-        if(sessionMode === "daily"){
-          const insertAt = Math.min(5, sessionQueue.length);
-          sessionQueue.splice(insertAt, 0, {
-            word,
-            type:"retry",
-            direction:currentItem.direction
-          });
-        }
+        progress.nextReviewAt = addDaysKey(1);
       }
 
       const mysteryEgg = countsTowardDaily ? maybeTriggerMysteryEgg(firstToday) : null;
@@ -1861,37 +2180,57 @@
       roomTapCount += 1;
       const messages = {
         books:[
-          "书架说：错题本已经按 A—Z 排好了，至少我很有秩序。",
-          "一本书从架子上歪了一点，里面夹着一张写着“再背五个”的纸条。"
+          "最上层那本书夹着一张纸条：今天错过的词，明天会回来。",
+          "星星罐晃了一下。它说累计学习越多，小屋等级越高。",
+          "书架已经替你把错题按 A—Z 排好，翻找起来不会乱。"
         ],
         window:[
-          "窗外的月亮今天也在。它没催你，只是一直亮着。",
-          "玻璃上像是有人写了一句：慢慢来，但别不来。"
+          "窗外的月亮没有催你，它只是把灯光借给书桌。",
+          "窗帘缝里漏进一点月光，今天适合安静完成一组。",
+          "玻璃上像有人写过一句：可以慢一点，但要记得回来。"
+        ],
+        bed:[
+          "枕头看起来很软。它提出的条件是：先完成今日任务。",
+          "被子已经铺好了，但小屋暂时没有批准摸鱼申请。",
+          "床边藏着一张晚安卡，连续打卡后才肯出现。"
         ],
         desk:[
-          "书桌已经擦干净了，借口暂时没有地方放。",
-          "桌角压着一颗星星，可惜要答题才能拿。"
+          "电脑正停在下一词，台灯也替你把位置照亮了。",
+          "桌面很干净，因为借口刚刚被小猫推到了地上。",
+          "椅子拉开了一半，像是在等你再坐五分钟。"
+        ],
+        chair:[
+          "椅子转了半圈：坐下可以，但要带着一个新单词离开。",
+          "它很适合背词，不适合瘫着刷手机。",
+          "椅背上挂着一条看不见的提示：先开始，再谈状态。"
         ],
         plant:[
-          "植物今天长高了一点。进度也是这样，天天看不出，回头就变了。",
-          "叶子晃了晃：浇水和复习都不能只做一次。"
+          "新叶子冒出来一点。复习也是这样，回头看才发现长了。",
+          "植物提醒：浇一次水不够，见一次单词也不够。",
+          "叶子晃了晃，像是在给刚才答对的词鼓掌。"
         ],
         cat:[
-          "小猫踩过你的单词本，然后理直气壮地坐下了。",
-          "它盯着奖励墙看了三秒。看来不只你有兴趣。",
-          "小猫说喵。翻译一下：今天也要回来。"
+          "小猫踩过错题本，然后假装自己只是路过。",
+          "它盯着奖励墙看了三秒。看来不只你对写真有兴趣。",
+          "小猫翻译器：喵 = 今天至少再背五个。",
+          "它占住了地毯中央，并拒绝解释自己的学习贡献。"
         ]
       };
-      const line = pick(messages[item] || ["小屋轻轻响了一下。"]);
+      const line = pick(messages[item] || ROOM_IDLE_LINES);
+      $("roomCaption").dataset.touched = "1";
       $("roomCaption").textContent = line;
       if(item === "cat" && roomTapCount === 7){
-        toast("小猫被你点烦了，决定躲到书桌下面 (¬_¬)");
+        toast("小猫被点了七次，决定暂时装睡 (－_－) zzZ");
       }
     }
 
-    function startVocabularyTest(){
-      if(!vocabularyLoaded || activeWords.length < 20){
-        toast("词书还没有加载完成");
+    async function startVocabularyTest(){
+      const ready = await ensureVocabularyReady();
+      if(!ready){
+        openModal(
+          "词书加载失败",
+          "完整词书暂时没有成功读取。请刷新页面后再试；你的测试记录和背词进度不会丢失。"
+        );
         return;
       }
       vocabTestState = {questions:[], index:0, correct:0, answered:false};
@@ -2458,6 +2797,7 @@
       getBook().dailyGoal = goal;
       buildStudyQueue();
       save();
+      $("modeSettingHint").textContent = pick(MODE_SETTING_HINTS);
       toast(`${BOOK_CONFIG[state.currentBookId].name}已设置为每天 ${goal} 个词 ${pick(KAOMOJI.hello)}`);
     }
 
@@ -2518,6 +2858,8 @@
         "晚上好，来小屋收一点进度";
       $("helloText").textContent = `${greeting}，月月 ${pick(KAOMOJI.hello)}`;
       $("subtitleText").textContent = pick(SUBTITLE_LINES);
+      $("modeSettingHint").textContent = pick(MODE_SETTING_HINTS);
+      $("roomCaption").textContent = pick(ROOM_IDLE_LINES);
       $("heroQuote").textContent = pick([
         "今天背一点，奖励墙就离解锁更近一点。",
         "认真学习的小朋友，会得到偏心奖励。",
@@ -2540,7 +2882,9 @@
       renderAll();
       renderDailyRoot();
       loadApiSettings();
-      const ok = await activateBook(state.currentBookId, false);
+      vocabularyLoadPromise = activateBook(state.currentBookId, false);
+      const ok = await vocabularyLoadPromise;
+      vocabularyLoadPromise = null;
       if(!ok){
         state.currentBookId = "cet4";
         activeWords = [...DEMO_WORDS];
