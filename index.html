@@ -188,9 +188,12 @@
     .spelling-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
     .pattern-box{display:grid;gap:9px;margin-bottom:14px}
     .pattern-row{
-      padding:11px 12px;border-radius:15px;
+      position:relative;padding:11px 54px 11px 12px;border-radius:15px;
       background:linear-gradient(135deg,#fff1f6,#fff9ed);
       border:1px solid #f5d9e3;
+    }
+    .pattern-row .audio-mini-btn{
+      position:absolute;right:9px;top:9px;
     }
     .pattern-code{
       display:block;color:var(--pink-deep);font-weight:900;
@@ -444,6 +447,21 @@
     }
     .example-en{color:var(--muted)}
     .example-zh{margin-top:5px;color:#87747e}
+    .audio-text-row{
+      display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;
+      align-items:start;padding:10px 11px;border-radius:15px;background:#fff8fa;
+    }
+    .audio-mini-btn{
+      width:37px;height:37px;flex:0 0 auto;border:1px solid #f2d4df;
+      border-radius:12px;background:linear-gradient(145deg,#ffc7da,#fff1df);
+      display:grid;place-items:center;font-size:16px;color:var(--ink);
+    }
+    .audio-mini-btn:active{transform:scale(.94)}
+    .audio-text-copy{min-width:0}
+    .example-list{display:grid;gap:9px;margin-bottom:14px}
+    .example-source{
+      margin-top:4px;color:#9a8490;font-size:11px;font-weight:700;
+    }
     .word-extra{
       width:100%;margin-top:14px;padding-top:14px;border-top:1px dashed var(--line);
       text-align:left;
@@ -474,8 +492,8 @@
       border-radius:15px;background:#fffafb;
     }
     .phrase-row{
-      display:grid;grid-template-columns:minmax(90px,1fr) 1.35fr;gap:10px;
-      padding:10px 11px;border-bottom:1px solid #f6e6ec;
+      display:grid;grid-template-columns:auto minmax(90px,1fr) 1.35fr;gap:9px;
+      align-items:start;padding:10px 11px;border-bottom:1px solid #f6e6ec;
       font-size:12px;line-height:1.5;
     }
     .phrase-row:last-child{border-bottom:0}
@@ -2181,6 +2199,50 @@
       }).slice(0, 10);
     }
 
+
+    function ttsReadableText(value){
+      return String(value || "")
+        .replace(/\bsb\b/gi, "somebody")
+        .replace(/\bsth\b/gi, "something")
+        .replace(/\bone['’]s\b/gi, "one's")
+        .replace(/\bn\.\b/gi, "a noun")
+        .replace(/\badj\.\b/gi, "an adjective")
+        .replace(/\badv\.\b/gi, "an adverb")
+        .replace(/\bv\.\b/gi, "a verb")
+        .replace(/\s*\/\s*/g, " or ")
+        .replace(/\s*\+\s*/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function speakTextValue(value, slow = false){
+      const clean = ttsReadableText(value);
+      if(!clean) return;
+      const rate = slow ? Math.max(.52, speechRate - .18) : speechRate;
+      speakEnglish(clean, rate);
+    }
+
+    function speakElementText(button, slow = false){
+      const text = button?.dataset?.speak || "";
+      speakTextValue(text, slow);
+    }
+
+    function exampleAudioHTML(sentence, translation = "", source = ""){
+      if(!sentence) return "";
+      return `
+        <div class="audio-text-row">
+          <button class="audio-mini-btn" type="button"
+                  data-speak="${escapeHTML(sentence)}"
+                  onclick="speakElementText(this)"
+                  aria-label="朗读例句">🔊</button>
+          <div class="audio-text-copy">
+            <div class="example-en">${escapeHTML(sentence)}</div>
+            ${translation ? `<div class="example-zh">｜${escapeHTML(translation)}</div>` : ""}
+            ${source ? `<div class="example-source">${escapeHTML(source)}</div>` : ""}
+          </div>
+        </div>`;
+    }
+
     function buildWordDetails(word){
       const senses = (word.translations || []).length
         ? word.translations
@@ -2195,6 +2257,10 @@
 
       const phraseHTML = (word.phrases || []).map(entry => `
         <div class="phrase-row">
+          <button class="audio-mini-btn" type="button"
+                  data-speak="${escapeHTML(entry.phrase)}"
+                  onclick="speakElementText(this)"
+                  aria-label="朗读词组">🔊</button>
           <span class="phrase-en">${escapeHTML(entry.phrase)}</span>
           <span class="phrase-zh">${escapeHTML(entry.translation)}</span>
         </div>
@@ -2203,9 +2269,20 @@
       const writingPatterns = buildWritingPatterns(word);
       const patternHTML = writingPatterns.map(item => `
         <div class="pattern-row">
+          <button class="audio-mini-btn" type="button"
+                  data-speak="${escapeHTML(ttsReadableText(item.pattern))}"
+                  onclick="speakElementText(this)"
+                  aria-label="朗读固定搭配">🔊</button>
           <span class="pattern-code">${escapeHTML(item.pattern)}</span>
           <span class="pattern-meaning">${escapeHTML(item.meaning || "")}</span>
-          ${item.example ? `<span class="pattern-example">${escapeHTML(item.example)}</span>` : ""}
+          ${item.example
+            ? `<span class="pattern-example">
+                 ${escapeHTML(item.example)}
+                 <button class="audio-mini-btn" style="position:static;display:inline-grid;width:30px;height:30px;margin-left:6px;vertical-align:middle"
+                         type="button" data-speak="${escapeHTML(item.example)}"
+                         onclick="speakElementText(this)" aria-label="朗读句型例句">🔊</button>
+               </span>`
+            : ""}
         </div>
       `).join("");
 
@@ -2224,9 +2301,40 @@
 
       const matchedHTML = word.examplePhrase
         ? `<div class="matched-phrase">
+             <button class="audio-mini-btn" style="display:inline-grid;width:31px;height:31px;margin-right:7px;vertical-align:middle"
+                     type="button"
+                     data-speak="${escapeHTML(word.examplePhrase.phrase)}"
+                     onclick="speakElementText(this)"
+                     aria-label="朗读本句搭配">🔊</button>
              本句搭配：<strong>${escapeHTML(word.examplePhrase.phrase)}</strong>
              = ${escapeHTML(word.examplePhrase.translation)}
            </div>`
+        : "";
+
+      const extraSentences = (word.sentences || [])
+        .filter(item =>
+          item?.sentence &&
+          String(item.sentence).trim().toLowerCase() !==
+            String(word.example || "").trim().toLowerCase()
+        )
+        .slice(0, 5);
+
+      const extraExampleSection = extraSentences.length
+        ? `
+          <div class="detail-title">
+            <span>更多例句 · 分开朗读</span>
+            <span class="phrase-count">${extraSentences.length} 句</span>
+          </div>
+          <div class="example-list">
+            ${extraSentences.map((item, index) =>
+              exampleAudioHTML(
+                item.sentence,
+                item.translation || "",
+                `例句 ${index + 2}`
+              )
+            ).join("")}
+          </div>
+        `
         : "";
 
       return `
@@ -2236,6 +2344,7 @@
         </div>
         <div class="sense-list">${senseHTML}</div>
         ${matchedHTML}
+        ${extraExampleSection}
         ${patternSection}
         <div class="detail-title">
           <span>常用词组</span>
@@ -2252,12 +2361,15 @@
     function renderRevealedExample(word){
       const example = $("example");
       example.innerHTML = `
-        <div class="example-en">${escapeHTML(word.example || "暂无例句")}</div>
-        ${
-          word.exampleTranslation
-            ? `<div class="example-zh">｜${escapeHTML(word.exampleTranslation)}</div>`
-            : ""
-        }
+        <div class="detail-title" style="margin-bottom:8px">
+          <span>本题例句 · 单独朗读</span>
+          <span class="phrase-count">点喇叭播放</span>
+        </div>
+        ${exampleAudioHTML(
+          word.example || "暂无例句",
+          word.exampleTranslation || "",
+          "本题例句"
+        )}
       `;
       $("wordExtra").innerHTML = buildWordDetails(word);
       $("wordExtra").classList.remove("hidden");
@@ -2916,7 +3028,11 @@
         wordEl.textContent = w.word;
         phoneticEl.textContent = w.phonetic;
         meaningEl.textContent = w.meaning;
-        exampleEl.textContent = w.example || "答题后显示例句。";
+        exampleEl.innerHTML = exampleAudioHTML(
+          w.example || "暂无例句",
+          "",
+          "例句朗读"
+        );
         $("modeHint").textContent = pick(MODE_HINTS["en-zh"]);
       }
 
