@@ -730,6 +730,18 @@
       width:100%;margin-top:10px;border:1px solid #f3c5d4;background:#fff5f8;
       color:#c75f82;border-radius:16px;padding:12px;font-weight:800
     }
+    .self-judge-note{
+      margin-top:12px;padding:12px;border-radius:15px;background:#fff6f9;
+      color:var(--muted);font-size:12px;line-height:1.65;text-align:left;
+    }
+    .self-judge-answer{
+      margin-top:10px;padding:12px;border-radius:15px;background:#fff;
+      border:1px solid #f2dce4;text-align:left;line-height:1.65;
+    }
+    .self-judge-grid{
+      display:grid;grid-template-columns:1fr;gap:9px;margin-top:12px;
+    }
+    .self-judge-grid button{width:100%}
     @media(max-width:370px){
       .special-grid{grid-template-columns:1fr}
     }
@@ -3033,7 +3045,8 @@
           "",
           "例句朗读"
         );
-        $("modeHint").textContent = pick(MODE_HINTS["en-zh"]);
+        $("modeHint").textContent =
+          "先写你理解的中文意思，再对照词书自行判断；程序不会因同义表达擅自判错。";
       }
 
       meaningEl.classList.add("hidden");
@@ -3461,7 +3474,9 @@
           <input id="knownAnswerInput" class="quiz-input" autocomplete="off"
                  autocapitalize="off" spellcheck="false"
                  placeholder="${zhToEn ? "输入完整英文拼写" : "输入你记得的核心释义"}" />
-          <button class="primary" style="margin-top:10px" onclick="submitKnownAnswer()">提交答案</button>
+          <button class="primary" style="margin-top:10px" onclick="submitKnownAnswer()">${
+            zhToEn ? "提交答案" : "对照标准释义"
+          }</button>
           <div id="knownResult" class="quiz-result"></div>
         </div>`;
       setTimeout(() => $("knownAnswerInput")?.focus(), 50);
@@ -3559,28 +3574,90 @@
     function submitKnownAnswer(){
       const input = $("knownAnswerInput")?.value.trim() || "";
       if(!input){
-        toast("先写一个你记得的意思");
+        toast(currentDirection() === "zh-en"
+          ? "先输入完整英文拼写"
+          : "先写一个你记得的中文意思");
         return;
       }
-      const zhToEn = currentDirection() === "zh-en";
-      const correct = zhToEn
-        ? normalizeEnglishAnswer(input) === normalizeEnglishAnswer(currentItem.word.word)
-        : isMeaningMatch(input, currentItem.word.meaning);
 
-      revealCurrentAnswer();
-      finalizeAnswer(correct ? "known" : "unknown", !correct);
+      const zhToEn = currentDirection() === "zh-en";
       const answerText = answerTextForCurrent();
-      $("knownResult").innerHTML = correct
-        ? `${
-            zhToEn
-              ? "拼写正确。"
-              : "意思相符，判定正确。近义表达不要求逐字一致。"
-          }<br>标准释义：${escapeHTML(answerText)}
-          <button class="primary" style="margin-top:12px;width:100%" onclick="advanceAfterAnswer()">下一词</button>`
-        : `这次语义没有匹配上。标准释义：<strong>${escapeHTML(answerText)}</strong><br>
-           已加入错题本；若只是合理近义表达，可以继续告诉 Daddy 补充规则。
-           <button class="primary" style="margin-top:12px;width:100%" onclick="advanceAfterAnswer()">下一词</button>`;
+      revealCurrentAnswer();
       $("knownAnswerInput").disabled = true;
+
+      if(zhToEn){
+        const correct =
+          normalizeEnglishAnswer(input) ===
+          normalizeEnglishAnswer(currentItem.word.word);
+
+        finalizeAnswer(correct ? "known" : "unknown", !correct);
+        $("knownResult").innerHTML = correct
+          ? `拼写正确。<br>正确答案：${escapeHTML(answerText)}
+             <button class="primary" style="margin-top:12px;width:100%"
+                     onclick="advanceAfterAnswer()">下一词</button>`
+          : `拼写不正确。正确答案：<strong>${escapeHTML(answerText)}</strong><br>
+             已加入错题本。
+             <button class="primary" style="margin-top:12px;width:100%"
+                     onclick="advanceAfterAnswer()">下一词</button>`;
+        return;
+      }
+
+      const localHint = isMeaningMatch(input, currentItem.word.meaning);
+      $("knownResult").dataset.resolved = "0";
+      $("knownResult").innerHTML = `
+        <div class="self-judge-answer">
+          <strong>你的表达：</strong>${escapeHTML(input)}<br>
+          <strong>词书释义：</strong>${escapeHTML(answerText)}
+        </div>
+        <div class="self-judge-note">
+          ${localHint
+            ? "本地规则认为两者较接近，但最终仍由你判断。"
+            : "本地规则没有识别出对应关系，但这不代表你的表达一定错误。"}
+          中文同义词、语境义和概括方式太多，小屋不会再擅自把它判错。
+        </div>
+        <div class="self-judge-grid">
+          <button class="primary" type="button"
+                  onclick="resolveChineseMeaning('known')">
+            意思相近，算对并移出错题
+          </button>
+          <button class="soft" type="button"
+                  onclick="resolveChineseMeaning('fuzzy')">
+            大致记得，但有点模糊
+          </button>
+          <button class="danger-soft" type="button"
+                  onclick="resolveChineseMeaning('unknown')">
+            确实不对，加入错题本
+          </button>
+        </div>`;
+    }
+
+    function resolveChineseMeaning(result){
+      const resultBox = $("knownResult");
+      if(!currentItem || !resultBox || resultBox.dataset.resolved === "1") return;
+      resultBox.dataset.resolved = "1";
+
+      const wordProgress = getWordProgress(wordKey(currentItem.word.word), true);
+
+      if(result === "known"){
+        wordProgress.inWrongBook = false;
+        finalizeAnswer("known", false);
+      }else if(result === "fuzzy"){
+        finalizeAnswer("fuzzy", false);
+      }else{
+        finalizeAnswer("unknown", true);
+      }
+
+      const message = {
+        known:"已按“意思相近”记录为正确；如果它曾被误加，现在也已移出错题本。",
+        fuzzy:"已记录为模糊，明天会优先复习，但不会加入错题本。",
+        unknown:"已记录为不会，并加入错题本。"
+      }[result];
+
+      resultBox.querySelectorAll("button").forEach(button => button.disabled = true);
+      resultBox.innerHTML += `
+        <div class="self-judge-note">${message}</div>
+        <button class="primary" style="margin-top:12px;width:100%"
+                onclick="advanceAfterAnswer()">下一词</button>`;
     }
 
 
