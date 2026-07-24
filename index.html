@@ -638,6 +638,66 @@
       from{opacity:1;transform:translateY(0) scale(.7) rotate(0)}
       to{opacity:0;transform:translateY(-90px) scale(1.5) rotate(130deg)}
     }
+    .special-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+    .special-card{
+      min-height:145px;padding:17px;text-align:left;border:1px solid var(--line);
+      background:linear-gradient(145deg,#fff,#fff6fa);color:var(--ink);
+      position:relative;overflow:hidden;
+    }
+    .special-card:after{
+      content:"";position:absolute;width:78px;height:78px;border-radius:50%;
+      right:-25px;bottom:-29px;background:rgba(255,213,229,.5)
+    }
+    .special-icon{font-size:29px;position:relative;z-index:1}
+    .special-name{font-size:16px;font-weight:850;margin-top:9px;position:relative;z-index:1}
+    .special-desc{font-size:12px;color:var(--muted);line-height:1.55;margin-top:6px;position:relative;z-index:1}
+    .audio-orb{
+      width:92px;height:92px;border:0;border-radius:50%;margin:8px auto 14px;
+      display:grid;place-items:center;font-size:36px;
+      background:linear-gradient(145deg,#ffc3d8,#fff0dc);
+      box-shadow:0 13px 27px rgba(216,107,148,.2);
+    }
+    .audio-orb:active{transform:scale(.95)}
+    .audio-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px}
+    .cloze-sentence{
+      padding:18px 15px;border-radius:18px;background:#fff8fa;
+      font-size:17px;line-height:1.75;text-align:left;color:var(--ink);
+    }
+    .cloze-blank{
+      display:inline-block;min-width:74px;padding:0 8px;text-align:center;
+      color:var(--pink-deep);font-weight:900;border-bottom:3px solid #f49bbb;
+    }
+    .context-note{
+      margin-top:11px;padding:10px 11px;border-radius:13px;
+      background:#fff1f6;color:var(--muted);font-size:12px;line-height:1.55;
+    }
+    .report-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .report-stat{padding:16px;text-align:center}
+    .report-stat strong{display:block;font-size:26px}
+    .report-stat span{display:block;margin-top:5px;color:var(--muted);font-size:12px}
+    .report-panel{padding:18px;margin-top:12px}
+    .report-bar-row{margin:13px 0}
+    .report-bar-head{display:flex;justify-content:space-between;gap:10px;font-size:12px}
+    .report-bar{
+      height:9px;margin-top:7px;border-radius:999px;background:#f2e3e9;overflow:hidden
+    }
+    .report-bar > div{
+      height:100%;border-radius:inherit;background:linear-gradient(90deg,#ff9dbd,#ef6e9d)
+    }
+    .week-row{
+      display:grid;grid-template-columns:70px 1fr auto;gap:10px;align-items:center;
+      padding:11px 0;border-bottom:1px solid #f6e5eb;font-size:12px
+    }
+    .week-row:last-child{border-bottom:0}
+    .week-mini{height:7px;border-radius:999px;background:#f1e3e8;overflow:hidden}
+    .week-mini > div{height:100%;border-radius:inherit;background:#ef8fb2}
+    .danger-soft{
+      width:100%;margin-top:10px;border:1px solid #f3c5d4;background:#fff5f8;
+      color:#c75f82;border-radius:16px;padding:12px;font-weight:800
+    }
+    @media(max-width:370px){
+      .special-grid{grid-template-columns:1fr}
+    }
     .empty{padding:28px 16px;text-align:center;color:var(--muted)}
   </style>
 </head>
@@ -720,6 +780,31 @@
           <div id="vocabTestDesc" class="task-desc">20 题随机抽样，仅作小屋估算</div>
         </div>
         <button class="soft" onclick="startVocabularyTest()">测试</button>
+      </div>
+
+      <div class="section-title">
+        <span>专项训练</span><span class="tiny">不消耗 API Token</span>
+      </div>
+      <div class="special-grid">
+        <button class="card special-card" type="button" onclick="startSpecialMode('listening')">
+          <div class="special-icon">🎧</div>
+          <div class="special-name">听音与听写</div>
+          <div class="special-desc">浏览器朗读单词；可以直接拼写，也可以改做听音四选一。</div>
+        </button>
+        <button class="card special-card" type="button" onclick="startSpecialMode('context')">
+          <div class="special-icon">🧩</div>
+          <div class="special-name">语境与搭配</div>
+          <div class="special-desc">从例句或可靠句型挖空，练单词、介词与固定结构。</div>
+        </button>
+      </div>
+
+      <div class="card task" style="margin-top:12px">
+        <div class="task-icon">📊</div>
+        <div class="task-main">
+          <div class="task-name">学习复盘</div>
+          <div id="reportHomeDesc" class="task-desc">从本次更新后记录答题明细</div>
+        </div>
+        <button class="soft" onclick="goPage('report')">查看</button>
       </div>
 
       <div class="section-title"><span>小屋数据</span><span id="dataSectionHint" class="tiny">每一点都算数</span></div>
@@ -877,6 +962,38 @@
       <div id="rewardGrid" class="reward-grid"></div>
     </section>
 
+    <section id="report" class="page">
+      <div class="hero">
+        <div class="hello">月月的学习复盘 📊</div>
+        <div class="quote">记录从本版本开始；旧进度和错题仍然保留，只是不补造过去的答题明细。</div>
+      </div>
+
+      <div class="section-title"><span>今天</span><span id="reportTodayDate" class="tiny"></span></div>
+      <div class="report-grid">
+        <div class="card report-stat"><strong id="reportTodayTotal">0</strong><span>答题次数</span></div>
+        <div class="card report-stat"><strong id="reportTodayRate">0%</strong><span>独立答对率</span></div>
+        <div class="card report-stat"><strong id="reportTodayWrong">0</strong><span>模糊 / 错误</span></div>
+        <div class="card report-stat"><strong id="reportTomorrowDue">0</strong><span>明日到期复习</span></div>
+      </div>
+
+      <div class="card report-panel">
+        <div class="section-title" style="margin:0"><span>近七日模式表现</span><span id="reportWeakMode" class="tiny"></span></div>
+        <div id="reportModeBars"></div>
+      </div>
+
+      <div class="card report-panel">
+        <div class="section-title" style="margin:0"><span>七日轨迹</span><span id="reportWeekTotal" class="tiny"></span></div>
+        <div id="reportWeekRows"></div>
+      </div>
+
+      <div class="card report-panel">
+        <div class="section-title" style="margin:0"><span>当前词书状态</span><span class="tiny">实时统计</span></div>
+        <div id="reportBookSummary" class="hint" style="margin-top:12px"></div>
+      </div>
+
+      <button class="soft" style="width:100%;margin-top:12px" onclick="goPage('home')">返回小屋</button>
+    </section>
+
     <section id="settings" class="page">
       <div class="card settings-card">
         <div class="field">
@@ -922,7 +1039,7 @@
 
       <div class="card settings-card">
         <div class="section-title" style="margin:0 0 14px">
-          <span>Daddy AI 接口</span><span class="tiny">词根词缀不需要 API</span>
+          <span>Daddy AI 接口</span><span class="tiny">可选功能 · 默认不会自动调用</span>
         </div>
         <div class="field">
           <label for="apiUrl">API 地址</label>
@@ -946,8 +1063,9 @@
           <button class="soft" type="button" onclick="saveApiSettings()">保存设置</button>
           <button class="primary" type="button" onclick="testApiConnection()">测试连接</button>
         </div>
+        <button class="danger-soft" type="button" onclick="clearApiKey()">清除当前浏览器里的 API Key</button>
         <p id="apiStatus" class="hint" style="margin:11px 2px 0">
-          不会随背词自动调用，也不会写进 GitHub 文件；公开设备不要保存私人 Key。
+          只有主动点“Daddy 讲讲”或“测试连接”才会调用；听音、搭配题和复盘都不使用 API。
         </p>
       </div>
 
@@ -1498,6 +1616,7 @@
     let roomTapCount = 0;
     let spellingHintUsed = false;
     let subtitleTimer = null;
+    let speechRate = .86;
     const copyHistory = {};
 
     function localDateKey(date = new Date()){
@@ -1528,6 +1647,7 @@
         },
         streak: 0,
         lastCheckin: "",
+        history: [],
         words: {}
       };
     }
@@ -1609,6 +1729,9 @@
             ...createBookState().today,
             ...((merged.books[bookId] || {}).today || {})
           },
+          history:Array.isArray((merged.books[bookId] || {}).history)
+            ? (merged.books[bookId] || {}).history.slice(-2000)
+            : [],
           words: {...((merged.books[bookId] || {}).words || {})}
         };
         ensureTodayForBook(merged.books[bookId]);
@@ -2108,6 +2231,173 @@
         .replace(/\s+/g, " ");
     }
 
+
+    function speakEnglish(text, rate = .86){
+      if(!("speechSynthesis" in window)){
+        toast("当前浏览器不支持朗读功能");
+        return false;
+      }
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(String(text || ""));
+      utterance.lang = "en-US";
+      utterance.rate = rate;
+      utterance.pitch = 1;
+      const voices = window.speechSynthesis.getVoices();
+      const voice = voices.find(v => /^en-(US|GB)/i.test(v.lang)) ||
+                    voices.find(v => /^en/i.test(v.lang));
+      if(voice) utterance.voice = voice;
+      window.speechSynthesis.speak(utterance);
+      return true;
+    }
+
+    function playCurrentAudio(slow = false){
+      if(!currentItem) return;
+      speakEnglish(currentItem.word.word, slow ? .62 : .86);
+    }
+
+    function escapeRegExp(value){
+      return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    function simpleWordForms(base){
+      const word = wordKey(base);
+      const forms = new Set([word, `${word}s`, `${word}es`, `${word}ed`, `${word}ing`]);
+      if(word.endsWith("e")){
+        forms.add(`${word}d`);
+        forms.add(`${word.slice(0,-1)}ing`);
+      }
+      if(word.endsWith("y")){
+        forms.add(`${word.slice(0,-1)}ies`);
+        forms.add(`${word.slice(0,-1)}ied`);
+      }
+      const irregular = {
+        be:["am","is","are","was","were","been"],
+        make:["made"], take:["took","taken"], write:["wrote","written"],
+        give:["gave","given"], find:["found"], lead:["led"], tell:["told"],
+        think:["thought"], bring:["brought"], teach:["taught"], buy:["bought"],
+        speak:["spoke","spoken"], choose:["chose","chosen"], become:["became"],
+        begin:["began","begun"], keep:["kept"], leave:["left"], feel:["felt"],
+        build:["built"], send:["sent"], spend:["spent"], mean:["meant"]
+      };
+      (irregular[word] || []).forEach(form => forms.add(form));
+      return [...forms].sort((a,b) => b.length - a.length);
+    }
+
+    function replaceFirstToken(sentence, token){
+      const pattern = new RegExp(`\\b${escapeRegExp(token)}\\b`, "i");
+      return String(sentence).replace(pattern, "____");
+    }
+
+    function contextPrepositionOptions(answer){
+      const pool = ["to","from","with","for","on","in","as","of","at","by","into","against"];
+      return shuffle([answer, ...pool.filter(item => item !== answer)]).slice(0, 4);
+    }
+
+    function buildContextQuestion(word){
+      const patterns = buildWritingPatterns(word).filter(item => item.example);
+      const prepositions = ["from","with","for","on","in","as","of","at","by","into","against","to"];
+
+      for(const item of patterns){
+        const example = String(item.example || "");
+        const normalizedPattern = ` ${String(item.pattern).toLowerCase()} `;
+        for(const prep of prepositions){
+          if(normalizedPattern.includes(` ${prep} `) &&
+             new RegExp(`\\b${prep}\\b`, "i").test(example)){
+            return {
+              prompt:replaceFirstToken(example, prep),
+              full:example,
+              answer:prep,
+              options:contextPrepositionOptions(prep),
+              note:`${item.pattern} = ${item.meaning}`,
+              kind:"preposition"
+            };
+          }
+        }
+
+        for(const form of simpleWordForms(word.word)){
+          if(new RegExp(`\\b${escapeRegExp(form)}\\b`, "i").test(example)){
+            const distractors = shuffle(activeWords)
+              .map(item => item.word)
+              .filter(item => wordKey(item) !== wordKey(word.word))
+              .slice(0, 3);
+            return {
+              prompt:replaceFirstToken(example, form),
+              full:example,
+              answer:form,
+              options:shuffle([form, ...distractors]),
+              note:`${item.pattern} = ${item.meaning}`,
+              kind:"word"
+            };
+          }
+        }
+      }
+
+      const sentence = String(word.example || "");
+      for(const form of simpleWordForms(word.word)){
+        if(new RegExp(`\\b${escapeRegExp(form)}\\b`, "i").test(sentence)){
+          const distractors = shuffle(activeWords)
+            .map(item => item.word)
+            .filter(item => wordKey(item) !== wordKey(word.word))
+            .slice(0, 3);
+          return {
+            prompt:replaceFirstToken(sentence, form),
+            full:sentence,
+            answer:form,
+            options:shuffle([form, ...distractors]),
+            note:word.examplePhrase
+              ? `${word.examplePhrase.phrase} = ${word.examplePhrase.translation}`
+              : `本题练习 ${word.word} 在完整句子中的使用。`,
+            kind:"word"
+          };
+        }
+      }
+      return null;
+    }
+
+    function practicePool(){
+      const book = getBook();
+      const priority = activeWords.filter(word => {
+        const progress = book.words[wordKey(word.word)];
+        return progress?.inWrongBook ||
+               (progress?.nextReviewAt && progress.nextReviewAt <= todayKey);
+      });
+      const priorityKeys = new Set(priority.map(word => wordKey(word.word)));
+      const rest = activeWords.filter(word => !priorityKeys.has(wordKey(word.word)));
+      return [...shuffle(priority), ...shuffle(rest)];
+    }
+
+    async function startSpecialMode(mode){
+      const ready = await ensureVocabularyReady();
+      if(!ready) return;
+
+      sessionMode = mode;
+      sessionDirection = mode;
+      answerLocked = false;
+
+      if(mode === "context"){
+        sessionQueue = practicePool()
+          .map(word => {
+            const context = buildContextQuestion(word);
+            return context ? {word, type:"context", direction:"context", context} : null;
+          })
+          .filter(Boolean)
+          .slice(0, 10);
+      }else{
+        sessionQueue = practicePool()
+          .slice(0, 10)
+          .map(word => ({word, type:"listening", direction:"listening"}));
+      }
+
+      currentItem = sessionQueue.shift() || null;
+      resetQuizUI();
+      renderAll();
+      goPage("study");
+
+      if(!currentItem){
+        openModal("暂时没有可练题目", "当前词书没有找到合适的例句或词条，请稍后再试。");
+      }
+    }
+
     function buildStudyQueue(){
       sessionMode = "daily";
       answerLocked = false;
@@ -2163,12 +2453,13 @@
       currentItem = prepareQueueItem(sessionQueue.shift() || null);
       renderAll();
       if(!currentItem){
-        openModal(
-          "复习完成",
-          sessionMode === "wrong"
-            ? "错题本这一轮复习完成。不会自动清除错题，你可以自己决定什么时候移出。"
-            : "收藏单词这一轮看完啦。"
-        );
+        const completionText = {
+          wrong:"错题本这一轮复习完成。不会自动清除错题，你可以自己决定什么时候移出。",
+          favorite:"收藏单词这一轮看完啦。",
+          listening:"听音与听写完成。听错或拼错的词已经收入错题本。",
+          context:"语境与搭配完成。错题已安排到后续复习。"
+        };
+        openModal("本轮完成", completionText[sessionMode] || "这一轮完成啦。");
       }
     }
 
@@ -2238,6 +2529,98 @@
       $("roomMood").textContent = pick(moods);
     }
 
+
+    function reportModeLabel(mode){
+      return {
+        "en-zh":"英文→中文",
+        "zh-en":"中文→英文",
+        spelling:"拼写专项",
+        listening:"听音听写",
+        context:"语境搭配",
+        wrong:"错题复习",
+        favorite:"收藏复习"
+      }[mode] || mode;
+    }
+
+    function renderReport(){
+      if(!$("reportTodayTotal")) return;
+      const book = getBook();
+      const history = Array.isArray(book.history) ? book.history : [];
+      const todayEvents = history.filter(event => event.date === todayKey);
+      const weekStart = addDaysKey(-6);
+      const weekEvents = history.filter(event => event.date >= weekStart && event.date <= todayKey);
+      const todayKnown = todayEvents.filter(event => event.result === "known").length;
+      const todayWeak = todayEvents.filter(event => event.result !== "known").length;
+      const tomorrow = addDaysKey(1);
+      const tomorrowDue = Object.values(book.words)
+        .filter(progress => progress.nextReviewAt === tomorrow).length;
+
+      $("reportTodayDate").textContent = todayKey;
+      $("reportTodayTotal").textContent = todayEvents.length;
+      $("reportTodayRate").textContent = todayEvents.length
+        ? `${Math.round(todayKnown / todayEvents.length * 100)}%`
+        : "0%";
+      $("reportTodayWrong").textContent = todayWeak;
+      $("reportTomorrowDue").textContent = tomorrowDue;
+      $("reportHomeDesc").textContent = todayEvents.length
+        ? `今天已记录 ${todayEvents.length} 次答题，独立答对 ${todayKnown} 次`
+        : "今天还没有本版本记录的答题";
+
+      const modeMap = {};
+      weekEvents.forEach(event => {
+        modeMap[event.mode] ||= {total:0, known:0};
+        modeMap[event.mode].total += 1;
+        if(event.result === "known") modeMap[event.mode].known += 1;
+      });
+      const modeRows = Object.entries(modeMap)
+        .sort((a,b) => b[1].total - a[1].total);
+
+      $("reportModeBars").innerHTML = modeRows.length
+        ? modeRows.map(([mode, data]) => {
+            const rate = Math.round(data.known / data.total * 100);
+            return `<div class="report-bar-row">
+              <div class="report-bar-head">
+                <span>${escapeHTML(reportModeLabel(mode))} · ${data.total} 题</span>
+                <strong>${rate}%</strong>
+              </div>
+              <div class="report-bar"><div style="width:${rate}%"></div></div>
+            </div>`;
+          }).join("")
+        : '<div class="empty">从这次更新后的第一道题开始记录。</div>';
+
+      const weakest = modeRows
+        .filter(([,data]) => data.total >= 2)
+        .sort((a,b) => (a[1].known/a[1].total) - (b[1].known/b[1].total))[0];
+      $("reportWeakMode").textContent = weakest
+        ? `当前较弱：${reportModeLabel(weakest[0])}`
+        : "完成几道题后生成";
+
+      const dates = Array.from({length:7}, (_, index) => addDaysKey(index - 6));
+      const maxCount = Math.max(1, ...dates.map(date => weekEvents.filter(event => event.date === date).length));
+      $("reportWeekRows").innerHTML = dates.map(date => {
+        const events = weekEvents.filter(event => event.date === date);
+        const known = events.filter(event => event.result === "known").length;
+        const rate = events.length ? Math.round(known / events.length * 100) : 0;
+        return `<div class="week-row">
+          <span>${date.slice(5)}</span>
+          <div class="week-mini"><div style="width:${events.length / maxCount * 100}%"></div></div>
+          <span>${events.length}题 · ${rate}%</span>
+        </div>`;
+      }).join("");
+      $("reportWeekTotal").textContent = `共 ${weekEvents.length} 题`;
+
+      const progresses = Object.values(book.words);
+      const mastered = progresses.filter(progress => progress.status === "mastered").length;
+      const wrongBook = progresses.filter(progress => progress.inWrongBook).length;
+      const spellingWrong = weekEvents.filter(event =>
+        ["spelling","listening"].includes(event.mode) && event.result === "unknown"
+      ).length;
+      $("reportBookSummary").innerHTML =
+        `已掌握 <strong>${mastered}</strong> 个 · 错题本 <strong>${wrongBook}</strong> 个 · `
+        + `近七日拼写/听写错误 <strong>${spellingWrong}</strong> 次 · `
+        + `明日到期复习 <strong>${tomorrowDue}</strong> 个。`;
+    }
+
     function renderAll(){
       const book = getBook();
       const count = getTodayCount(book);
@@ -2258,7 +2641,10 @@
               sessionDirection === "zh-en" ? "中文 → 英文 · 主动回忆" :
               "英文 → 中文 · 认词模式"
             )
-          : sessionMode === "wrong" ? "错题本复习" : "收藏单词复习";
+          : sessionMode === "wrong" ? "错题本复习"
+          : sessionMode === "favorite" ? "收藏单词复习"
+          : sessionMode === "listening" ? "听音与听写 · 10题"
+          : "语境与搭配 · 10题";
       $("studyCounter").textContent = sessionMode === "daily"
         ? (count >= book.dailyGoal ? `${book.dailyGoal} / ${book.dailyGoal}` : `${count + 1} / ${book.dailyGoal}`)
         : `剩余 ${sessionQueue.length + (currentItem ? 1 : 0)} 个`;
@@ -2288,6 +2674,7 @@
       renderNotebook();
       renderRewards();
       renderRoom();
+      renderReport();
     }
 
     function renderWord(){
@@ -2304,9 +2691,12 @@
       if(!currentItem){
         const book = getBook();
         if(sessionMode !== "daily"){
-          wordEl.textContent = "复习完成";
-          phoneticEl.textContent = "回到单词本可以再来一轮";
-          meaningEl.textContent = "这一轮已经没有单词了。";
+          wordEl.textContent = "本轮完成";
+          phoneticEl.textContent =
+            sessionMode === "listening" ? "听音练习已经完成" :
+            sessionMode === "context" ? "语境搭配已经完成" :
+            "回到单词本可以再来一轮";
+          meaningEl.textContent = "这一轮已经没有题目了。";
           exampleEl.textContent = "";
           queueTag.textContent = "完成";
         }else if(getTodayCount(book) >= book.dailyGoal){
@@ -2337,7 +2727,24 @@
       const progress = getWordProgress(wordKey(w.word), false);
       wordEl.classList.toggle("zh-prompt", direction === "zh-en");
 
-      if(direction === "spelling"){
+      if(direction === "listening"){
+        wordEl.textContent = "听音拼写";
+        phoneticEl.textContent = "点击播放，只凭声音判断单词";
+        meaningEl.textContent = `${w.word}  ${w.phonetic}`;
+        exampleEl.textContent = "浏览器本地朗读，不消耗 API Token。";
+        $("modeHint").textContent = "可以直接听写，也可以切换成听音四选一。";
+      }else if(direction === "context"){
+        const question = currentItem.context;
+        wordEl.textContent = "语境与搭配";
+        phoneticEl.textContent = question?.kind === "preposition"
+          ? "选择正确介词或结构"
+          : "选择最适合语境的单词";
+        meaningEl.textContent = `${w.word}  ${w.phonetic}`;
+        exampleEl.innerHTML = `<div class="cloze-sentence">${
+          escapeHTML(question?.prompt || "").replace("____", '<span class="cloze-blank">____</span>')
+        }</div>`;
+        $("modeHint").textContent = "答题后会显示完整例句、对应搭配和全部释义。";
+      }else if(direction === "spelling"){
         wordEl.textContent = compactMeaning(w);
         phoneticEl.textContent = `${w.phonetic} · ${w.word.length} 个字母`;
         meaningEl.textContent = `${w.word}  ${w.phonetic}`;
@@ -2366,15 +2773,18 @@
         currentItem.type === "wrongbook" ? "错题本" :
         currentItem.type === "favorite" ? "收藏" : "到期复习";
       const directionLabel =
+        currentDirection() === "listening" ? "听音听写" :
+        currentDirection() === "context" ? "语境搭配" :
         currentDirection() === "spelling" ? "拼写专项" :
         currentDirection() === "zh-en" ? "中→英" : "英→中";
       queueTag.textContent = `${baseTag} · ${directionLabel}`;
       $("studyActions").style.display =
-        answerLocked || currentDirection() === "spelling" ? "none" : "grid";
+        answerLocked || ["spelling","listening","context"].includes(currentDirection())
+          ? "none" : "grid";
       $("modeHint").style.display = answerLocked ? "none" : "block";
-      if(currentDirection() === "spelling" && !answerLocked){
-        showSpellingPractice();
-      }
+      if(currentDirection() === "spelling" && !answerLocked) showSpellingPractice();
+      if(currentDirection() === "listening" && !answerLocked) showListeningPractice();
+      if(currentDirection() === "context" && !answerLocked) showContextPractice();
     }
 
     function renderRewards(){
@@ -2465,6 +2875,7 @@
       document.querySelectorAll(".page").forEach(p => p.classList.toggle("active", p.id === page));
       document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("active", b.dataset.page === page));
       if(page === "notebook") renderNotebook();
+      if(page === "report") renderReport();
       refreshPageCopy(page);
       if(Math.random() < .35) shuffleSubtitle();
       window.scrollTo({top:0, behavior:"smooth"});
@@ -2474,10 +2885,137 @@
       spellingHintUsed = false;
       if($("quizPanel")) $("quizPanel").innerHTML = "";
       if($("studyActions")) $("studyActions").style.display =
-        currentItem && currentDirection() !== "spelling" ? "grid" : "none";
+        currentItem && !["spelling","listening","context"].includes(currentDirection())
+          ? "grid" : "none";
       if($("modeHint")) $("modeHint").style.display = currentItem ? "block" : "none";
     }
 
+
+
+    function showListeningPractice(){
+      if(!currentItem || currentDirection() !== "listening" || answerLocked) return;
+      $("quizPanel").innerHTML = `
+        <div class="quiz-box">
+          <button class="audio-orb" type="button" onclick="playCurrentAudio(false)">🔊</button>
+          <div class="audio-actions">
+            <button class="soft" type="button" onclick="playCurrentAudio(false)">正常播放</button>
+            <button class="soft" type="button" onclick="playCurrentAudio(true)">慢速播放</button>
+          </div>
+          <input id="listeningInput" class="quiz-input" autocomplete="off"
+                 autocapitalize="off" spellcheck="false"
+                 placeholder="听到什么，就输入什么" />
+          <button class="primary" style="margin-top:10px" onclick="submitListeningAnswer()">提交听写</button>
+          <button class="soft" style="width:100%;margin-top:9px" onclick="showListeningOptions()">改做听音四选一</button>
+          <button class="soft" style="width:100%;margin-top:9px" onclick="giveUpListening()">完全没听出来</button>
+          <div id="listeningResult" class="quiz-result"></div>
+        </div>`;
+    }
+
+    function submitListeningAnswer(){
+      if(answerLocked || !currentItem) return;
+      const input = $("listeningInput")?.value.trim() || "";
+      if(!input){
+        toast("先输入你听到的单词");
+        return;
+      }
+      hideModeButtons();
+      const correct =
+        normalizeEnglishAnswer(input) === normalizeEnglishAnswer(currentItem.word.word);
+      revealCurrentAnswer();
+      finalizeAnswer(correct ? "known" : "unknown", !correct);
+      $("listeningInput").disabled = true;
+      $("listeningResult").innerHTML = correct
+        ? `听写正确：<strong>${escapeHTML(currentItem.word.word)}</strong>`
+        : `正确答案：<strong>${escapeHTML(currentItem.word.word)}</strong><br>已加入错题本。`;
+      $("listeningResult").innerHTML +=
+        '<button class="primary" style="margin-top:12px;width:100%" onclick="advanceAfterAnswer()">下一题</button>';
+    }
+
+    function showListeningOptions(){
+      if(answerLocked || !currentItem) return;
+      const correct = currentItem.word.word;
+      const options = shuffle([
+        correct,
+        ...shuffle(activeWords)
+          .map(word => word.word)
+          .filter(word => wordKey(word) !== wordKey(correct))
+          .slice(0,3)
+      ]);
+      $("quizPanel").innerHTML = `
+        <div class="quiz-box">
+          <button class="audio-orb" type="button" onclick="playCurrentAudio(false)">🔊</button>
+          <div class="quiz-title">选出刚才听到的单词</div>
+          <div id="listeningOptions" class="option-grid"></div>
+          <div id="listeningResult" class="quiz-result"></div>
+        </div>`;
+      const grid = $("listeningOptions");
+      options.forEach(option => {
+        const button = document.createElement("button");
+        button.className = "option-btn";
+        button.textContent = option;
+        button.onclick = () => {
+          if(answerLocked) return;
+          hideModeButtons();
+          const isCorrect = option === correct;
+          [...grid.children].forEach(btn => {
+            if(btn.textContent === correct) btn.classList.add("correct");
+            else if(btn === button) btn.classList.add("wrong");
+            btn.disabled = true;
+          });
+          revealCurrentAnswer();
+          finalizeAnswer(isCorrect ? "fuzzy" : "unknown", !isCorrect);
+          $("listeningResult").innerHTML =
+            `${isCorrect ? "听对了；选择题按“模糊”安排次日复习。" : `正确答案是 ${escapeHTML(correct)}，已加入错题本。`}`
+            + '<button class="primary" style="margin-top:12px;width:100%" onclick="advanceAfterAnswer()">下一题</button>';
+        };
+        grid.appendChild(button);
+      });
+      playCurrentAudio(false);
+    }
+
+    function giveUpListening(){
+      if(answerLocked || !currentItem) return;
+      hideModeButtons();
+      revealCurrentAnswer();
+      finalizeAnswer("unknown", true);
+      $("listeningResult").innerHTML =
+        `正确答案：<strong>${escapeHTML(currentItem.word.word)}</strong><br>已加入错题本。`
+        + '<button class="primary" style="margin-top:12px;width:100%" onclick="advanceAfterAnswer()">下一题</button>';
+    }
+
+    function showContextPractice(){
+      if(!currentItem || currentDirection() !== "context" || answerLocked) return;
+      const question = currentItem.context;
+      $("quizPanel").innerHTML = `
+        <div class="quiz-box">
+          <div class="quiz-title">补全句子</div>
+          <div id="contextOptions" class="option-grid"></div>
+          <div id="contextResult" class="quiz-result"></div>
+        </div>`;
+      const grid = $("contextOptions");
+      (question?.options || []).forEach(option => {
+        const button = document.createElement("button");
+        button.className = "option-btn";
+        button.textContent = option;
+        button.onclick = () => {
+          if(answerLocked) return;
+          hideModeButtons();
+          const correct = option === question.answer;
+          [...grid.children].forEach(btn => {
+            if(btn.textContent === question.answer) btn.classList.add("correct");
+            else if(btn === button) btn.classList.add("wrong");
+            btn.disabled = true;
+          });
+          revealCurrentAnswer();
+          finalizeAnswer(correct ? "known" : "unknown", !correct);
+          $("contextResult").innerHTML =
+            `${correct ? "语境判断正确。" : `正确答案：<strong>${escapeHTML(question.answer)}</strong>`}`
+            + `<div class="context-note">${escapeHTML(question.note || "")}<br>${escapeHTML(question.full || "")}</div>`
+            + '<button class="primary" style="margin-top:12px;width:100%" onclick="advanceAfterAnswer()">下一题</button>';
+        };
+        grid.appendChild(button);
+      });
+    }
 
     function showSpellingPractice(){
       if(!currentItem || currentDirection() !== "spelling" || answerLocked) return;
@@ -2694,6 +3232,22 @@
       $("knownAnswerInput").disabled = true;
     }
 
+
+    function recordStudyEvent(book, details){
+      if(!Array.isArray(book.history)) book.history = [];
+      book.history.push({
+        at:Date.now(),
+        date:todayKey,
+        word:details.word,
+        mode:details.mode,
+        result:details.result,
+        wrong:Boolean(details.wrong),
+        source:details.source || "",
+        wasNew:Boolean(details.wasNew)
+      });
+      book.history = book.history.slice(-2000);
+    }
+
     function finalizeAnswer(type, addWrong){
       const book = getBook();
       if(!currentItem) return;
@@ -2740,6 +3294,15 @@
         progress.status = "learning";
         progress.nextReviewAt = addDaysKey(1);
       }
+
+      recordStudyEvent(book, {
+        word:key,
+        mode:sessionMode === "daily" ? currentDirection() : sessionMode,
+        result:type,
+        wrong:addWrong,
+        source:currentItem.type,
+        wasNew:firstToday
+      });
 
       const mysteryEgg = countsTowardDaily ? maybeTriggerMysteryEgg(firstToday) : null;
       const wordEgg = maybeTriggerWordEgg(word.word);
@@ -3282,6 +3845,57 @@
       return Math.min(200, Math.max(5, value));
     }
 
+
+    function clearApiKey(){
+      if(!confirm("清除当前浏览器保存的 API Key 吗？URL 和模型名称会保留。")) return;
+      localStorage.removeItem("cetApiKey");
+      $("apiKey").value = "";
+      updateApiStatus();
+      toast("API Key 已从当前浏览器清除");
+    }
+
+    function contentToText(value){
+      if(typeof value === "string") return value.trim();
+      if(Array.isArray(value)){
+        return value.map(item => contentToText(item)).filter(Boolean).join("\n").trim();
+      }
+      if(value && typeof value === "object"){
+        return contentToText(
+          value.text ??
+          value.content ??
+          value.output_text ??
+          value.message ??
+          value.value ??
+          ""
+        );
+      }
+      return "";
+    }
+
+    function extractApiText(data, raw){
+      const candidates = [
+        data?.choices?.[0]?.message?.content,
+        data?.choices?.[0]?.text,
+        data?.choices?.[0]?.delta?.content,
+        data?.output_text,
+        data?.output?.[0]?.content,
+        data?.candidates?.[0]?.content?.parts,
+        data?.candidates?.[0]?.output,
+        data?.response,
+        data?.result,
+        data?.text,
+        data?.message
+      ];
+      for(const candidate of candidates){
+        const text = contentToText(candidate);
+        if(text) return text;
+      }
+      if(typeof raw === "string" && raw.trim() && !raw.trim().startsWith("{")){
+        return raw.trim();
+      }
+      return "";
+    }
+
     function loadApiSettings(){
       $("apiUrl").value = localStorage.getItem("cetApiUrl") || "";
       $("apiKey").value = localStorage.getItem("cetApiKey") || "";
@@ -3325,9 +3939,10 @@
     function updateApiStatus(){
       const url = localStorage.getItem("cetApiUrl") || "";
       const model = localStorage.getItem("cetApiModel") || "";
+      const hasKey = Boolean(localStorage.getItem("cetApiKey"));
       $("apiStatus").textContent = url && model
-        ? `已保存：${model}；仅在点“Daddy 讲讲”或“测试连接”时请求。`
-        : "尚未配置；没有接口时“Daddy 讲讲”会使用本地释义。";
+        ? `已保存模型：${model}；Key ${hasKey ? "已保存" : "未保存"}。只有主动点击 AI 功能才会请求。`
+        : "尚未配置；听音、搭配题、词根词缀和复盘都不需要 API。";
     }
 
     function buildChatEndpoint(url){
@@ -3453,13 +4068,9 @@
         throw new Error(detail);
       }
 
-      const content =
-        data?.choices?.[0]?.message?.content ??
-        data?.choices?.[0]?.text ??
-        data?.output_text;
-
-      if(!content) throw new Error("接口已响应，但没有返回可读取的文本");
-      return String(content).trim();
+      const content = extractApiText(data, raw);
+      if(!content) throw new Error("接口已响应，但返回格式仍无法识别；可以暂时清除 Key 停用 AI。");
+      return content;
     }
 
     async function testApiConnection(){
