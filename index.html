@@ -3467,22 +3467,93 @@
       setTimeout(() => $("knownAnswerInput")?.focus(), 50);
     }
 
+    const CHINESE_MEANING_RULES = [
+      [/没有任何价值|没有价值|毫无价值|没什么价值|没价值/g, "无价值"],
+      [/没有任何用处|没有用处|毫无用处|没什么用处|没有用|没用处|没用/g, "无用"],
+      [/不能使用|无法使用|不可以使用/g, "不可用"],
+      [/没有必要|没必要/g, "无必要"],
+      [/没有意义|毫无意义|没意义/g, "无意义"],
+      [/没有效果|毫无效果|没效果/g, "无效"],
+      [/没有能力|没能力/g, "无能力"],
+      [/没有意识到|没意识到/g, "未意识到"],
+      [/没有注意到|没注意到/g, "未注意到"],
+      [/没有完成|没完成/g, "未完成"],
+      [/非常|十分|特别|相当|很/g, ""],
+      [/的|地|得/g, ""]
+    ];
+
+    function normalizeChineseMeaning(value){
+      let text = String(value || "")
+        .toLowerCase()
+        .replace(/[a-zA-Z]+\./g, "")
+        .replace(/[（）()\[\]【】]/g, "")
+        .replace(/[；;，,、\/｜|：:。！？!?“”"'‘’\s]+/g, "");
+
+      CHINESE_MEANING_RULES.forEach(([pattern, replacement]) => {
+        text = text.replace(pattern, replacement);
+      });
+      return text;
+    }
+
     function meaningTokens(meaning){
       return String(meaning)
         .replace(/[a-zA-Z]+\./g, "")
         .replace(/[（）()\[\]【】]/g, " ")
         .split(/[；;，,、\/｜|\s]+/)
-        .map(s => s.replace(/[^\u4e00-\u9fffA-Za-z]/g, "").trim())
-        .filter(s => s.length >= 2);
+        .map(normalizeChineseMeaning)
+        .filter(token => token.length >= 2);
+    }
+
+    function chineseNegationProfile(value){
+      const text = normalizeChineseMeaning(value);
+      return {
+        negative:/无|未|不|非|没|不可|不能|无法/.test(text),
+        positive:/有价值|有用|有效|必要|能够|可以/.test(text)
+      };
+    }
+
+    function chineseCharacterSimilarity(left, right){
+      const a = new Set([...left]);
+      const b = new Set([...right]);
+      const union = new Set([...a, ...b]);
+      if(!union.size) return 0;
+
+      let intersection = 0;
+      a.forEach(char => {
+        if(b.has(char)) intersection += 1;
+      });
+      return intersection / union.size;
+    }
+
+    function isSingleMeaningMatch(input, token){
+      const answer = normalizeChineseMeaning(input);
+      const target = normalizeChineseMeaning(token);
+      if(!answer || !target) return false;
+      if(answer === target) return true;
+
+      const answerProfile = chineseNegationProfile(answer);
+      const targetProfile = chineseNegationProfile(target);
+
+      // “有价值”不能因为包含“价值”而匹配成“无价值”，反之亦然。
+      if(answerProfile.negative !== targetProfile.negative) return false;
+      if(answerProfile.positive !== targetProfile.positive &&
+         (answerProfile.positive || targetProfile.positive)) return false;
+
+      const shorter = answer.length <= target.length ? answer : target;
+      const longer = answer.length > target.length ? answer : target;
+
+      // 至少三个汉字才允许包含式匹配，避免只输入“价值”就蒙对。
+      if(shorter.length >= 3 && longer.includes(shorter)) return true;
+
+      // 接受轻微措辞差异，但阈值保持较高，减少误判。
+      return Math.min(answer.length, target.length) >= 3 &&
+             chineseCharacterSimilarity(answer, target) >= .78;
     }
 
     function isMeaningMatch(input, meaning){
-      const answer = String(input).replace(/\s+/g, "").toLowerCase();
+      const answer = normalizeChineseMeaning(input);
       if(!answer) return false;
-      return meaningTokens(meaning).some(token => {
-        const clean = token.replace(/\s+/g, "").toLowerCase();
-        return answer.includes(clean) || clean.includes(answer);
-      });
+      return meaningTokens(meaning).some(token => isSingleMeaningMatch(answer, token));
     }
 
     function submitKnownAnswer(){
@@ -3500,8 +3571,15 @@
       finalizeAnswer(correct ? "known" : "unknown", !correct);
       const answerText = answerTextForCurrent();
       $("knownResult").innerHTML = correct
-        ? `答对了：${escapeHTML(answerText)}<button class="primary" style="margin-top:12px;width:100%" onclick="advanceAfterAnswer()">下一词</button>`
-        : `这次没匹配上。正确答案：<strong>${escapeHTML(answerText)}</strong><br>已加入错题本。<button class="primary" style="margin-top:12px;width:100%" onclick="advanceAfterAnswer()">下一词</button>`;
+        ? `${
+            zhToEn
+              ? "拼写正确。"
+              : "意思相符，判定正确。近义表达不要求逐字一致。"
+          }<br>标准释义：${escapeHTML(answerText)}
+          <button class="primary" style="margin-top:12px;width:100%" onclick="advanceAfterAnswer()">下一词</button>`
+        : `这次语义没有匹配上。标准释义：<strong>${escapeHTML(answerText)}</strong><br>
+           已加入错题本；若只是合理近义表达，可以继续告诉 Daddy 补充规则。
+           <button class="primary" style="margin-top:12px;width:100%" onclick="advanceAfterAnswer()">下一词</button>`;
       $("knownAnswerInput").disabled = true;
     }
 
