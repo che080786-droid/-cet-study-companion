@@ -149,6 +149,55 @@
     .stats{
       display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
     }
+    .direction-grid{
+      display:grid;grid-template-columns:1fr 1fr;gap:11px;
+    }
+    .direction-card{
+      min-height:166px;padding:17px;text-align:left;
+      border:1px solid var(--line);color:var(--ink);
+      position:relative;overflow:hidden;
+    }
+    .direction-card:after{
+      content:"";position:absolute;width:88px;height:88px;border-radius:50%;
+      right:-32px;top:-30px;background:rgba(255,220,233,.58);
+    }
+    .direction-icon{font-size:29px;position:relative;z-index:1}
+    .direction-name{font-size:16px;font-weight:850;margin-top:10px;position:relative;z-index:1}
+    .direction-desc{font-size:12px;color:var(--muted);line-height:1.55;margin-top:6px;position:relative;z-index:1}
+    .direction-count{
+      display:inline-block;margin-top:12px;padding:6px 9px;border-radius:999px;
+      background:var(--pink-soft);color:var(--pink-deep);font-size:11px;font-weight:800;
+      position:relative;z-index:1;
+    }
+    .room-card{padding:18px;overflow:hidden;position:relative}
+    .room-scene{
+      min-height:150px;border-radius:22px;padding:16px;
+      background:linear-gradient(180deg,#fff1f6 0 58%,#f7dfd2 58% 100%);
+      position:relative;overflow:hidden;
+    }
+    .room-window{
+      position:absolute;right:18px;top:14px;width:76px;height:66px;
+      display:grid;place-items:center;border-radius:18px;
+      background:linear-gradient(180deg,#dce8ff,#fff3dc);
+      border:5px solid rgba(255,255,255,.85);font-size:28px;
+    }
+    .room-shelf{position:absolute;left:18px;top:24px;font-size:28px}
+    .room-desk{position:absolute;left:28px;bottom:16px;font-size:43px}
+    .room-plant{position:absolute;right:28px;bottom:13px;font-size:38px}
+    .room-cat{
+      position:absolute;left:50%;bottom:15px;transform:translateX(-50%);
+      border:0;background:transparent;font-size:38px;padding:4px;
+    }
+    .room-caption{font-size:13px;color:var(--muted);line-height:1.65;margin-top:12px}
+    .daily-root{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      margin-top:12px;padding:13px 14px;border-radius:17px;background:#fff6f9;
+    }
+    .daily-root strong{display:block;font-size:15px}
+    .daily-root span{font-size:12px;color:var(--muted)}
+    @media(max-width:370px){
+      .direction-grid{grid-template-columns:1fr}
+    }
     .stat{padding:15px 8px;text-align:center}
     .stat strong{display:block;font-size:20px}
     .stat span{font-size:11px;color:var(--muted)}
@@ -358,7 +407,27 @@
       </div>
 
       <div class="section-title">
-        <span>今日任务</span>
+        <span>选择今天怎么背</span>
+        <span class="tiny">两个模式独立进入</span>
+      </div>
+
+      <div class="direction-grid">
+        <button class="card direction-card" type="button" onclick="startDirectionMode('en-zh')">
+          <div class="direction-icon">🔤</div>
+          <div class="direction-name">英文 → 中文</div>
+          <div class="direction-desc">看英文，判断或输入中文含义。适合快速认词。</div>
+          <div class="direction-count">今日练习 <span id="enZhToday">0</span> 个</div>
+        </button>
+        <button class="card direction-card" type="button" onclick="startDirectionMode('zh-en')">
+          <div class="direction-icon">✍🏻</div>
+          <div class="direction-name">中文 → 英文</div>
+          <div class="direction-desc">看中文，选择或亲手拼出英文。更考验主动回忆。</div>
+          <div class="direction-count">今日练习 <span id="zhEnToday">0</span> 个</div>
+        </button>
+      </div>
+
+      <div class="section-title">
+        <span>今日总任务</span>
         <span id="todayText" class="tiny"></span>
       </div>
 
@@ -369,7 +438,7 @@
           <div id="wordTaskDesc" class="task-desc">0 / 10 个</div>
           <div class="progress"><div id="wordProgress"></div></div>
         </div>
-        <button class="soft" onclick="goPage('study')">继续</button>
+        <button class="soft" onclick="continueLastMode()">继续</button>
       </div>
 
       <div class="card task">
@@ -396,6 +465,28 @@
         <div class="card stat"><strong id="daysStat">0</strong><span>连续天数</span></div>
         <div class="card stat"><strong id="learnedStat">0</strong><span>累计单词</span></div>
         <div class="card stat"><strong id="starsStat">0</strong><span>拥有星星</span></div>
+      </div>
+
+      <div class="section-title">
+        <span>小屋角落</span>
+        <span class="tiny">点点看，有东西会回应你</span>
+      </div>
+      <div class="card room-card">
+        <div class="room-scene">
+          <button class="room-shelf" type="button" style="border:0;background:transparent" onclick="tapRoomItem('books')">📚</button>
+          <button class="room-window" type="button" onclick="tapRoomItem('window')">🌙</button>
+          <button class="room-desk" type="button" style="border:0;background:transparent" onclick="tapRoomItem('desk')">🪑</button>
+          <button class="room-cat" type="button" onclick="tapRoomItem('cat')">🐈</button>
+          <button class="room-plant" type="button" style="border:0;background:transparent" onclick="tapRoomItem('plant')">🪴</button>
+        </div>
+        <div id="roomCaption" class="room-caption">书桌、窗户、小猫和植物都不是纯装饰。小屋总要有人住，才不会空。</div>
+        <div class="daily-root">
+          <div>
+            <strong id="dailyRootTitle">今日词根</strong>
+            <span id="dailyRootMeaning">正在挑选……</span>
+          </div>
+          <button class="soft" type="button" onclick="showDailyRoot()">看看</button>
+        </div>
       </div>
     </section>
 
@@ -447,7 +538,7 @@
       <div id="quizPanel" class="quiz-panel"></div>
       <div class="study-tools">
         <button class="primary" onclick="daddyExplain()">Daddy 讲讲</button>
-        <button class="soft" onclick="showRootAffix()">词根词缀</button>
+        <button class="soft" onclick="showRootAffix()">词根词缀（本地）</button>
       </div>
     </section>
 
@@ -502,12 +593,10 @@
           </div>
         </div>
         <div class="field">
-          <label for="directionSelect">出题方向</label>
-          <select id="directionSelect">
-            <option value="mixed">英→中 / 中→英随机混合</option>
-            <option value="en-zh">只看英文猜中文</option>
-            <option value="zh-en">只看中文猜英文</option>
-          </select>
+          <label>背词模式</label>
+          <div class="hint" style="padding:12px 13px;border-radius:15px;background:#fff6f9">
+            “英文→中文”和“中文→英文”已拆成首页两个独立入口，不再随机混在一起。
+          </div>
         </div>
         <button class="primary" onclick="saveStudySettings()">保存并切换词书</button>
         <p id="bookProgressHint" class="hint" style="margin:12px 2px 0"></p>
@@ -519,13 +608,13 @@
         </div>
         <p class="hint">
           不认识：本轮约 5 个词后再出现；模糊：明天复习；认识：3 天后复习；
-          同一单词连续答对 3 次进入已掌握，14 天后再复查；混合模式会随机出现中→英拼写题。
+          同一单词连续答对 3 次进入已掌握，14 天后再复查；英→中与中→英分别进入，不会在一轮里突然切换。
         </p>
       </div>
 
       <div class="card settings-card">
         <div class="section-title" style="margin:0 0 14px">
-          <span>Daddy AI 接口</span><span class="tiny">只在点“讲讲”时调用</span>
+          <span>Daddy AI 接口</span><span class="tiny">词根词缀不需要 API</span>
         </div>
         <div class="field">
           <label for="apiUrl">API 地址</label>
@@ -563,7 +652,7 @@
 
   <nav class="nav">
     <button class="active" data-page="home" onclick="goPage('home')"><span>🏠</span>小屋</button>
-    <button data-page="study" onclick="goPage('study')"><span>📚</span>背词</button>
+    <button data-page="study" onclick="continueLastMode()"><span>📚</span>背词</button>
     <button data-page="notebook" onclick="goPage('notebook')"><span>📒</span>词本</button>
     <button data-page="rewards" onclick="goPage('rewards')"><span>🎁</span>奖励</button>
     <button data-page="settings" onclick="goPage('settings')"><span>⚙️</span>设置</button>
@@ -740,6 +829,8 @@
       correct: 0,
       answered: false
     };
+    let sessionDirection = "en-zh";
+    let roomTapCount = 0;
 
     function localDateKey(date = new Date()){
       const y = date.getFullYear();
@@ -758,9 +849,15 @@
     function createBookState(goal = 10){
       return {
         dailyGoal: goal,
-        direction: "mixed",
+        lastDirection: "en-zh",
         vocabTest: {lastEstimate:0, bestEstimate:0, lastDate:""},
-        today: {date: todayKey, wordKeys: [], legacyCount: 0, checkedIn: false},
+        today: {
+          date: todayKey,
+          wordKeys: [],
+          directionWordKeys: {"en-zh":[], "zh-en":[]},
+          legacyCount: 0,
+          checkedIn: false
+        },
         streak: 0,
         lastCheckin: "",
         words: {}
@@ -877,9 +974,20 @@
 
     function ensureTodayForBook(book){
       if(book.today.date !== todayKey){
-        book.today = {date: todayKey, wordKeys: [], legacyCount: 0, checkedIn: false};
+        book.today = {
+          date: todayKey,
+          wordKeys: [],
+          directionWordKeys: {"en-zh":[], "zh-en":[]},
+          legacyCount: 0,
+          checkedIn: false
+        };
       }
       if(!Array.isArray(book.today.wordKeys)) book.today.wordKeys = [];
+      if(!book.today.directionWordKeys || typeof book.today.directionWordKeys !== "object"){
+        book.today.directionWordKeys = {"en-zh":[], "zh-en":[]};
+      }
+      if(!Array.isArray(book.today.directionWordKeys["en-zh"])) book.today.directionWordKeys["en-zh"] = [];
+      if(!Array.isArray(book.today.directionWordKeys["zh-en"])) book.today.directionWordKeys["zh-en"] = [];
       if(!Number.isFinite(book.today.legacyCount)) book.today.legacyCount = 0;
     }
 
@@ -1040,14 +1148,28 @@
 
 
     function chooseQuestionDirection(){
-      const mode = getBook().direction || "mixed";
-      if(mode === "mixed") return Math.random() < 0.42 ? "zh-en" : "en-zh";
-      return mode;
+      return sessionDirection === "zh-en" ? "zh-en" : "en-zh";
+    }
+
+    function startDirectionMode(direction){
+      sessionDirection = direction === "zh-en" ? "zh-en" : "en-zh";
+      const book = getBook();
+      book.lastDirection = sessionDirection;
+      sessionMode = "daily";
+      buildStudyQueue();
+      save(false);
+      goPage("study");
+      renderAll();
+    }
+
+    function continueLastMode(){
+      startDirectionMode(getBook().lastDirection || "en-zh");
     }
 
     function prepareQueueItem(item){
       if(!item) return item;
-      if(!item.direction) item.direction = chooseQuestionDirection();
+      if(sessionMode === "daily") item.direction = chooseQuestionDirection();
+      else if(!item.direction) item.direction = chooseQuestionDirection();
       return item;
     }
 
@@ -1190,8 +1312,9 @@
       $("wordTaskDesc").textContent = `${count} / ${book.dailyGoal} 个`;
       $("wordProgress").style.width = `${Math.min(100, count / book.dailyGoal * 100)}%`;
       $("studyTitle").textContent =
-        sessionMode === "daily" ? "今日背词" :
-        sessionMode === "wrong" ? "错题本复习" : "收藏单词复习";
+        sessionMode === "daily"
+          ? (sessionDirection === "zh-en" ? "中文 → 英文 · 拼写模式" : "英文 → 中文 · 认词模式")
+          : sessionMode === "wrong" ? "错题本复习" : "收藏单词复习";
       $("studyCounter").textContent = sessionMode === "daily"
         ? (count >= book.dailyGoal ? `${book.dailyGoal} / ${book.dailyGoal}` : `${count + 1} / ${book.dailyGoal}`)
         : `剩余 ${sessionQueue.length + (currentItem ? 1 : 0)} 个`;
@@ -1201,15 +1324,14 @@
       $("checkinBtn").disabled = book.today.checkedIn;
       $("checkinBtn").style.opacity = book.today.checkedIn ? ".55" : "1";
       $("dailyGoal").value = String(book.dailyGoal);
-      $("directionSelect").value = book.direction || "mixed";
       $("bookSelect").value = state.currentBookId;
+      $("enZhToday").textContent = book.today.directionWordKeys["en-zh"].length;
+      $("zhEnToday").textContent = book.today.directionWordKeys["zh-en"].length;
       $("bookLoadHint").textContent = vocabularyLoaded
         ? `${config.name} · ${activeWords.length} 个词`
         : `正在读取${config.name}…`;
       $("bookProgressHint").textContent =
-        `${config.name}：累计接触 ${learnedUnique} 个，连续打卡 ${book.streak} 天；出题方向 ${
-          book.direction === "zh-en" ? "中→英" : book.direction === "en-zh" ? "英→中" : "随机混合"
-        }。`;
+        `${config.name}：累计接触 ${learnedUnique} 个，连续打卡 ${book.streak} 天；两个方向从首页分别进入。`;
       const test = book.vocabTest || {};
       $("vocabTestDesc").textContent = test.lastEstimate
         ? `上次估算掌握约 ${test.lastEstimate} / ${activeWords.length} 个`
@@ -1480,6 +1602,12 @@
       const firstToday = countsTowardDaily && !book.today.wordKeys.includes(key);
       if(firstToday) book.today.wordKeys.push(key);
 
+      if(countsTowardDaily){
+        const direction = currentDirection();
+        const directionKeys = book.today.directionWordKeys[direction];
+        if(!directionKeys.includes(key)) directionKeys.push(key);
+      }
+
       let gain = 0;
       if(progress.lastRewardDate !== todayKey){
         gain = type === "known" ? 2 : 1;
@@ -1696,6 +1824,70 @@
         .replace(/'/g, "&#039;");
     }
 
+
+
+    function dailyRootEntry(){
+      const index = Math.abs(
+        [...`${todayKey}-${state.currentBookId}`]
+          .reduce((sum, char) => sum + char.charCodeAt(0), 0)
+      ) % ROOTS.length;
+      return ROOTS[index];
+    }
+
+    function renderDailyRoot(){
+      const [root, meaning] = dailyRootEntry();
+      $("dailyRootTitle").textContent = `今日词根 · ${root}`;
+      $("dailyRootMeaning").textContent = meaning;
+    }
+
+    function showDailyRoot(){
+      const [root, meaning] = dailyRootEntry();
+      const examples = activeWords
+        .filter(item => wordKey(item.word).includes(root))
+        .slice(0, 5)
+        .map(item => `${item.word}（${item.meaning.split("；")[0]}）`);
+
+      openModal(
+        `今日词根 · ${root}`,
+        `${root} = ${meaning}\n\n${
+          examples.length
+            ? `当前词书例词：\n${examples.join("\n")}`
+            : "当前词书暂时没有匹配到合适例词。"
+        }\n\n这是辅助记忆拆分，不等于严格词源考证。`
+      );
+    }
+
+    function tapRoomItem(item){
+      roomTapCount += 1;
+      const messages = {
+        books:[
+          "书架说：错题本已经按 A—Z 排好了，至少我很有秩序。",
+          "一本书从架子上歪了一点，里面夹着一张写着“再背五个”的纸条。"
+        ],
+        window:[
+          "窗外的月亮今天也在。它没催你，只是一直亮着。",
+          "玻璃上像是有人写了一句：慢慢来，但别不来。"
+        ],
+        desk:[
+          "书桌已经擦干净了，借口暂时没有地方放。",
+          "桌角压着一颗星星，可惜要答题才能拿。"
+        ],
+        plant:[
+          "植物今天长高了一点。进度也是这样，天天看不出，回头就变了。",
+          "叶子晃了晃：浇水和复习都不能只做一次。"
+        ],
+        cat:[
+          "小猫踩过你的单词本，然后理直气壮地坐下了。",
+          "它盯着奖励墙看了三秒。看来不只你有兴趣。",
+          "小猫说喵。翻译一下：今天也要回来。"
+        ]
+      };
+      const line = pick(messages[item] || ["小屋轻轻响了一下。"]);
+      $("roomCaption").textContent = line;
+      if(item === "cat" && roomTapCount === 7){
+        toast("小猫被你点烦了，决定躲到书桌下面 (¬_¬)");
+      }
+    }
 
     function startVocabularyTest(){
       if(!vocabularyLoaded || activeWords.length < 20){
@@ -1914,37 +2106,13 @@
       return `${word.word}\n\n${lines.join("\n")}\n\n词书释义：${word.meaning}\n\n记忆拆分仅用于辅助联想；遇到历史词源不确定时，不强行拆解。`;
     }
 
-    async function showRootAffix(){
+    function showRootAffix(){
       if(!currentItem){
         toast("现在没有可以拆解的单词");
         return;
       }
-
       const word = currentItem.word;
-      const localText = localRootAffixText(word);
-      const settings = getApiSettings();
-
-      if(!settings.url || !settings.model){
-        openModal("词根词缀拆解", localText);
-        return;
-      }
-
-      openModal("词根词缀拆解", `${localText}\n\n正在让 AI 核对并补充……`);
-      try{
-        const result = await callChatApi([
-          {
-            role:"system",
-            content:"你是严谨的英语词汇老师。用简体中文回答，控制在220字内。只给可靠的词根词缀或构词法；不确定就明确说不确定，禁止编造词源。区分“构词拆分”和“记忆联想”。"
-          },
-          {
-            role:"user",
-            content:`分析单词 ${word.word}。词书释义：${word.meaning}。请给：1.可靠的前缀/词根/后缀拆分；2.每部分含义；3.一句简短记忆法；4.若不能可靠拆分，直接说明。`
-          }
-        ]);
-        openModal("词根词缀拆解", result);
-      }catch(error){
-        openModal("词根词缀拆解", `${localText}\n\nAI 补充失败：${String(error.message || error)}`);
-      }
+      openModal("词根词缀 · 本地拆解", localRootAffixText(word));
     }
 
     async function daddyExplain(){
@@ -2288,7 +2456,6 @@
 
       $("dailyGoal").value = String(goal);
       getBook().dailyGoal = goal;
-      getBook().direction = $("directionSelect").value || "mixed";
       buildStudyQueue();
       save();
       toast(`${BOOK_CONFIG[state.currentBookId].name}已设置为每天 ${goal} 个词 ${pick(KAOMOJI.hello)}`);
@@ -2369,7 +2536,9 @@
         "奖励不是作弊，它只是很懂怎么哄你继续。"
       ]);
 
+      sessionDirection = getBook().lastDirection || "en-zh";
       renderAll();
+      renderDailyRoot();
       loadApiSettings();
       const ok = await activateBook(state.currentBookId, false);
       if(!ok){
