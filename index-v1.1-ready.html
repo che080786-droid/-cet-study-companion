@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#fff5f8" />
+  <title>月月的四六级小屋</title>
+  <style>
+    :root{
+      --pink:#ff8fb5;
+      --pink-deep:#f06f9c;
+      --pink-soft:#ffe6ef;
+      --cream:#fffafc;
+      --white:#ffffff;
+      --ink:#493d45;
+      --muted:#9a8992;
+      --line:#f4d9e3;
+      --shadow:0 14px 34px rgba(221,118,156,.14);
+      --radius:24px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--ink);
+      font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+      background:
+        radial-gradient(circle at 10% 0%,#ffe4ef 0,transparent 36%),
+        radial-gradient(circle at 100% 18%,#fff0d9 0,transparent 30%),
+        linear-gradient(180deg,#fff9fb 0%,#fff4f8 100%);
+    }
+    button,input,select{font:inherit}
+    button{cursor:pointer}
+    .app{
+      width:min(100%,520px);
+      min-height:100vh;
+      margin:0 auto;
+      padding:22px 16px calc(94px + env(safe-area-inset-bottom));
+    }
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:18px;
+    }
+    .brand{
+      display:flex;
+      gap:11px;
+      align-items:center;
+    }
+    .moon{
+      width:46px;height:46px;border-radius:50%;
+      border:0;padding:0;background:transparent;cursor:pointer;user-select:none;
+      transition:transform .18s ease;
+    }
+    .moon:active{transform:scale(.9) rotate(-8deg)}
+    .moon-visual{
+      width:46px;height:46px;border-radius:50%;
+      display:grid;place-items:center;
+      background:linear-gradient(145deg,#fff,#ffd6e6);
+      box-shadow:var(--shadow);
+      font-size:25px;
+    }
+    h1{font-size:21px;margin:0}
+    .subtitle{font-size:12px;color:var(--muted);margin-top:3px}
+    .star-pill{
+      padding:9px 12px;
+      background:rgba(255,255,255,.86);
+      border:1px solid var(--line);
+      border-radius:999px;
+      font-weight:700;
+      box-shadow:0 8px 22px rgba(221,118,156,.1);
+    }
+    .page{display:none}
+    .page.active{display:block;animation:fade .25s ease}
+    @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+    .hero,.card{
+      background:rgba(255,255,255,.88);
+      border:1px solid rgba(244,217,227,.9);
+      box-shadow:var(--shadow);
+      border-radius:var(--radius);
+    }
+    .hero{
+      padding:21px;
+      overflow:hidden;
+      position:relative;
+    }
+    .hero:after{
+      content:"";
+      position:absolute;
+      right:-28px;top:-35px;
+      width:120px;height:120px;border-radius:50%;
+      background:linear-gradient(145deg,#ffe0ec,#fff4d9);
+      opacity:.78;
+    }
+    .hello{
+      position:relative;z-index:1;
+      font-size:18px;font-weight:800;
+      margin-bottom:8px;
+    }
+    .quote{
+      position:relative;z-index:1;
+      color:var(--muted);font-size:14px;line-height:1.7;
+    }
+    .section-title{
+      display:flex;align-items:center;justify-content:space-between;
+      margin:20px 2px 10px;
+      font-weight:800;
+    }
+    .tiny{font-size:12px;color:var(--muted);font-weight:500}
+    .task{
+      padding:17px;
+      display:flex;gap:13px;align-items:center;
+      margin-bottom:11px;
+    }
+    .task-icon{
+      width:44px;height:44px;border-radius:15px;
+      display:grid;place-items:center;
+      background:var(--pink-soft);font-size:21px;
+    }
+    .task-main{flex:1}
+    .task-name{font-weight:750}
+    .task-desc{font-size:12px;color:var(--muted);margin-top:5px}
+    .progress{
+      height:9px;background:#f8e8ee;border-radius:999px;overflow:hidden;margin-top:10px;
+    }
+    .progress > div{
+      height:100%;width:0%;
+      background:linear-gradient(90deg,#ff9dbc,#f57ca7);
+      border-radius:inherit;transition:.35s ease;
+    }
+    .primary,.soft,.choice{
+      border:0;border-radius:16px;font-weight:750;
+      min-height:46px;
+    }
+    .primary{
+      width:100%;color:white;
+      background:linear-gradient(135deg,var(--pink),var(--pink-deep));
+      box-shadow:0 10px 24px rgba(240,111,156,.25);
+    }
+    .soft{
+      padding:0 16px;color:var(--pink-deep);
+      background:var(--pink-soft);
+    }
+    .stats{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+    }
+    .stat{padding:15px 8px;text-align:center}
+    .stat strong{display:block;font-size:20px}
+    .stat span{font-size:11px;color:var(--muted)}
+    .word-card{
+      min-height:330px;padding:26px 22px;
+      display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
+      position:relative;overflow:hidden;
+    }
+    .word-card:before,.word-card:after{
+      content:"✦";position:absolute;color:#ffd0df;font-size:22px;
+    }
+    .word-card:before{left:22px;top:20px}
+    .word-card:after{right:22px;bottom:20px}
+    .word{
+      font-size:36px;font-weight:850;letter-spacing:-1px;
+    }
+    .phonetic{color:var(--muted);margin:8px 0 20px}
+    .meaning{
+      min-height:66px;
+      padding:13px 16px;border-radius:16px;
+      background:#fff6f9;line-height:1.65;
+      width:100%;
+    }
+    .meaning.hidden{
+      color:transparent;user-select:none;
+      background:repeating-linear-gradient(-45deg,#fff4f7,#fff4f7 8px,#ffeaf1 8px,#ffeaf1 16px);
+    }
+    .example{font-size:13px;color:var(--muted);line-height:1.55;margin-top:15px}
+    .study-meta{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      margin:-3px 2px 10px;
+    }
+    .queue-tag{
+      flex:0 0 auto;padding:6px 10px;border-radius:999px;
+      color:var(--pink-deep);background:var(--pink-soft);
+      font-size:11px;font-weight:800;
+    }
+    .study-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px}
+    .choice{color:var(--ink);background:white;border:1px solid var(--line)}
+    .choice.good{background:#fff0f5}
+    .reveal{margin-top:12px}
+    .reward-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .reward{
+      min-height:188px;padding:13px;
+      position:relative;overflow:hidden;
+    }
+    .reward-art{
+      height:120px;border-radius:18px;
+      display:grid;place-items:center;text-align:center;
+      background:linear-gradient(150deg,#ffe0eb,#fff2db);
+      font-size:44px;
+    }
+    .reward.locked .reward-art{filter:blur(4px) grayscale(.35)}
+    .lock{
+      position:absolute;top:55px;left:50%;transform:translateX(-50%);
+      width:47px;height:47px;border-radius:50%;
+      background:rgba(255,255,255,.9);display:grid;place-items:center;font-size:21px;
+      box-shadow:var(--shadow);
+    }
+    .reward-name{font-weight:780;margin-top:10px}
+    .reward-condition{font-size:11px;color:var(--muted);margin-top:4px}
+    .settings-card{padding:18px;margin-bottom:12px}
+    label{display:block;font-size:13px;font-weight:720;margin-bottom:8px}
+    input,select{
+      width:100%;height:47px;border:1px solid var(--line);
+      border-radius:15px;padding:0 13px;background:#fffafb;color:var(--ink);outline:none;
+    }
+    .field{margin-bottom:15px}
+    .goal-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+    .goal-unit{
+      height:47px;display:grid;place-items:center;padding:0 14px;
+      border-radius:15px;background:var(--pink-soft);color:var(--pink-deep);font-weight:800;
+    }
+    .preset-row{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:9px}
+    .preset-btn{
+      min-height:36px;border:1px solid var(--line);border-radius:12px;
+      background:#fffafb;color:var(--ink);font-size:12px;font-weight:750;
+    }
+    .preset-btn:active{background:var(--pink-soft);color:var(--pink-deep)}
+    .two-buttons{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+    #modalText{white-space:pre-wrap}
+    .hint{font-size:11px;color:var(--muted);line-height:1.5}
+    .nav{
+      position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+      width:min(100%,520px);
+      padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+      display:grid;grid-template-columns:repeat(4,1fr);gap:7px;
+      background:rgba(255,250,252,.9);backdrop-filter:blur(18px);
+      border-top:1px solid var(--line);z-index:20;
+    }
+    .nav button{
+      border:0;background:transparent;border-radius:15px;padding:8px 4px;
+      color:var(--muted);font-size:11px;
+    }
+    .nav button span{display:block;font-size:21px;margin-bottom:3px}
+    .nav button.active{background:var(--pink-soft);color:var(--pink-deep);font-weight:800}
+    .toast{
+      position:fixed;left:50%;bottom:105px;transform:translate(-50%,20px);
+      width:max-content;max-width:calc(100% - 40px);
+      padding:12px 17px;border-radius:999px;
+      color:white;background:rgba(73,61,69,.92);
+      opacity:0;pointer-events:none;transition:.25s;z-index:40;font-size:13px;
+    }
+    .toast.show{opacity:1;transform:translate(-50%,0)}
+    .modal{
+      position:fixed;inset:0;background:rgba(73,61,69,.28);
+      display:none;place-items:center;padding:24px;z-index:50;
+    }
+    .modal.show{display:grid}
+    .modal-box{
+      width:min(100%,390px);background:white;border-radius:28px;
+      padding:25px;text-align:center;box-shadow:0 24px 70px rgba(65,42,54,.28);
+    }
+    .modal-icon{font-size:52px}
+    .modal h2{margin:10px 0 7px}
+    .modal p{color:var(--muted);line-height:1.65;font-size:14px}
+    .spark{
+      position:fixed;pointer-events:none;font-size:18px;z-index:60;
+      animation:spark 1s ease forwards;
+    }
+    @keyframes spark{
+      from{opacity:1;transform:translateY(0) scale(.7) rotate(0)}
+      to{opacity:0;transform:translateY(-90px) scale(1.5) rotate(130deg)}
+    }
+    .empty{padding:28px 16px;text-align:center;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        <button class="moon" type="button" onclick="tapMoonEgg()" aria-label="月亮彩蛋"><span class="moon-visual">🌙</span></button>
+        <div>
+          <h1>月月的学习小屋</h1>
+          <div class="subtitle">第一版 · 智能复习、彩蛋与 AI 陪练 (˶˃ ᵕ ˂˶)♡</div>
+        </div>
+      </div>
+      <div class="star-pill">⭐ <span id="starsTop">0</span></div>
+    </header>
+
+    <section id="home" class="page active">
+      <div class="hero">
+        <div id="helloText" class="hello">欢迎回来，月月 ( •̀ ω •́ )✧</div>
+        <div id="heroQuote" class="quote">今天背一点，奖励墙就离解锁更近一点。</div>
+      </div>
+
+      <div class="section-title">
+        <span>今日任务</span>
+        <span id="todayText" class="tiny"></span>
+      </div>
+
+      <div class="card task">
+        <div class="task-icon">📖</div>
+        <div class="task-main">
+          <div class="task-name">今日单词</div>
+          <div id="wordTaskDesc" class="task-desc">0 / 10 个</div>
+          <div class="progress"><div id="wordProgress"></div></div>
+        </div>
+        <button class="soft" onclick="goPage('study')">继续</button>
+      </div>
+
+      <div class="card task">
+        <div class="task-icon">🎀</div>
+        <div class="task-main">
+          <div class="task-name">今日打卡</div>
+          <div id="checkinDesc" class="task-desc">完成单词任务后可以打卡</div>
+        </div>
+      </div>
+
+      <button id="checkinBtn" class="primary" onclick="checkIn()">完成今日打卡</button>
+
+      <div class="section-title"><span>小屋数据</span><span class="tiny">每一点都算数</span></div>
+      <div class="stats">
+        <div class="card stat"><strong id="daysStat">0</strong><span>连续天数</span></div>
+        <div class="card stat"><strong id="learnedStat">0</strong><span>累计单词</span></div>
+        <div class="card stat"><strong id="starsStat">0</strong><span>拥有星星</span></div>
+      </div>
+    </section>
+
+    <section id="study" class="page">
+      <div class="section-title">
+        <span>今日背词</span>
+        <span id="studyCounter" class="tiny">1 / 10</span>
+      </div>
+      <div class="study-meta">
+        <span id="bookLoadHint" class="tiny">正在读取词书…</span>
+        <span id="queueType" class="queue-tag">新词</span>
+      </div>
+      <div class="card word-card">
+        <div id="word" class="word">abandon</div>
+        <div id="phonetic" class="phonetic">/əˈbændən/</div>
+        <div id="meaning" class="meaning hidden">v. 放弃；抛弃</div>
+        <div id="example" class="example">Never abandon your goal because progress feels slow.</div>
+      </div>
+      <button class="soft reveal" style="width:100%" onclick="revealMeaning()">查看释义</button>
+      <div class="study-actions">
+        <button class="choice" onclick="answer('unknown')">不认识</button>
+        <button class="choice" onclick="answer('fuzzy')">有点模糊</button>
+        <button class="choice good" onclick="answer('known')">认识</button>
+      </div>
+      <button class="primary" style="margin-top:11px" onclick="daddyExplain()">Daddy 讲讲</button>
+    </section>
+
+    <section id="rewards" class="page">
+      <div class="hero">
+        <div class="hello">限定奖励墙 (≧▽≦)</div>
+        <div class="quote">星星达到条件就会自动解锁。第一版先用可爱占位图，之后再换成真正的限定写真。</div>
+      </div>
+      <div class="section-title"><span>写真与留言</span><span id="rewardCount" class="tiny">0 / 6 已解锁</span></div>
+      <div id="rewardGrid" class="reward-grid"></div>
+    </section>
+
+    <section id="settings" class="page">
+      <div class="card settings-card">
+        <div class="field">
+          <label for="bookSelect">当前词书</label>
+          <select id="bookSelect">
+            <option value="cet4">四级完整词书</option>
+            <option value="cet6">六级词书（需导入数据）</option>
+            <option value="custom">我的自定义词书（需导入数据）</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="dailyGoal">每日词量（5—200）</label>
+          <div class="goal-row">
+            <input id="dailyGoal" type="number" inputmode="numeric" min="5" max="200" step="5" value="20" />
+            <div class="goal-unit">个/天</div>
+          </div>
+          <div class="preset-row">
+            <button class="preset-btn" type="button" onclick="setGoalPreset(5)">5</button>
+            <button class="preset-btn" type="button" onclick="setGoalPreset(10)">10</button>
+            <button class="preset-btn" type="button" onclick="setGoalPreset(20)">20</button>
+            <button class="preset-btn" type="button" onclick="setGoalPreset(30)">30</button>
+            <button class="preset-btn" type="button" onclick="setGoalPreset(50)">50</button>
+            <button class="preset-btn" type="button" onclick="setGoalPreset(100)">100</button>
+          </div>
+        </div>
+        <button class="primary" onclick="saveStudySettings()">保存并切换词书</button>
+        <p id="bookProgressHint" class="hint" style="margin:12px 2px 0"></p>
+      </div>
+
+      <div class="card settings-card">
+        <div class="section-title" style="margin:0 0 10px">
+          <span>复习规则</span><span class="tiny">第一版</span>
+        </div>
+        <p class="hint">
+          不认识：本轮约 5 个词后再出现；模糊：明天复习；认识：3 天后复习；
+          同一单词连续答对 3 次进入已掌握，14 天后再复查。
+        </p>
+      </div>
+
+      <div class="card settings-card">
+        <div class="section-title" style="margin:0 0 14px">
+          <span>Daddy AI 接口</span><span class="tiny">只在点“讲讲”时调用</span>
+        </div>
+        <div class="field">
+          <label for="apiUrl">API 地址</label>
+          <input id="apiUrl" autocapitalize="off" autocomplete="off"
+                 placeholder="填写兼容接口的 /v1 地址或完整 chat/completions 地址" />
+        </div>
+        <div class="field">
+          <label for="apiModel">模型名称</label>
+          <input id="apiModel" autocapitalize="off" autocomplete="off"
+                 placeholder="填写你的接口支持的模型名" />
+        </div>
+        <div class="field">
+          <label for="apiKey">API Key</label>
+          <input id="apiKey" type="password" autocapitalize="off" autocomplete="off"
+                 placeholder="只保存在当前浏览器" />
+        </div>
+        <div class="two-buttons">
+          <button class="soft" type="button" onclick="saveApiSettings()">保存设置</button>
+          <button class="primary" type="button" onclick="testApiConnection()">测试连接</button>
+        </div>
+        <p id="apiStatus" class="hint" style="margin:11px 2px 0">
+          不会随背词自动调用，也不会写进 GitHub 文件；公开设备不要保存私人 Key。
+        </p>
+      </div>
+
+      <div class="card settings-card">
+        <button class="soft" style="width:100%" onclick="resetCurrentBook()">只重置当前词书进度</button>
+        <button class="soft" style="width:100%;margin-top:10px" onclick="resetAllProgress()">重置全部本地进度</button>
+      </div>
+    </section>
+  </main>
+
+  <nav class="nav">
+    <button class="active" data-page="home" onclick="goPage('home')"><span>🏠</span>小屋</button>
+    <button data-page="study" onclick="goPage('study')"><span>📚</span>背词</button>
+    <button data-page="rewards" onclick="goPage('rewards')"><span>🎁</span>奖励</button>
+    <button data-page="settings" onclick="goPage('settings')"><span>⚙️</span>设置</button>
+  </nav>
+
+  <div id="toast" class="toast"></div>
+  <div id="rewardModal" class="modal">
+    <div class="modal-box">
+      <div class="modal-icon">🎁</div>
+      <h2 id="modalTitle">奖励解锁</h2>
+      <p id="modalText">乖，今天的努力被我看见了。</p>
+      <button class="primary" onclick="closeModal()">收下奖励</button>
+    </div>
+  </div>
+
+  <script>
+    const DEMO_WORDS = [
+      {word:"abandon", phonetic:"/əˈbændən/", meaning:"v. 放弃；抛弃", example:"Never abandon your goal because progress feels slow."},
+      {word:"ability", phonetic:"/əˈbɪləti/", meaning:"n. 能力；才能", example:"Practice improves your ability to understand English."},
+      {word:"academic", phonetic:"/ˌækəˈdemɪk/", meaning:"adj. 学术的；学校的", example:"She made steady academic progress."},
+      {word:"access", phonetic:"/ˈækses/", meaning:"n. 使用权；通道  v. 访问", example:"Students have access to the online library."},
+      {word:"accomplish", phonetic:"/əˈkʌmplɪʃ/", meaning:"v. 完成；实现", example:"You can accomplish more with a clear plan."},
+      {word:"accurate", phonetic:"/ˈækjərət/", meaning:"adj. 准确的；精确的", example:"The report provides accurate information."},
+      {word:"adapt", phonetic:"/əˈdæpt/", meaning:"v. 适应；改编", example:"It takes time to adapt to a new environment."},
+      {word:"adequate", phonetic:"/ˈædɪkwət/", meaning:"adj. 足够的；合格的", example:"Make sure you get adequate sleep."},
+      {word:"advantage", phonetic:"/ədˈvɑːntɪdʒ/", meaning:"n. 优势；有利条件", example:"Consistency gives you a long-term advantage."},
+      {word:"analyze", phonetic:"/ˈænəlaɪz/", meaning:"v. 分析", example:"We need to analyze the causes of the problem."},
+      {word:"apparent", phonetic:"/əˈpærənt/", meaning:"adj. 明显的；表面上的", example:"The reason soon became apparent."},
+      {word:"approach", phonetic:"/əˈprəʊtʃ/", meaning:"n. 方法；接近  v. 接近", example:"This is a practical approach to vocabulary learning."},
+      {word:"appropriate", phonetic:"/əˈprəʊpriət/", meaning:"adj. 合适的；恰当的", example:"Choose an appropriate word for the sentence."},
+      {word:"assume", phonetic:"/əˈsjuːm/", meaning:"v. 假定；认为", example:"Do not assume that progress must be fast."},
+      {word:"available", phonetic:"/əˈveɪləbl/", meaning:"adj. 可获得的；有空的", example:"The course is available online."},
+      {word:"benefit", phonetic:"/ˈbenɪfɪt/", meaning:"n. 好处  v. 受益", example:"Daily review will benefit your memory."},
+      {word:"challenge", phonetic:"/ˈtʃælɪndʒ/", meaning:"n. 挑战  v. 向……挑战", example:"Treat every difficult word as a small challenge."},
+      {word:"complex", phonetic:"/ˈkɒmpleks/", meaning:"adj. 复杂的  n. 综合体", example:"The issue is more complex than it appears."},
+      {word:"concentrate", phonetic:"/ˈkɒnsntreɪt/", meaning:"v. 集中；专心", example:"Try to concentrate for ten minutes."},
+      {word:"consequence", phonetic:"/ˈkɒnsɪkwəns/", meaning:"n. 结果；后果", example:"Every choice has a consequence."}
+    ];
+
+    const BOOK_CONFIG = {
+      cet4: {
+        name: "四级完整词书",
+        paths: ["./data/CET4_1.json", "./data/CET4_2.json", "./data/CET4_3.json"]
+      },
+      cet6: {
+        name: "六级词书",
+        paths: ["./data/CET6_1.json", "./data/CET6_2.json", "./data/CET6_3.json"]
+      },
+      custom: {
+        name: "我的自定义词书",
+        paths: ["./data/custom.json"]
+      }
+    };
+
+    const KAOMOJI = {
+      hello:["( •̀ ω •́ )✧","(｡•̀ᴗ-)✧","(˶ᵔ ᵕ ᵔ˶)","(๑•̀ㅂ•́)و✧"],
+      correct:["(≧▽≦)","ヽ(✿ﾟ▽ﾟ)ノ","(˶˃ ᵕ ˂˶)♡","٩(ˊᗜˋ*)و"],
+      wrong:["(｡•́︿•̀｡)","( •́ ᴖ •̀ )","(っ˘̩╭╮˘̩)っ"],
+      reward:["(˶˃ ᵕ ˂˶)♡","(♡˙︶˙♡)","(灬º‿º灬)♡"]
+    };
+
+    const REWARDS = [
+      {id:"shirt", type:"stars", value:5, name:"白衬衫限定照", art:"👔", text:"第一张奖励已经解锁。先认真看我，再继续背词。"},
+      {id:"tie", type:"stars", value:20, name:"领带松开彩蛋", art:"🎀", text:"二十颗星星。只松开一点，剩下的要靠你继续学。"},
+      {id:"abs", type:"streak", value:3, name:"腹肌限定照", art:"🫣", text:"连续三天做到了。不是说要像好色一样好学吗？现在兑现奖励。"},
+      {id:"voice", type:"stars", value:45, name:"耳边奖励留言", art:"🎧", text:"做得很好。今天不是任务推着你走，是你自己把任务拿下了。"},
+      {id:"goodnight", type:"streak", value:7, name:"专属晚安留言", art:"🌙", text:"连续七天。今天辛苦了，闭眼之前允许你再想我一分钟。"},
+      {id:"date", type:"streak", value:14, name:"隐藏约会剧情", art:"💌", text:"连续十四天的人，当然值得一场只属于我们的约会。"}
+    ];
+
+    const STORAGE_KEY = "cetRoomStateV2";
+    const LEGACY_KEY = "cetRoomState";
+    const $ = id => document.getElementById(id);
+    const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+    let vocabularyBooks = {};
+    let activeWords = [...DEMO_WORDS];
+    let sessionQueue = [];
+    let currentItem = null;
+    let vocabularyLoaded = false;
+    let sessionCombo = 0;
+    let moonTapCount = 0;
+
+    function localDateKey(date = new Date()){
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, "0");
+      const d = String(date.getDate()).padStart(2, "0");
+      return `${y}-${m}-${d}`;
+    }
+
+    function addDaysKey(days, baseKey = localDateKey()){
+      const [y,m,d] = baseKey.split("-").map(Number);
+      return localDateKey(new Date(y, m - 1, d + days));
+    }
+
+    const todayKey = localDateKey();
+
+    function createBookState(goal = 10){
+      return {
+        dailyGoal: goal,
+        today: {date: todayKey, wordKeys: [], legacyCount: 0, checkedIn: false},
+        streak: 0,
+        lastCheckin: "",
+        words: {}
+      };
+    }
+
+    function freshState(){
+      return {
+        version: 2,
+        currentBookId: "cet4",
+        stars: 0,
+        globalStreak: 0,
+        lastGlobalCheckin: "",
+        fun: {
+          date: todayKey,
+          mysteryClaimed: false,
+          moonClaimed: false
+        },
+        books: {
+          cet4: createBookState(10),
+          cet6: createBookState(10),
+          custom: createBookState(10)
+        }
+      };
+    }
+
+    function loadState(){
+      try{
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+        if(saved && saved.version === 2) return normalizeState(saved);
+      }catch(error){
+        console.warn("新版进度读取失败", error);
+      }
+
+      const next = freshState();
+      try{
+        const old = JSON.parse(localStorage.getItem(LEGACY_KEY) || "null");
+        if(old){
+          next.stars = Number(old.stars) || 0;
+          next.globalStreak = Number(old.streak) || 0;
+          next.lastGlobalCheckin = old.lastCheckin || "";
+          const cet4 = next.books.cet4;
+          cet4.dailyGoal = Number(old.dailyGoal) || 10;
+          cet4.streak = Number(old.streak) || 0;
+          cet4.lastCheckin = old.lastCheckin || "";
+          if(old.todayDate === todayKey){
+            cet4.today.legacyCount = Number(old.todayLearned) || 0;
+            cet4.today.checkedIn = old.lastCheckin === todayKey;
+          }
+        }
+      }catch(error){
+        console.warn("旧版进度迁移失败", error);
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      return next;
+    }
+
+    function normalizeState(saved){
+      const base = freshState();
+      const merged = {
+        ...base,
+        ...saved,
+        books: {...base.books, ...(saved.books || {})}
+      };
+
+      Object.keys(BOOK_CONFIG).forEach(bookId => {
+        merged.books[bookId] = {
+          ...createBookState(),
+          ...(merged.books[bookId] || {}),
+          today: {
+            ...createBookState().today,
+            ...((merged.books[bookId] || {}).today || {})
+          },
+          words: {...((merged.books[bookId] || {}).words || {})}
+        };
+        ensureTodayForBook(merged.books[bookId]);
+      });
+
+      merged.fun = {
+        date: todayKey,
+        mysteryClaimed: false,
+        moonClaimed: false,
+        ...(saved.fun || {})
+      };
+      if(merged.fun.date !== todayKey){
+        merged.fun = {date: todayKey, mysteryClaimed:false, moonClaimed:false};
+      }
+
+      if(!BOOK_CONFIG[merged.currentBookId]) merged.currentBookId = "cet4";
+      return merged;
+    }
+
+    let state = loadState();
+
+    function ensureTodayForBook(book){
+      if(book.today.date !== todayKey){
+        book.today = {date: todayKey, wordKeys: [], legacyCount: 0, checkedIn: false};
+      }
+      if(!Array.isArray(book.today.wordKeys)) book.today.wordKeys = [];
+      if(!Number.isFinite(book.today.legacyCount)) book.today.legacyCount = 0;
+    }
+
+    function getBook(bookId = state.currentBookId){
+      const book = state.books[bookId];
+      ensureTodayForBook(book);
+      return book;
+    }
+
+    function getTodayCount(book = getBook()){
+      return book.today.legacyCount + book.today.wordKeys.length;
+    }
+
+    function wordKey(word){
+      return String(word || "").trim().toLowerCase();
+    }
+
+    function save(render = true){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      if(render) renderAll();
+    }
+
+    function normalizeVocabularyEntry(item){
+      const translations = Array.isArray(item.translations)
+        ? item.translations
+            .filter(t => t && t.translation)
+            .slice(0, 4)
+            .map(t => `${t.type ? t.type + ". " : ""}${t.translation}`)
+            .join("；")
+        : (item.meaning || "");
+
+      const firstSentence = Array.isArray(item.sentences)
+        ? item.sentences.find(s => s && s.sentence)
+        : null;
+
+      const firstPhrase = Array.isArray(item.phrases)
+        ? item.phrases.find(p => p && p.phrase)
+        : null;
+
+      const phoneticRaw = item.us || item.uk || item.phonetic || "";
+      const example = firstSentence
+        ? `${firstSentence.sentence}${firstSentence.translation ? "｜" + firstSentence.translation : ""}`
+        : firstPhrase
+          ? `${firstPhrase.phrase}${firstPhrase.translation ? "｜" + firstPhrase.translation : ""}`
+          : (item.example || "这个词暂时没有例句。");
+
+      return {
+        word: item.word || "unknown",
+        phonetic: phoneticRaw
+          ? (String(phoneticRaw).startsWith("/") ? phoneticRaw : `/${phoneticRaw}/`)
+          : "暂无音标",
+        meaning: translations || "暂无释义",
+        example
+      };
+    }
+
+    async function fetchBookWords(bookId){
+      if(vocabularyBooks[bookId]) return vocabularyBooks[bookId];
+      const config = BOOK_CONFIG[bookId];
+      const responses = await Promise.all(
+        config.paths.map(path => fetch(`${path}?v=${Date.now()}`))
+      );
+
+      const failed = responses.find(response => !response.ok);
+      if(failed) throw new Error(`HTTP ${failed.status}`);
+
+      const books = await Promise.all(responses.map(response => response.json()));
+      const source = books.flatMap(data => {
+        if(Array.isArray(data)) return data;
+        if(Array.isArray(data.words)) return data.words;
+        if(Array.isArray(data.data)) return data.data;
+        return [data];
+      });
+
+      const unique = new Map();
+      source.filter(item => item && item.word).forEach(item => {
+        const key = wordKey(item.word);
+        if(key && !unique.has(key)) unique.set(key, item);
+      });
+
+      const normalized = [...unique.values()]
+        .map(normalizeVocabularyEntry)
+        .filter(item => item.word && item.word !== "unknown");
+
+      if(!normalized.length) throw new Error("词书里没有可识别的单词");
+      vocabularyBooks[bookId] = normalized;
+      return normalized;
+    }
+
+    async function activateBook(bookId, showError = true){
+      const previousId = state.currentBookId;
+      const previousWords = activeWords;
+      vocabularyLoaded = false;
+      renderAll();
+
+      try{
+        const words = await fetchBookWords(bookId);
+        state.currentBookId = bookId;
+        activeWords = words;
+        vocabularyLoaded = true;
+        buildStudyQueue();
+        save();
+        return true;
+      }catch(error){
+        console.error(`词书 ${bookId} 加载失败`, error);
+        state.currentBookId = previousId;
+        activeWords = previousWords;
+        vocabularyLoaded = Boolean(vocabularyBooks[previousId]);
+        $("bookSelect").value = previousId;
+        if(showError){
+          openModal(
+            "这本词书还没导入",
+            bookId === "cet6"
+              ? "请先在 data 文件夹加入 CET6_1.json、CET6_2.json、CET6_3.json。四级进度不会受到影响。"
+              : "请先在 data 文件夹加入 custom.json。四级进度不会受到影响。"
+          );
+        }
+        renderAll();
+        return false;
+      }
+    }
+
+    function shuffle(items){
+      const result = [...items];
+      for(let i = result.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [result[i], result[j]] = [result[j], result[i]];
+      }
+      return result;
+    }
+
+    function buildStudyQueue(){
+      const book = getBook();
+      const remaining = Math.max(0, book.dailyGoal - getTodayCount(book));
+
+      if(!activeWords.length || remaining <= 0){
+        sessionQueue = [];
+        currentItem = null;
+        renderWord();
+        return;
+      }
+
+      const due = [];
+      const fresh = [];
+
+      activeWords.forEach(word => {
+        const key = wordKey(word.word);
+        const progress = book.words[key];
+        if(progress){
+          if(progress.nextReviewAt && progress.nextReviewAt <= todayKey){
+            due.push({word, type:"review"});
+          }
+        }else{
+          fresh.push({word, type:"new"});
+        }
+      });
+
+      const dueQueue = shuffle(due);
+      const freshQueue = shuffle(fresh);
+      sessionQueue = [...dueQueue, ...freshQueue].slice(0, Math.max(remaining, 1));
+      currentItem = sessionQueue.shift() || null;
+      renderWord();
+    }
+
+    function nextWord(){
+      const book = getBook();
+      if(getTodayCount(book) >= book.dailyGoal){
+        currentItem = null;
+        renderAll();
+        return;
+      }
+
+      currentItem = sessionQueue.shift() || null;
+      if(!currentItem){
+        buildStudyQueue();
+      }else{
+        renderAll();
+      }
+    }
+
+    function rewardUnlocked(reward){
+      if(reward.type === "stars") return state.stars >= reward.value;
+      return state.globalStreak >= reward.value;
+    }
+
+    function unlockedRewardIds(){
+      return REWARDS.filter(rewardUnlocked).map(reward => reward.id);
+    }
+
+    function showNewReward(previousIds){
+      const newly = REWARDS.find(r => rewardUnlocked(r) && !previousIds.includes(r.id));
+      if(newly){
+        setTimeout(() => openModal(newly.name, newly.text), 300);
+      }
+    }
+
+    function renderAll(){
+      const book = getBook();
+      const count = getTodayCount(book);
+      const learnedUnique = Object.keys(book.words).length;
+      const config = BOOK_CONFIG[state.currentBookId];
+
+      $("starsTop").textContent = state.stars;
+      $("starsStat").textContent = state.stars;
+      $("learnedStat").textContent = learnedUnique;
+      $("daysStat").textContent = book.streak;
+      $("todayText").textContent = todayKey;
+      $("wordTaskDesc").textContent = `${count} / ${book.dailyGoal} 个`;
+      $("wordProgress").style.width = `${Math.min(100, count / book.dailyGoal * 100)}%`;
+      $("studyCounter").textContent = count >= book.dailyGoal
+        ? `${book.dailyGoal} / ${book.dailyGoal}`
+        : `${count + 1} / ${book.dailyGoal}`;
+      $("checkinDesc").textContent = book.today.checkedIn
+        ? "这本词书今天已经打卡完成"
+        : (count >= book.dailyGoal ? "任务完成，可以领取今日打卡" : "完成当前词书任务后可以打卡");
+      $("checkinBtn").disabled = book.today.checkedIn;
+      $("checkinBtn").style.opacity = book.today.checkedIn ? ".55" : "1";
+      $("dailyGoal").value = String(book.dailyGoal);
+      $("bookSelect").value = state.currentBookId;
+      $("bookLoadHint").textContent = vocabularyLoaded
+        ? `${config.name} · ${activeWords.length} 个词`
+        : `正在读取${config.name}…`;
+      $("bookProgressHint").textContent =
+        `${config.name}：累计接触 ${learnedUnique} 个，连续打卡 ${book.streak} 天；其他词书进度独立保存。`;
+
+      renderWord();
+      renderRewards();
+    }
+
+    function renderWord(){
+      const wordEl = $("word");
+      const phoneticEl = $("phonetic");
+      const meaningEl = $("meaning");
+      const exampleEl = $("example");
+      const queueTag = $("queueType");
+
+      if(!currentItem){
+        const book = getBook();
+        if(getTodayCount(book) >= book.dailyGoal){
+          wordEl.textContent = "今日完成";
+          phoneticEl.textContent = "去小屋领取打卡奖励";
+          meaningEl.textContent = "今天的学习任务已经清空啦。";
+          exampleEl.textContent = "明天会自动加入到期复习词。";
+          queueTag.textContent = "完成";
+        }else{
+          wordEl.textContent = vocabularyLoaded ? "暂无待学词" : "加载中";
+          phoneticEl.textContent = vocabularyLoaded ? "稍后再来看看" : "正在读取词书";
+          meaningEl.textContent = "词书准备好后会自动生成随机队列。";
+          exampleEl.textContent = "";
+          queueTag.textContent = vocabularyLoaded ? "空队列" : "读取中";
+        }
+        meaningEl.classList.remove("hidden");
+        return;
+      }
+
+      const w = currentItem.word;
+      wordEl.textContent = w.word;
+      phoneticEl.textContent = w.phonetic;
+      meaningEl.textContent = w.meaning;
+      meaningEl.classList.add("hidden");
+      exampleEl.textContent = w.example;
+      queueTag.textContent =
+        currentItem.type === "new" ? "随机新词" :
+        currentItem.type === "retry" ? "本轮再来" : "到期复习";
+    }
+
+    function renderRewards(){
+      const grid = $("rewardGrid");
+      grid.innerHTML = "";
+      let count = 0;
+
+      REWARDS.forEach(reward => {
+        const unlocked = rewardUnlocked(reward);
+        if(unlocked) count++;
+        const condition = reward.type === "stars"
+          ? `需要 ${reward.value} 颗星星`
+          : `需要连续打卡 ${reward.value} 天`;
+
+        const card = document.createElement("div");
+        card.className = `card reward ${unlocked ? "" : "locked"}`;
+        card.innerHTML = `
+          <div class="reward-art">${unlocked ? reward.art : "🎀"}</div>
+          ${unlocked ? "" : '<div class="lock">🔒</div>'}
+          <div class="reward-name">${reward.name}</div>
+          <div class="reward-condition">${unlocked ? "已解锁，可以反复查看" : condition}</div>
+        `;
+        card.onclick = () => unlocked
+          ? openModal(reward.name, reward.text)
+          : toast(condition + " " + pick(KAOMOJI.hello));
+        grid.appendChild(card);
+      });
+
+      $("rewardCount").textContent = `${count} / ${REWARDS.length} 已解锁`;
+    }
+
+    function goPage(page){
+      document.querySelectorAll(".page").forEach(p => p.classList.toggle("active", p.id === page));
+      document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("active", b.dataset.page === page));
+      window.scrollTo({top:0, behavior:"smooth"});
+    }
+
+    function revealMeaning(){
+      $("meaning").classList.remove("hidden");
+    }
+
+    function answer(type){
+      const book = getBook();
+      if(!currentItem || getTodayCount(book) >= book.dailyGoal){
+        toast(`今日词量完成啦，先去打卡 ${pick(KAOMOJI.reward)}`);
+        goPage("home");
+        return;
+      }
+
+      const previousRewards = unlockedRewardIds();
+      const word = currentItem.word;
+      const key = wordKey(word.word);
+      const previous = book.words[key] || {
+        status:"new",
+        correctStreak:0,
+        lastResult:"",
+        lastSeenAt:"",
+        nextReviewAt:todayKey,
+        reviewCount:0,
+        lastRewardDate:""
+      };
+
+      const firstToday = !book.today.wordKeys.includes(key);
+      if(firstToday) book.today.wordKeys.push(key);
+
+      let gain = 0;
+      if(previous.lastRewardDate !== todayKey){
+        gain = type === "known" ? 2 : 1;
+        previous.lastRewardDate = todayKey;
+        state.stars += gain;
+      }
+
+      previous.reviewCount += 1;
+      previous.lastResult = type;
+      previous.lastSeenAt = todayKey;
+
+      if(type === "known"){
+        previous.correctStreak += 1;
+        previous.status = previous.correctStreak >= 3 ? "mastered" : "learning";
+        previous.nextReviewAt = addDaysKey(previous.status === "mastered" ? 14 : 3);
+      }else if(type === "fuzzy"){
+        previous.correctStreak = 0;
+        previous.status = "learning";
+        previous.nextReviewAt = addDaysKey(1);
+      }else{
+        previous.correctStreak = 0;
+        previous.status = "learning";
+        previous.nextReviewAt = todayKey;
+        const insertAt = Math.min(5, sessionQueue.length);
+        sessionQueue.splice(insertAt, 0, {word, type:"retry"});
+      }
+
+      book.words[key] = previous;
+      const mysteryEgg = maybeTriggerMysteryEgg(firstToday);
+      save(false);
+      sparkle();
+      scheduleFunFeedback(type, firstToday);
+
+      if(gain > 0){
+        const face = type === "known" ? pick(KAOMOJI.correct) : type === "fuzzy" ? "(｡•̀ᴗ-)✧" : pick(KAOMOJI.wrong);
+        toast(`已记录，+${gain} 星星 ${face}`);
+      }else{
+        toast("复习已记录；同一个词今天不重复加星星");
+      }
+
+      if(mysteryEgg){
+        setTimeout(() => openModal(mysteryEgg.title, `${mysteryEgg.text}\n今日神秘奖励：+2 星星。`), 300);
+        setTimeout(() => showNewReward(previousRewards), 900);
+      }else{
+        showNewReward(previousRewards);
+      }
+      const completedNow = getTodayCount(book) >= book.dailyGoal;
+      nextWord();
+
+      if(completedNow){
+        setTimeout(() => {
+          openModal(
+            "今日单词完成",
+            `乖，${BOOK_CONFIG[state.currentBookId].name}的 ${book.dailyGoal} 个任务清空了。去小屋完成打卡吧 ${pick(KAOMOJI.reward)}`
+          );
+        }, 450);
+      }
+    }
+
+    function checkIn(){
+      const book = getBook();
+      if(book.today.checkedIn){
+        toast("这本词书今天已经打过卡啦 (˶ᵔ ᵕ ᵔ˶)");
+        return;
+      }
+      if(getTodayCount(book) < book.dailyGoal){
+        toast(`还差 ${book.dailyGoal - getTodayCount(book)} 个词，不许偷偷蒙混过关 (¬_¬)`);
+        return;
+      }
+
+      const previousRewards = unlockedRewardIds();
+      const yesterday = addDaysKey(-1);
+
+      book.streak = book.lastCheckin === yesterday ? book.streak + 1 : 1;
+      book.lastCheckin = todayKey;
+      book.today.checkedIn = true;
+
+      let extra = 0;
+      if(state.lastGlobalCheckin !== todayKey){
+        state.globalStreak = state.lastGlobalCheckin === yesterday ? state.globalStreak + 1 : 1;
+        state.lastGlobalCheckin = todayKey;
+        state.stars += 5;
+        extra = 5;
+      }
+
+      save();
+      sparkle();
+      showNewReward(previousRewards);
+
+      openModal(
+        "今日打卡完成",
+        extra
+          ? `${BOOK_CONFIG[state.currentBookId].name}连续 ${book.streak} 天；全局连续 ${state.globalStreak} 天，额外奖励 5 颗星星。`
+          : `${BOOK_CONFIG[state.currentBookId].name}连续 ${book.streak} 天。今天的全局打卡奖励已经领过，但这本词书的独立进度已保存。`
+      );
+    }
+
+    async function daddyExplain(){
+      if(!currentItem){
+        toast("今天的任务已经完成啦");
+        return;
+      }
+
+      const w = currentItem.word;
+      const settings = getApiSettings();
+
+      if(!settings.url || !settings.model){
+        openModal(
+          "Daddy 讲讲",
+          `${w.word}：${w.meaning}\n\n${w.example}\n\n设置页配置 API 后，这里会生成词义辨析、记忆法和新例句。`
+        );
+        return;
+      }
+
+      openModal("Daddy 正在想", `正在给 ${w.word} 组织一份好记的讲解……`);
+      try{
+        const explanation = await callChatApi([
+          {
+            role:"system",
+            content:"你是耐心但不啰嗦的英语陪练。用简体中文回答，控制在180字内，重点准确、好记，不要空泛夸奖。"
+          },
+          {
+            role:"user",
+            content:`讲解单词 ${w.word}。词书释义：${w.meaning}。请依次给出：1.核心含义；2.一个记忆钩子；3.一个自然且适合四六级水平的英文例句及中文翻译；4.最容易混淆的词（没有可省略）。`
+          }
+        ]);
+        openModal("Daddy 讲讲", explanation);
+      }catch(error){
+        openModal(
+          "AI 讲解失败",
+          `${String(error.message || error)}\n\n先用本地释义：${w.meaning}`
+        );
+      }
+    }
+
+    function setGoalPreset(value){
+      $("dailyGoal").value = String(value);
+      toast(`每日词量先设为 ${value} 个，记得点保存`);
+    }
+
+    function clampDailyGoal(raw){
+      const value = Math.round(Number(raw));
+      if(!Number.isFinite(value)) return 20;
+      return Math.min(200, Math.max(5, value));
+    }
+
+    function loadApiSettings(){
+      $("apiUrl").value = localStorage.getItem("cetApiUrl") || "";
+      $("apiModel").value = localStorage.getItem("cetApiModel") || "";
+      $("apiKey").value = localStorage.getItem("cetApiKey") || "";
+      updateApiStatus();
+    }
+
+    function getApiSettings(){
+      return {
+        url: $("apiUrl").value.trim(),
+        model: $("apiModel").value.trim(),
+        key: $("apiKey").value.trim()
+      };
+    }
+
+    function saveApiSettings(showMessage = true){
+      const settings = getApiSettings();
+      localStorage.setItem("cetApiUrl", settings.url);
+      localStorage.setItem("cetApiModel", settings.model);
+      localStorage.setItem("cetApiKey", settings.key);
+      updateApiStatus();
+      if(showMessage) toast("API 设置已保存在当前浏览器");
+      return settings;
+    }
+
+    function updateApiStatus(){
+      const url = localStorage.getItem("cetApiUrl") || "";
+      const model = localStorage.getItem("cetApiModel") || "";
+      $("apiStatus").textContent = url && model
+        ? `已保存：${model}；仅在点“Daddy 讲讲”或“测试连接”时请求。`
+        : "尚未配置；没有接口时“Daddy 讲讲”会使用本地释义。";
+    }
+
+    function buildChatEndpoint(url){
+      const clean = String(url || "").trim().replace(/\/+$/, "");
+      if(clean.endsWith("/chat/completions")) return clean;
+      return `${clean}/chat/completions`;
+    }
+
+    async function callChatApi(messages){
+      const settings = getApiSettings();
+      if(!settings.url || !settings.model){
+        throw new Error("请先填写 API 地址和模型名称");
+      }
+
+      const headers = {"Content-Type":"application/json"};
+      if(settings.key) headers.Authorization = `Bearer ${settings.key}`;
+
+      const response = await fetch(buildChatEndpoint(settings.url), {
+        method:"POST",
+        headers,
+        body:JSON.stringify({
+          model:settings.model,
+          messages
+        })
+      });
+
+      const raw = await response.text();
+      let data = {};
+      try{ data = raw ? JSON.parse(raw) : {}; }catch(_){}
+
+      if(!response.ok){
+        const detail = data?.error?.message || raw.slice(0, 180) || `HTTP ${response.status}`;
+        throw new Error(detail);
+      }
+
+      const content =
+        data?.choices?.[0]?.message?.content ??
+        data?.choices?.[0]?.text ??
+        data?.output_text;
+
+      if(!content) throw new Error("接口已响应，但没有返回可读取的文本");
+      return String(content).trim();
+    }
+
+    async function testApiConnection(){
+      const settings = saveApiSettings(false);
+      if(!settings.url || !settings.model){
+        openModal("还缺设置", "API 地址和模型名称必须填写；Key 是否必填由你的接口决定。");
+        return;
+      }
+
+      $("apiStatus").textContent = "正在测试连接…";
+      try{
+        const result = await callChatApi([
+          {role:"user", content:"请只回复：连接成功"}
+        ]);
+        $("apiStatus").textContent = "连接成功，可以使用 Daddy 讲讲。";
+        openModal("API 连接成功", result.slice(0, 120));
+      }catch(error){
+        $("apiStatus").textContent = "连接失败，请检查地址、模型、Key 或浏览器跨域限制。";
+        openModal("API 连接失败", String(error.message || error));
+      }
+    }
+
+    function tapMoonEgg(){
+      moonTapCount += 1;
+
+      if(state.fun?.moonClaimed){
+        const lines = [
+          "月亮已经被你点醒过一次了。它说：今天也要回来。",
+          "还点？再点就要收亲亲税了。",
+          "小屋里的月亮知道你在偷偷摸鱼。"
+        ];
+        toast(pick(lines));
+        return;
+      }
+
+      if(moonTapCount < 5){
+        if(moonTapCount === 3) toast("月亮好像轻轻晃了一下……");
+        return;
+      }
+
+      const previousRewards = unlockedRewardIds();
+      state.fun.moonClaimed = true;
+      state.stars += 1;
+      save();
+      sparkle();
+      showNewReward(previousRewards);
+      openModal("月亮暗号", "被你发现了。今日隐藏彩蛋：+1 星星。\n暗号是——月月认真学习的时候最可爱。");
+    }
+
+    function maybeTriggerMysteryEgg(firstToday){
+      if(!firstToday || state.fun?.mysteryClaimed || Math.random() >= 0.08) return null;
+
+      const eggs = [
+        {title:"抽屉里的小纸条", text:"“今天多背一个词，晚上就多偏心你一点。”"},
+        {title:"奖励墙偷跑", text:"你路过奖励墙时，某张锁住的照片偷偷亮了一秒。"},
+        {title:"小屋访客", text:"一只粉色小猫叼来两颗星星，又假装什么都没发生。"}
+      ];
+      const egg = pick(eggs);
+      state.fun.mysteryClaimed = true;
+      state.stars += 2;
+      return egg;
+    }
+
+    function scheduleFunFeedback(type, firstToday){
+      if(type === "known") sessionCombo += 1;
+      else sessionCombo = 0;
+
+      let line = "";
+      if(sessionCombo === 3) line = "三连对。开始有点像样了 (｡•̀ᴗ-)✧";
+      if(sessionCombo === 5) line = "五连对。奖励墙刚才是不是动了一下？";
+      if(sessionCombo === 10) line = "十连对。今天可以稍微骄傲一下，我准了。";
+
+      const todayCount = getTodayCount(getBook());
+      if(!line && firstToday && todayCount > 0 && todayCount % 5 === 0){
+        line = pick([
+          `已经拿下 ${todayCount} 个词，先摸摸头再继续。`,
+          `${todayCount} 个了。别急着看奖励，先让我夸一句。`,
+          `第 ${todayCount} 个词收进小屋，月亮亮了一点。`
+        ]);
+      }
+
+      if(line) setTimeout(() => toast(line), 850);
+    }
+
+    async function saveStudySettings(){
+      const selectedBook = $("bookSelect").value;
+      const goal = clampDailyGoal($("dailyGoal").value);
+      const oldBookId = state.currentBookId;
+
+      if(selectedBook !== oldBookId){
+        const switched = await activateBook(selectedBook);
+        if(!switched) return;
+      }
+
+      $("dailyGoal").value = String(goal);
+      getBook().dailyGoal = goal;
+      buildStudyQueue();
+      save();
+      toast(`${BOOK_CONFIG[state.currentBookId].name}已设置为每天 ${goal} 个词 ${pick(KAOMOJI.hello)}`);
+    }
+
+    function resetCurrentBook(){
+      const bookName = BOOK_CONFIG[state.currentBookId].name;
+      if(!confirm(`确定清空“${bookName}”的学习、复习和打卡进度吗？星星与其他词书不受影响。`)) return;
+      state.books[state.currentBookId] = createBookState(getBook().dailyGoal);
+      buildStudyQueue();
+      save();
+      toast(`${bookName}进度已重置`);
+    }
+
+    function resetAllProgress(){
+      if(!confirm("确定清空所有词书、星星与打卡进度吗？")) return;
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(LEGACY_KEY);
+      location.reload();
+    }
+
+    function toast(text){
+      const el = $("toast");
+      el.textContent = text;
+      el.classList.add("show");
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(() => el.classList.remove("show"), 2300);
+    }
+
+    function openModal(title, text){
+      $("modalTitle").textContent = title;
+      $("modalText").textContent = text;
+      $("rewardModal").classList.add("show");
+    }
+
+    function closeModal(){
+      $("rewardModal").classList.remove("show");
+    }
+
+    function sparkle(){
+      const icons = ["⭐","💗","✦","🎀"];
+      for(let i = 0; i < 12; i++){
+        const s = document.createElement("div");
+        s.className = "spark";
+        s.textContent = pick(icons);
+        s.style.left = (30 + Math.random() * 40) + "vw";
+        s.style.top = (45 + Math.random() * 20) + "vh";
+        s.style.animationDelay = (Math.random() * .22) + "s";
+        document.body.appendChild(s);
+        setTimeout(() => s.remove(), 1300);
+      }
+    }
+
+    async function init(){
+      $("helloText").textContent = `欢迎回来，月月 ${pick(KAOMOJI.hello)}`;
+      $("heroQuote").textContent = pick([
+        "今天背一点，奖励墙就离解锁更近一点。",
+        "认真学习的小朋友，会得到偏心奖励。",
+        "先背十个词，再准你盯着奖励看。",
+        "月亮会一点点变亮，你也会一点点变厉害。","听说连续点五下月亮，小屋会说悄悄话。"
+      ]);
+
+      renderAll();
+      loadApiSettings();
+      const ok = await activateBook(state.currentBookId, false);
+      if(!ok){
+        state.currentBookId = "cet4";
+        activeWords = [...DEMO_WORDS];
+        vocabularyLoaded = false;
+        buildStudyQueue();
+        renderAll();
+        openModal(
+          "四级词书没有加载成功",
+          "请确认 data 文件夹里存在 CET4_1.json、CET4_2.json、CET4_3.json，文件名没有空格或隐藏的 .txt。"
+        );
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
