@@ -932,9 +932,9 @@
         </div>
         <div class="field">
           <label for="apiModel">模型名称</label>
-          <input id="apiModel" list="modelOptions" autocapitalize="off" autocomplete="off"
-                 placeholder="填写 URL 后会自动拉取模型" />
-          <datalist id="modelOptions"></datalist>
+          <select id="apiModel" onchange="saveSelectedModel()">
+            <option value="">请先填写 URL 并拉取模型</option>
+          </select>
         </div>
         <div class="field">
           <label for="apiKey">API Key</label>
@@ -3284,10 +3284,24 @@
 
     function loadApiSettings(){
       $("apiUrl").value = localStorage.getItem("cetApiUrl") || "";
-      $("apiModel").value = localStorage.getItem("cetApiModel") || "";
       $("apiKey").value = localStorage.getItem("cetApiKey") || "";
+
+      const savedModel = localStorage.getItem("cetApiModel") || "";
+      const select = $("apiModel");
+      select.innerHTML = savedModel
+        ? `<option value="${escapeHTML(savedModel)}">${escapeHTML(savedModel)}（上次选择）</option>`
+        : '<option value="">请先填写 URL 并拉取模型</option>';
+      select.value = savedModel;
+
       updateApiStatus();
       if($("apiUrl").value.trim()) fetchModels(false);
+    }
+
+    function saveSelectedModel(){
+      const model = $("apiModel").value.trim();
+      if(model) localStorage.setItem("cetApiModel", model);
+      updateApiStatus();
+      if(model) toast(`已选择模型：${model}`);
     }
 
     function getApiSettings(){
@@ -3375,25 +3389,38 @@
 
         if(!models.length) throw new Error("接口返回成功，但没有识别到模型列表");
 
-        const datalist = $("modelOptions");
-        datalist.innerHTML = "";
+        const select = $("apiModel");
+        const previousModel =
+          select.value.trim() ||
+          localStorage.getItem("cetApiModel") ||
+          "";
+
+        select.innerHTML = "";
+
         models.forEach(model => {
           const option = document.createElement("option");
           option.value = model;
-          datalist.appendChild(option);
+          option.textContent = model;
+          select.appendChild(option);
         });
 
-        if(!$("apiModel").value.trim()) $("apiModel").value = models[0];
+        if(previousModel && models.includes(previousModel)){
+          select.value = previousModel;
+        }else{
+          select.value = models[0];
+        }
+
         localStorage.setItem("cetApiUrl", url);
-        localStorage.setItem("cetApiModel", $("apiModel").value.trim());
+        localStorage.setItem("cetApiModel", select.value);
         if(key) localStorage.setItem("cetApiKey", key);
+
         $("apiStatus").textContent =
-          `已拉取 ${models.length} 个模型；当前选择 ${$("apiModel").value.trim()}。`;
+          `已拉取 ${models.length} 个模型；点开下拉框可完整选择，当前为 ${select.value}。`;
         if(showMessage) toast(`找到 ${models.length} 个模型`);
         return true;
       }catch(error){
         $("apiStatus").textContent =
-          "模型拉取失败：可能需要 Key，或接口不支持 /models、浏览器跨域请求。仍可手动填写模型名。";
+          "模型拉取失败：可能需要先填写 Key，或接口不支持 /models、浏览器跨域请求。";
         if(showMessage) openModal("模型拉取失败", String(error.message || error));
         return false;
       }
