@@ -659,6 +659,23 @@
     }
     .audio-orb:active{transform:scale(.95)}
     .audio-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px}
+    .pronounce-row{
+      display:grid;grid-template-columns:auto 1fr auto;gap:9px;align-items:center;
+      width:100%;margin:11px 0 2px;padding:10px 11px;border-radius:15px;
+      background:#fff6f9;
+    }
+    .pronounce-btn{
+      width:44px;height:44px;border:0;border-radius:14px;
+      background:linear-gradient(145deg,#ffc2d7,#fff0de);
+      font-size:20px;display:grid;place-items:center;
+    }
+    .pronounce-label{font-size:12px;color:var(--muted);line-height:1.45}
+    .pronounce-label strong{display:block;color:var(--ink);font-size:13px}
+    .audio-settings{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+    .audio-settings select{
+      min-height:44px;padding:8px 10px;border:1px solid var(--line);
+      border-radius:13px;background:#fff;color:var(--ink);font-size:12px;
+    }
     .cloze-sentence{
       padding:18px 15px;border-radius:18px;background:#fff8fa;
       font-size:17px;line-height:1.75;text-align:left;color:var(--ink);
@@ -916,6 +933,14 @@
         <button id="favoriteBtn" class="favorite-btn" type="button" onclick="toggleFavorite()">♡</button>
         <div id="word" class="word">abandon</div>
         <div id="phonetic" class="phonetic">/əˈbændən/</div>
+        <div id="pronounceRow" class="pronounce-row">
+          <button class="pronounce-btn" type="button" onclick="playCurrentWord(false)">🔊</button>
+          <div class="pronounce-label">
+            <strong id="pronounceTitle">点击播放发音</strong>
+            <span id="pronounceSubtitle">英文→中文模式会自动朗读一次</span>
+          </div>
+          <button class="soft" type="button" onclick="playCurrentWord(true)">慢速</button>
+        </div>
         <div id="meaning" class="meaning hidden">v. 放弃；抛弃</div>
         <div id="example" class="example">Never abandon your goal because progress feels slow.</div>
         <div id="wordExtra" class="word-extra hidden"></div>
@@ -1034,6 +1059,32 @@
         <p id="reviewRuleHint" class="hint">
           每日任务内不会重复出同一个词；不认识和模糊会进入错题本，次日开始复习；
           认识的词 3 天后复习，连续答对 3 次进入已掌握，14 天后再复查。
+        </p>
+      </div>
+
+      <div class="card settings-card">
+        <div class="section-title" style="margin:0 0 14px">
+          <span>英文发音设置</span><span class="tiny">本地朗读 · 不消耗 Token</span>
+        </div>
+        <div class="field">
+          <label for="voiceAccent">口音</label>
+          <select id="voiceAccent" onchange="saveAudioSettings()">
+            <option value="en-US">美音优先</option>
+            <option value="en-GB">英音优先</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="voiceRate">语速</label>
+          <select id="voiceRate" onchange="saveAudioSettings()">
+            <option value="0.62">很慢</option>
+            <option value="0.72">慢速</option>
+            <option value="0.82">清晰正常</option>
+            <option value="0.92">稍快</option>
+          </select>
+        </div>
+        <button class="soft" style="width:100%" type="button" onclick="previewVoice()">试听当前发音</button>
+        <p id="voiceStatus" class="hint" style="margin:11px 2px 0">
+          英文→中文模式每题会自动朗读一次，也可以点喇叭重播。
         </p>
       </div>
 
@@ -1616,7 +1667,10 @@
     let roomTapCount = 0;
     let spellingHintUsed = false;
     let subtitleTimer = null;
-    let speechRate = .86;
+    let speechRate = .82;
+    let speechAccent = "en-US";
+    let preferredVoice = null;
+    let lastAutoSpokenKey = "";
     const copyHistory = {};
 
     function localDateKey(date = new Date()){
@@ -2232,27 +2286,65 @@
     }
 
 
-    function speakEnglish(text, rate = .86){
+    function rankVoice(voice, accent){
+      const name = String(voice.name || "").toLowerCase();
+      const lang = String(voice.lang || "");
+      let score = 0;
+
+      if(lang === accent) score += 100;
+      else if(lang.startsWith(accent.slice(0, 2))) score += 35;
+
+      if(/samantha|ava|allison|susan|serena|daniel|karen|moira|rishi|siri|premium|enhanced|natural/.test(name)){
+        score += 30;
+      }
+      if(/compact|novelty|whisper|zarvox|bells|bad news|good news/.test(name)){
+        score -= 60;
+      }
+      if(voice.localService) score += 5;
+      return score;
+    }
+
+    function refreshPreferredVoice(){
+      if(!("speechSynthesis" in window)) return null;
+      const voices = window.speechSynthesis.getVoices();
+      if(!voices.length) return null;
+      preferredVoice = [...voices]
+        .sort((a, b) => rankVoice(b, speechAccent) - rankVoice(a, speechAccent))[0] || null;
+      return preferredVoice;
+    }
+
+    function speakEnglish(text, rate = speechRate){
       if(!("speechSynthesis" in window)){
         toast("当前浏览器不支持朗读功能");
         return false;
       }
+
+      const clean = String(text || "").trim();
+      if(!clean) return false;
+
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(String(text || ""));
-      utterance.lang = "en-US";
+
+      const utterance = new SpeechSynthesisUtterance(clean);
+      utterance.lang = speechAccent;
       utterance.rate = rate;
       utterance.pitch = 1;
-      const voices = window.speechSynthesis.getVoices();
-      const voice = voices.find(v => /^en-(US|GB)/i.test(v.lang)) ||
-                    voices.find(v => /^en/i.test(v.lang));
+      utterance.volume = 1;
+
+      const voice = preferredVoice || refreshPreferredVoice();
       if(voice) utterance.voice = voice;
+
       window.speechSynthesis.speak(utterance);
       return true;
     }
 
-    function playCurrentAudio(slow = false){
+    function playCurrentWord(slow = false){
       if(!currentItem) return;
-      speakEnglish(currentItem.word.word, slow ? .62 : .86);
+      const rate = slow ? Math.max(.52, speechRate - .18) : speechRate;
+      speakEnglish(currentItem.word.word, rate);
+    }
+
+    function playCurrentAudio(slow = false){
+      playCurrentWord(slow);
     }
 
     function escapeRegExp(value){
@@ -2366,6 +2458,59 @@
       return [...shuffle(priority), ...shuffle(rest)];
     }
 
+
+    function loadAudioSettings(){
+      speechAccent = localStorage.getItem("cetSpeechAccent") || "en-US";
+      speechRate = Number(localStorage.getItem("cetSpeechRate") || ".82");
+
+      if($("voiceAccent")) $("voiceAccent").value = speechAccent;
+      if($("voiceRate")) $("voiceRate").value = String(speechRate);
+
+      refreshPreferredVoice();
+      updateVoiceStatus();
+
+      if("speechSynthesis" in window){
+        window.speechSynthesis.onvoiceschanged = () => {
+          refreshPreferredVoice();
+          updateVoiceStatus();
+        };
+      }
+    }
+
+    function saveAudioSettings(){
+      speechAccent = $("voiceAccent").value || "en-US";
+      speechRate = Number($("voiceRate").value || ".82");
+
+      localStorage.setItem("cetSpeechAccent", speechAccent);
+      localStorage.setItem("cetSpeechRate", String(speechRate));
+
+      refreshPreferredVoice();
+      updateVoiceStatus();
+      toast("发音设置已保存");
+    }
+
+    function updateVoiceStatus(){
+      if(!$("voiceStatus")) return;
+      const voice = preferredVoice || refreshPreferredVoice();
+      $("voiceStatus").textContent = voice
+        ? `当前声线：${voice.name} · ${voice.lang}；英文→中文每题自动朗读一次。`
+        : "系统英文声线仍在加载；稍后点“试听当前发音”重试。";
+    }
+
+    function previewVoice(){
+      speakEnglish("Vocabulary practice starts now.", speechRate);
+    }
+
+    function maybeAutoSpeakCurrent(){
+      if(!currentItem || currentDirection() !== "en-zh" || answerLocked) return;
+
+      const key = `${sessionMode}|${wordKey(currentItem.word.word)}|${currentDirection()}`;
+      if(lastAutoSpokenKey === key) return;
+      lastAutoSpokenKey = key;
+
+      setTimeout(() => playCurrentWord(false), 260);
+    }
+
     async function startSpecialMode(mode){
       const ready = await ensureVocabularyReady();
       if(!ready) return;
@@ -2435,6 +2580,7 @@
 
     function nextWord(){
       answerLocked = false;
+      lastAutoSpokenKey = "";
       resetQuizUI();
 
       if(sessionMode === "daily"){
@@ -2685,6 +2831,7 @@
       const queueTag = $("queueType");
       const favoriteBtn = $("favoriteBtn");
       const wordExtra = $("wordExtra");
+      const pronounceRow = $("pronounceRow");
       wordExtra.classList.add("hidden");
       wordExtra.innerHTML = "";
 
@@ -2718,12 +2865,21 @@
         favoriteBtn.disabled = true;
         $("studyActions").style.display = "none";
         $("modeHint").style.display = "none";
+        pronounceRow.style.display = "none";
         wordExtra.classList.add("hidden");
         return;
       }
 
       const w = currentItem.word;
       const direction = currentDirection();
+
+      pronounceRow.style.display = "grid";
+      $("pronounceTitle").textContent =
+        `${w.word} · ${speechAccent === "en-GB" ? "英音" : "美音"}`;
+      $("pronounceSubtitle").textContent =
+        direction === "en-zh"
+          ? "本题会自动朗读一次，也可以点喇叭重播"
+          : "点喇叭可听发音；右侧可慢速播放";
       const progress = getWordProgress(wordKey(w.word), false);
       wordEl.classList.toggle("zh-prompt", direction === "zh-en");
 
@@ -2785,6 +2941,7 @@
       if(currentDirection() === "spelling" && !answerLocked) showSpellingPractice();
       if(currentDirection() === "listening" && !answerLocked) showListeningPractice();
       if(currentDirection() === "context" && !answerLocked) showContextPractice();
+      if(currentDirection() === "en-zh" && !answerLocked) maybeAutoSpeakCurrent();
     }
 
     function renderRewards(){
@@ -4284,6 +4441,7 @@
       startSubtitleRotation();
 
       sessionDirection = getBook().lastDirection || "en-zh";
+      loadAudioSettings();
       renderAll();
       renderDailyRoot();
       loadApiSettings();
