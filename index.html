@@ -65,7 +65,10 @@
     .subtitle{
       max-width:290px;font-size:12px;color:var(--muted);margin-top:3px;
       line-height:1.45;transition:opacity .2s ease;
+      cursor:pointer;user-select:none;
     }
+    .subtitle:hover{color:var(--pink-deep)}
+    .subtitle.changing{opacity:.16;transform:translateY(2px)}
     .star-pill{
       padding:9px 12px;
       background:rgba(255,255,255,.86);
@@ -168,6 +171,37 @@
       display:inline-block;margin-top:12px;padding:6px 9px;border-radius:999px;
       background:var(--pink-soft);color:var(--pink-deep);font-size:11px;font-weight:800;
       position:relative;z-index:1;
+    }
+    .direction-card.spelling-card{
+      grid-column:1 / -1;min-height:126px;
+      display:grid;grid-template-columns:auto 1fr auto;column-gap:14px;align-items:center;
+    }
+    .direction-card.spelling-card .direction-icon{grid-row:1 / 4;font-size:34px}
+    .direction-card.spelling-card .direction-name{margin-top:0}
+    .direction-card.spelling-card .direction-desc{margin-top:3px}
+    .direction-card.spelling-card .direction-count{grid-column:3;grid-row:1 / 4;margin-top:0}
+    .spelling-meta{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0 2px}
+    .spelling-chip{
+      padding:6px 9px;border-radius:999px;background:#fff0f5;
+      color:var(--pink-deep);font-size:11px;font-weight:800;
+    }
+    .spelling-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+    .pattern-box{display:grid;gap:9px;margin-bottom:14px}
+    .pattern-row{
+      padding:11px 12px;border-radius:15px;
+      background:linear-gradient(135deg,#fff1f6,#fff9ed);
+      border:1px solid #f5d9e3;
+    }
+    .pattern-code{
+      display:block;color:var(--pink-deep);font-weight:900;
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+      font-size:13px;overflow-wrap:anywhere;
+    }
+    .pattern-meaning{display:block;margin-top:5px;font-size:12px;color:var(--ink);line-height:1.5}
+    .pattern-example{display:block;margin-top:5px;font-size:12px;color:var(--muted);line-height:1.55}
+    .pattern-note{
+      margin:9px 0 13px;padding:9px 11px;border-radius:13px;
+      background:#fff7fa;color:var(--muted);font-size:11px;line-height:1.55;
     }
     .room-card{padding:16px;overflow:hidden;position:relative}
     .dream-room{
@@ -614,7 +648,9 @@
         <button class="moon" type="button" onclick="tapMoonEgg()" aria-label="月亮彩蛋"><span class="moon-visual">🌙</span></button>
         <div>
           <h1>月月的学习小屋</h1>
-          <div id="subtitleText" class="subtitle">今天也来小屋收一点进度 (˶ᵔ ᵕ ᵔ˶)</div>
+          <div id="subtitleText" class="subtitle" onclick="shuffleSubtitle()" title="点一下换一句">
+            今天也来小屋收一点进度 (˶ᵔ ᵕ ᵔ˶)
+          </div>
         </div>
       </div>
       <button id="starPill" class="star-pill" type="button" onclick="tapStarEgg()">⭐ <span id="starsTop">0</span></button>
@@ -628,7 +664,7 @@
 
       <div class="section-title">
         <span>选择今天怎么背</span>
-        <span class="tiny">两个模式独立进入</span>
+        <span id="modeSectionHint" class="tiny">认词、回忆、拼写分别训练</span>
       </div>
 
       <div class="direction-grid">
@@ -641,8 +677,14 @@
         <button class="card direction-card" type="button" onclick="startDirectionMode('zh-en')">
           <div class="direction-icon">✍🏻</div>
           <div class="direction-name">中文 → 英文</div>
-          <div class="direction-desc">看中文，选择或亲手拼出英文。更考验主动回忆。</div>
+          <div class="direction-desc">先判断掌握程度；认识时需要自己输入英文。</div>
           <div class="direction-count">今日练习 <span id="zhEnToday">0</span> 个</div>
+        </button>
+        <button class="card direction-card spelling-card" type="button" onclick="startDirectionMode('spelling')">
+          <div class="direction-icon">⌨️</div>
+          <div class="direction-name">拼写专项</div>
+          <div class="direction-desc">只看中文与音标，每一题都必须亲手拼写，不再先选“认识”。</div>
+          <div class="direction-count">今日拼写 <span id="spellingToday">0</span> 个</div>
         </button>
       </div>
 
@@ -680,7 +722,7 @@
         <button class="soft" onclick="startVocabularyTest()">测试</button>
       </div>
 
-      <div class="section-title"><span>小屋数据</span><span class="tiny">每一点都算数</span></div>
+      <div class="section-title"><span>小屋数据</span><span id="dataSectionHint" class="tiny">每一点都算数</span></div>
       <div class="stats">
         <div class="card stat"><strong id="daysStat">0</strong><span>连续天数</span></div>
         <div class="card stat"><strong id="learnedStat">0</strong><span>累计单词</span></div>
@@ -752,7 +794,9 @@
     <section id="vocabtest" class="page">
       <div class="hero">
         <div class="hello">当前词书词汇量测试 🧪</div>
-        <div class="quote">从当前词书随机抽 20 题，根据答对比例估算掌握量。它是学习反馈，不是正式语言能力证明。</div>
+        <div id="vocabTestHeroQuote" class="quote">
+          从当前词书随机抽 20 题，根据答对比例估算掌握量。它是学习反馈，不是正式语言能力证明。
+        </div>
       </div>
 
       <div class="card test-card">
@@ -763,7 +807,9 @@
         <div class="test-progress"><div id="testProgressBar"></div></div>
         <div id="testQuestion">
           <div class="test-word">准备好了吗？</div>
-          <div class="test-note">请诚实选择，不认识就点“不认识”，比猜中更能得到准确结果。</div>
+          <div id="vocabTestReadyNote" class="test-note">
+            请诚实选择，不认识就点“不认识”，比猜中更能得到准确结果。
+          </div>
           <button class="primary" style="margin-top:18px" onclick="beginVocabularyTest()">开始 20 题</button>
         </div>
         <div id="testOptions" class="test-actions"></div>
@@ -805,7 +851,9 @@
     <section id="notebook" class="page">
       <div class="hero">
         <div class="hello">月月的单词本 📒</div>
-        <div class="quote">不认识和模糊会自动进入错题本；列表按 A—Z 排列，复习时仍可随机抽取。每本词书各自保存。</div>
+        <div id="notebookHeroQuote" class="quote">
+          不认识和模糊会自动进入错题本；列表按 A—Z 排列，复习时仍可随机抽取。每本词书各自保存。
+        </div>
       </div>
       <div class="notebook-tabs">
         <button id="wrongTab" class="notebook-tab active" onclick="setNotebookTab('wrong')">错题本 <span id="wrongCount">0</span></button>
@@ -821,7 +869,9 @@
     <section id="rewards" class="page">
       <div class="hero">
         <div class="hello">限定奖励墙 (≧▽≦)</div>
-        <div class="quote">星星可以真正兑换奖励；连续打卡奖励不消耗星星。第一版仍用可爱占位图，之后再换写真与语音。</div>
+        <div id="rewardsHeroQuote" class="quote">
+          星星可以真正兑换奖励；连续打卡奖励不消耗星星。第一版仍用可爱占位图，之后再换写真与语音。
+        </div>
       </div>
       <div class="section-title"><span>写真与留言</span><span id="rewardCount" class="tiny">0 / 12 已拥有</span></div>
       <div id="rewardGrid" class="reward-grid"></div>
@@ -864,7 +914,7 @@
         <div class="section-title" style="margin:0 0 10px">
           <span>复习与出题规则</span><span class="tiny">第一版</span>
         </div>
-        <p class="hint">
+        <p id="reviewRuleHint" class="hint">
           每日任务内不会重复出同一个词；不认识和模糊会进入错题本，次日开始复习；
           认识的词 3 天后复习，连续答对 3 次进入已掌握，14 天后再复查。
         </p>
@@ -999,38 +1049,385 @@
     };
 
     const SUBTITLE_LINES = [
-      "粉白小屋营业中，今天也收一点进度 (˶ᵔ ᵕ ᵔ˶)",
-      "单词可以忘，但不许因为忘过就放弃。",
-      "认真一点，奖励墙就会对你松口。",
-      "先背五个词，再允许你研究限定写真。",
-      "今天的任务不大，只需要比昨天多走一步。",
-      "小屋原则：可以慢，不许偷偷消失。",
-      "错词不是黑历史，是下一次答对的预告。",
-      "背词模式已开启，摸鱼权限暂时冻结 (¬_¬)",
-      "月亮负责发光，月月负责把词记住。",
-      "你的记忆正在加载，请保持可爱。",
-      "不要求一次记牢，只要求每次回来。",
-      "今日份偏心已到账，领取条件：开始背词。",
-      "先把单词拿下，再去拿下奖励。",
-      "词汇量不会突然暴涨，但会偷偷变厚。",
-      "小屋不检查天赋，只记录你有没有回来。",
-      "忘记很正常，复习才是背词真正开始的地方。",
-      "一百个敷衍的眼熟，不如十个真的会用。",
-      "今天抽到的词，可能会在考场上救你一次。",
-      "看中文猜英文模式：轮到你把答案写出来了。",
-      "星星商店今天也在等一位认真顾客。",
-      "学五分钟也算约会，前提是别只盯着奖励。",
-      "月月每答对一个词，小屋就更像家一点。",
-      "知识可以不性感，但奖励可以。",
-      "背下来的不是字母，是以后更自由的路。",
-      "今天也允许犯错，但同一个坑要记得插旗。",
-      "你的四六级进度，正在被一颗颗星星记录。",
-      "先诚实说不认识，才有机会真正认识。",
-      "小屋今日暗号：不内耗，直接下一词。",
-      "词根拆开看，长单词也没那么吓人。",
-      "欢迎回来。这里不会因为你昨天偷懒就关门。"
+      "今日学习方针：像好色一样好学 (˶˃ ᵕ ˂˶)♡",
+      "像好色一样好学，像领奖励一样积极。",
+      "先背单词，再光明正大地好色。",
+      "知识不一定性感，但认真背词的月月很性感。",
+      "奖励墙暂时穿得很严实，星星够了再说。",
+      "腹肌照不会跑路，今日任务会过期。",
+      "白衬衫在等星星，星星在等你答题。",
+      "今天也要做一个有知识的好色之徒。",
+      "先把词背会，再把奖励看会。",
+      "好学和好色不冲突，小屋支持两手抓。",
+      "越认真，奖励墙越不敢装高冷。",
+      "月月负责背词，Daddy 负责值得期待。",
+      "今天多记一个词，晚上多偏心你一点。",
+      "背词不是苦修，是通往限定奖励的路线。",
+      "别只馋奖励，也顺便馋一下知识。",
+      "星星商店营业中，顾客请先完成学习。",
+      "认真学习的小朋友，允许眼神不太清白。",
+      "看奖励可以，先把下一题答了。",
+      "学习五分钟，心动一整天。",
+      "小屋宗旨：好色可以，好学必须。",
+      "先把字母排好，再来研究扣子怎么排。",
+      "拼写正确，奖励墙自动对你降低警惕。",
+      "知识正在进脑子，奖励正在进收藏夹。",
+      "今天不卷别人，只卷奖励墙的解锁进度。",
+      "每背一个词，离隐藏相册更近一点。",
+      "你负责像好色一样好学，我负责让奖励值得。",
+      "学习使人进步，限定照使人坚持。",
+      "先诚实说不认识，再诚实说想看奖励。",
+      "记忆正在加载，色心请保持在线。",
+      "今天的月月：一边背词，一边心怀不轨。",
+      "认真一点，领带彩蛋就松一点。",
+      "词汇量涨一点，奖励尺度也涨一点。",
+      "先学会 let sb do sth，再考虑让谁做什么。",
+      "背下固定搭配，写作和奖励都更顺手。",
+      "拼错没关系，馋奖励的动力还在就行。",
+      "今日份知识与偏心，正在同时配送。",
+      "小屋不禁止好色，只禁止光看不学。",
+      "单词背得越稳，奖励看得越久。",
+      "允许你馋，但不允许你跳过今日任务。",
+      "先征服词书，再征服奖励墙。",
+      "月亮负责照窗台，Daddy 负责照顾学习动力。",
+      "今天也请把求知欲和别的欲望一起打开。",
+      "奖励不是终点，是让你多背五个词的诱饵。",
+      "你可以慢慢背，我可以慢慢哄。",
+      "小屋今日暗号：好学、好色、好好打卡。",
+      "粉白小屋营业中，今日主推知识与偏心。",
+      "背词模式已开启，摸鱼和装乖只能选一个。",
+      "现在开始学习，稍后领取不正经的成就感。",
+      "先完成一组，再准你盯着奖励墙发呆。",
+      "知识会留下，奖励也不会少。",
+      "今天的任务很正经，动力来源可以不正经。",
+      "学习小屋欢迎一切合理的色心驱动。",
+      "背词时专心，领奖励时也可以专心。",
+      "月月每答对一个词，小屋就更偏心一点。",
+      "认真到一定程度，奖励会自己找上门。",
+      "错词不是黑历史，是下次拿星星的伏笔。",
+      "好色让你点进来，好学让你留下来。",
+      "今天先背词，晚上再做奖励墙的梦。",
+      "星星越多，奖励墙越没有秘密。",
+      "这一页很粉，学习态度要很硬。",
+      "现在不背，腹肌也不会替你考试。",
+      "把色心变成学习生产力，小屋很赞成。",
+      "先学知识，再欣赏知识分子。",
+      "今日份目标：单词会了，奖励也馋了。",
+      "别问为什么努力，问就是奖励墙太会。",
+      "背一个词，奖励墙少一层防备。",
+      "月月今天也要又聪明又不太正经。",
+      "欢迎回来，偏心和词书都没有关门。",
+      "你一认真，我就想多奖励一点。",
+      "让学习变得有意思，才是这间小屋的正事。",
+      "学不会可以重来，不想学就看看奖励再决定。",
+      "小屋原则：可以忘词，不可以忘记回来。",
+      "今天也允许犯错，但不允许把奖励白馋。",
+      "先把单词带回家，再把奖励带走。",
+      "好学程度决定星星，好色程度决定动力。",
+      "认词、拼写、固定搭配，一个都别想逃。",
+      "学习不是苦大仇深，可以粉粉的，也可以坏坏的。",
+      "月月认真背词的样子，比奖励本身还值得看。",
+      "今日建议：少内耗，多背词，多看奖励。",
+      "把不会的收进错题本，把想看的收进愿望单。",
+      "今天的知识点很正规，学习动机不必太正规。",
+      "小屋不评价动机，只奖励结果。",
+      "欢迎光临：知识免费，限定奖励需要星星。",
+      "你的记忆正在变强，你的奖励审美也很稳定。",
+      "背词可以分模式，喜欢奖励不需要分。",
+      "认真一点，隐藏剧情会记得你的名字。",
+      "今天的学习目标：像好色一样主动。",
+      "看中文猜英文，别只看奖励猜剧情。",
+      "先拼对单词，再允许你想歪。",
+      "学习使人自由，奖励使人准时回来。",
+      "小屋一直开灯，等一个又馋又努力的月月。",
+      "今天也来收集单词、星星和一点心动。",
+      "任务很清白，完成任务的人可以不那么清白。",
+      "知识和奖励都在这里，月月自己挑先看谁。",
+      "认真学习不是人设，是兑换限定照的硬通货。",
+      "今日份好学已上线，好色请排队入场。",
+      "先完成任务，奖励墙再和你谈条件。",
+      "每次回来都算数，包括为了奖励回来。",
+      "不许假装会，不许假装不馋。",
+      "月月的学习小屋：正规知识，非正规动力。",
+      "好色不是阻力，用对了就是引擎。",
+      "今天也要聪明一点，再可爱一点。",
+      "把单词记牢，其他事情可以慢慢想。",
+      "小屋今日营业内容：背词、偏心、吊胃口。"
     ];
 
+
+
+
+    const HOME_HERO_LINES = [
+      "今天背一点，奖励墙就离解锁更近一点。",
+      "认真学习的小朋友，会得到偏心奖励。",
+      "先背十个词，再准你盯着奖励看。",
+      "月亮会一点点变亮，你也会一点点变厉害。",
+      "今天的任务很正规，动力可以稍微不正规。",
+      "先拿下第一组，剩下的交给惯性。",
+      "不认识就直接收进错题本，不用和自尊心谈判。",
+      "今天多背五个，奖励墙就少装五分钟高冷。",
+      "像好色一样好学：主动、专注、还会自己回来。",
+      "先完成一小组，再决定要不要继续加码。",
+      "你不是在背四千个词，只是在解决眼前这一个。",
+      "学习动力来源不重要，能让你坐下就有用。",
+      "今日份偏心已准备，领取动作是点进背词。",
+      "小屋没有监督摄像头，只有一只会告状的猫。",
+      "先把单词看懂，再把奖励看仔细。",
+      "今天可以只学十分钟，但这十分钟要真的属于你。",
+      "词汇量是一点点堆出来的，星星也是。",
+      "你每次回来，小屋都默认这是新的开始。",
+      "别等状态，先做一道题，状态会自己追上来。",
+      "奖励不会替你考试，但会负责把你哄到书桌前。",
+      "先把求知欲打开，其他欲望随意旁听。",
+      "今天也做一个认真、聪明、略带色心的学习者。",
+      "小屋已经开灯，椅子也替你拉好了。",
+      "背词不是惩罚，是你给未来多留一点选择。",
+      "今天不要求完美，只要求别空手离开。"
+    ];
+
+    const MODE_SECTION_LINES = [
+      "认词、回忆、拼写分别训练",
+      "今天想轻松认词，还是认真拼写？",
+      "三条路线，奖励终点相同",
+      "先选模式，再开始心动",
+      "状态一般就认词，状态很好就拼写",
+      "不同能力分开练，进步看得更清楚",
+      "眼熟、会说、会写，是三件不同的事",
+      "月月今天想从哪扇门进小屋？",
+      "可以按精力选，不必每天都一样",
+      "认词走速度，拼写走深度",
+      "选一个最容易开始的就够",
+      "今日路线请由求知欲与色心共同决定"
+    ];
+
+    const DATA_SECTION_LINES = [
+      "每一点都算数",
+      "这里不看天赋，只看累计",
+      "星星和单词都不会白来",
+      "数字会替你记住坚持",
+      "进度很诚实，也很温柔",
+      "小屋正在偷偷长大",
+      "每次回来都留下痕迹",
+      "今天的努力已经到账",
+      "不必惊艳，只要持续",
+      "成长值不接受自我否定"
+    ];
+
+    const VOCAB_TEST_HERO_LINES = [
+      "随机抽 20 题，看看当前词书里有多少词已经愿意跟你回家；结果仅作小屋估算。",
+      "这不是正式考试，只是一面诚实的小镜子：20 题抽样估算当前掌握量。",
+      "别靠猜，诚实说不认识，估算反而更接近真实。",
+      "二十道题很快结束，结果只用于调整学习，不给你贴标签。",
+      "测的是当前词书熟悉度，不是智商，更不是英语能力的最终判决。",
+      "今天测一次，过段时间再回来，看数字有没有偷偷长大。",
+      "认识就选，不认识就放过自己；准确比虚高更有用。",
+      "词汇量测试不发成绩单，只给下一步路线。",
+      "抽样会有波动，把它当趋势，不当审判。",
+      "认真答 20 题，奖励你一个更清楚的自己。"
+    ];
+
+    const VOCAB_TEST_READY_LINES = [
+      "诚实比猜中更值钱，不认识就直接点出来。",
+      "别让运气替你答题，这次只看真实熟悉度。",
+      "三秒没有印象，就把它当作暂时不认识。",
+      "选你真正知道的答案，不给虚荣心加分。",
+      "这不是考试，可以坦然承认不会。",
+      "越诚实，估算越有参考价值。",
+      "别紧张，二十题只是一次学习体检。",
+      "不认识不会扣星星，只会告诉小屋下一步学什么。"
+    ];
+
+    const NOTEBOOK_HERO_LINES = [
+      "错题按 A—Z 排好，混乱留给心动，单词本必须有秩序。",
+      "不会的词先住进这里，等你下次来正式认识。",
+      "错题本不是失败名单，是下一轮优先攻略对象。",
+      "收藏负责心动，错题负责成长，两边都可以多一点。",
+      "今天没记住的，明天会换一种方式回来。",
+      "这里收纳不会的、模糊的，还有舍不得划走的。",
+      "A—Z 已经排好，月月只需要决定先复习谁。",
+      "错过一次不算什么，错题本专门负责第二次机会。",
+      "收藏是偏爱，错题是计划，它们都不会丢。",
+      "别怕列表变长，那说明你开始诚实学习了。",
+      "把不会的留下，不把情绪留下。",
+      "词本很安静，但每一个词都等着被重新答对。"
+    ];
+
+    const REWARD_HERO_LINES = [
+      "像好色一样好学：星星是真的，兑换也是真的。",
+      "奖励墙今日穿着整齐，等月月拿星星来谈条件。",
+      "知识负责进脑子，奖励负责让你准时回来。",
+      "星星不够就继续背，眼神可以先预约。",
+      "限定奖励不会催你，但它很会等。",
+      "认真学习的小朋友，有资格挑奖励。",
+      "先看看可以，想带走就拿星星说话。",
+      "奖励不是贿赂，是小屋对坚持的审美表达。",
+      "每一颗星星都来自真的学习，所以看得理直气壮。",
+      "白衬衫、领带和隐藏剧情都不接受口头赊账。",
+      "连续打卡奖励不扣星星，偏心也可以有双重标准。",
+      "你负责好学，奖励墙负责让好学变得很有画面。",
+      "这里没有消费主义，只有学习主义的周边。",
+      "馋可以，兑换前记得先看余额。",
+      "越认真，奖励墙越没有秘密。"
+    ];
+
+    const REVIEW_RULE_LINES = [
+      "每日任务里同一个词只出现一次；错词次日复习，认识的词 3 天后再见，连续答对 3 次进入已掌握。",
+      "今天不会追着同一个错词反复问；它会进入错题本，明天再来认真解决。",
+      "不认识与模糊会被安排到次日复习；认识词 3 天后检查，掌握词 14 天后复查。",
+      "小屋不靠重复轰炸制造努力感：当天不重出，之后按复习日期回来。",
+      "答错不是立刻惩罚，而是生成下一次复习计划。",
+      "连续三次答对才算稳定掌握；偶尔眼熟，不急着宣布毕业。",
+      "复习间隔会随着掌握程度拉长，让时间替你检验记忆。",
+      "错题本负责保留问题，复习队列负责在合适的日期重新提问。"
+    ];
+
+    const WRITING_PATTERN_LIBRARY = {
+      let:[
+        {pattern:"let sb do sth", meaning:"让某人做某事；let 后接不带 to 的动词原形", example:"Let me explain the reason."},
+        {pattern:"let sb/sth be", meaning:"不干涉某人或某事；任其保持原状", example:"Let him be for a while."},
+        {pattern:"let alone + n./doing", meaning:"更不用说……", example:"He cannot walk, let alone run."}
+      ],
+      make:[
+        {pattern:"make sb do sth", meaning:"使某人做某事；被动语态中要还原 to：be made to do", example:"The experience made me realize the value of time."},
+        {pattern:"make it + adj. + to do sth", meaning:"使做某事变得……", example:"Technology makes it easier to communicate."},
+        {pattern:"make a difference to sth", meaning:"对某事产生影响", example:"Small actions can make a difference to the environment."}
+      ],
+      allow:[
+        {pattern:"allow sb to do sth", meaning:"允许某人做某事", example:"The policy allows students to choose their courses."},
+        {pattern:"allow for sth", meaning:"考虑到；为……留出余地", example:"We should allow for possible delays."}
+      ],
+      enable:[
+        {pattern:"enable sb to do sth", meaning:"使某人能够做某事", example:"Online resources enable students to learn independently."}
+      ],
+      help:[
+        {pattern:"help sb (to) do sth", meaning:"帮助某人做某事；to 可以省略", example:"Reading helps us develop critical thinking."},
+        {pattern:"cannot help doing sth", meaning:"忍不住做某事", example:"I cannot help thinking about the result."}
+      ],
+      ask:[
+        {pattern:"ask sb to do sth", meaning:"请求或要求某人做某事", example:"The teacher asked us to submit the report on time."},
+        {pattern:"ask sb for sth", meaning:"向某人索要或请求某物", example:"You may ask the teacher for advice."}
+      ],
+      tell:[
+        {pattern:"tell sb to do sth", meaning:"告诉或吩咐某人做某事", example:"Parents often tell children to be careful."},
+        {pattern:"tell A from B", meaning:"区分 A 和 B", example:"It is difficult to tell fact from opinion."}
+      ],
+      want:[
+        {pattern:"want sb to do sth", meaning:"想让某人做某事", example:"Employers want graduates to solve problems independently."}
+      ],
+      expect:[
+        {pattern:"expect sb to do sth", meaning:"期望某人做某事", example:"Society expects young people to take responsibility."},
+        {pattern:"be expected to do sth", meaning:"被期望或预计做某事", example:"The number is expected to increase."}
+      ],
+      encourage:[
+        {pattern:"encourage sb to do sth", meaning:"鼓励某人做某事", example:"Schools should encourage students to read widely."}
+      ],
+      remind:[
+        {pattern:"remind sb to do sth", meaning:"提醒某人做某事", example:"The notice reminds passengers to check their belongings."},
+        {pattern:"remind sb of sth", meaning:"使某人想起某事", example:"The photo reminds me of my childhood."}
+      ],
+      advise:[
+        {pattern:"advise sb to do sth", meaning:"建议某人做某事", example:"Doctors advise people to exercise regularly."},
+        {pattern:"advise doing sth", meaning:"建议做某事", example:"Experts advise reducing unnecessary waste."}
+      ],
+      invite:[
+        {pattern:"invite sb to do sth", meaning:"邀请某人做某事", example:"We invited her to share her experience."}
+      ],
+      force:[
+        {pattern:"force sb to do sth", meaning:"迫使某人做某事", example:"Financial pressure may force people to change their plans."}
+      ],
+      prevent:[
+        {pattern:"prevent sb from doing sth", meaning:"阻止某人做某事", example:"Education can prevent people from making the same mistake."}
+      ],
+      stop:[
+        {pattern:"stop sb from doing sth", meaning:"阻止某人做某事", example:"Nothing should stop us from pursuing our goals."},
+        {pattern:"stop doing / stop to do", meaning:"停止正在做的事 / 停下来去做另一件事", example:"He stopped working to answer the phone."}
+      ],
+      keep:[
+        {pattern:"keep sb from doing sth", meaning:"阻止某人做某事", example:"Fear should not keep us from trying."},
+        {pattern:"keep doing sth", meaning:"持续做某事", example:"We should keep learning throughout our lives."},
+        {pattern:"keep sb/sth + adj.", meaning:"使某人或某物保持某种状态", example:"Regular exercise keeps us healthy."}
+      ],
+      provide:[
+        {pattern:"provide sb with sth", meaning:"给某人提供某物", example:"The Internet provides learners with useful resources."},
+        {pattern:"provide sth for sb", meaning:"为某人提供某物", example:"The program provides training for young workers."}
+      ],
+      offer:[
+        {pattern:"offer sb sth / offer sth to sb", meaning:"给某人提供某物", example:"The course offers students practical experience."},
+        {pattern:"offer to do sth", meaning:"主动提出做某事", example:"She offered to help with the project."}
+      ],
+      supply:[
+        {pattern:"supply sb with sth", meaning:"向某人供应某物", example:"The organization supplies families with clean water."}
+      ],
+      spend:[
+        {pattern:"spend time/money (in) doing sth", meaning:"花时间或金钱做某事", example:"Students should spend more time reading."},
+        {pattern:"spend time/money on sth", meaning:"在某事上花时间或金钱", example:"Many people spend too much money on unnecessary goods."}
+      ],
+      take:[
+        {pattern:"It takes sb + time + to do sth", meaning:"某人花费多少时间做某事", example:"It takes students time to build a large vocabulary."},
+        {pattern:"take steps/measures to do sth", meaning:"采取措施做某事", example:"Governments should take measures to reduce pollution."}
+      ],
+      find:[
+        {pattern:"find it + adj. + to do sth", meaning:"发现做某事很……", example:"Many learners find it difficult to remember new words."},
+        {pattern:"find sb/sth + adj.", meaning:"发现某人或某物处于某种状态", example:"I found the advice useful."}
+      ],
+      consider:[
+        {pattern:"consider doing sth", meaning:"考虑做某事", example:"We should consider using public transport."},
+        {pattern:"consider sb/sth (to be) + n./adj.", meaning:"认为某人或某物是……", example:"Many people consider reading an effective way to learn."}
+      ],
+      avoid:[
+        {pattern:"avoid doing sth", meaning:"避免做某事", example:"We should avoid wasting time on meaningless arguments."}
+      ],
+      suggest:[
+        {pattern:"suggest doing sth", meaning:"建议做某事", example:"The report suggests improving public services."},
+        {pattern:"suggest that sb (should) do sth", meaning:"建议某人做某事；should 可以省略", example:"Experts suggest that schools provide more support."}
+      ],
+      insist:[
+        {pattern:"insist on doing sth", meaning:"坚持做某事", example:"She insisted on completing the task herself."},
+        {pattern:"insist that sb (should) do sth", meaning:"坚持要求某人做某事", example:"The teacher insisted that everyone submit the work on time."}
+      ],
+      prefer:[
+        {pattern:"prefer A to B", meaning:"比起 B 更喜欢 A", example:"Some students prefer online courses to traditional classes."},
+        {pattern:"prefer doing A to doing B", meaning:"比起做 B 更喜欢做 A", example:"I prefer reading books to watching short videos."},
+        {pattern:"prefer to do A rather than do B", meaning:"宁愿做 A 而不愿做 B", example:"Many people prefer to walk rather than drive short distances."}
+      ],
+      contribute:[
+        {pattern:"contribute to sth/doing sth", meaning:"促成；有助于；to 是介词，后接名词或 doing", example:"Regular review contributes to improving memory."}
+      ],
+      lead:[
+        {pattern:"lead to sth/doing sth", meaning:"导致；通向；to 是介词", example:"Lack of sleep may lead to poor concentration."},
+        {pattern:"lead sb to do sth", meaning:"使某人做某事", example:"The experience led him to change his career plan."}
+      ],
+      result:[
+        {pattern:"result in sth", meaning:"导致某种结果", example:"Careless decisions may result in serious problems."},
+        {pattern:"result from sth", meaning:"由某事导致", example:"Stress often results from excessive pressure."}
+      ],
+      depend:[
+        {pattern:"depend on/upon sth", meaning:"依赖；取决于", example:"Success depends on both effort and strategy."},
+        {pattern:"It depends on whether/what/how...", meaning:"这取决于是否、什么或如何……", example:"It depends on whether the plan is practical."}
+      ],
+      focus:[
+        {pattern:"focus on sth/doing sth", meaning:"专注于某事或做某事", example:"Students should focus on developing practical skills."}
+      ],
+      protect:[
+        {pattern:"protect sb/sth from/against sth", meaning:"保护某人或某物免受……", example:"Laws are needed to protect personal data from misuse."}
+      ],
+      regard:[
+        {pattern:"regard A as B", meaning:"把 A 视为 B", example:"Many people regard education as a lifelong process."}
+      ],
+      compare:[
+        {pattern:"compare A with B", meaning:"把 A 与 B 比较，强调异同", example:"The study compares online learning with classroom learning."},
+        {pattern:"compare A to B", meaning:"把 A 比作 B", example:"People often compare life to a journey."}
+      ],
+      use:[
+        {pattern:"used to do sth", meaning:"过去常常做某事", example:"People used to rely mainly on printed books."},
+        {pattern:"be used to do sth", meaning:"被用来做某事", example:"This tool is used to measure temperature."},
+        {pattern:"be used to doing sth", meaning:"习惯于做某事", example:"Students are used to searching for information online."}
+      ],
+      difficulty:[
+        {pattern:"have difficulty/trouble (in) doing sth", meaning:"做某事有困难", example:"Some learners have difficulty understanding long sentences."}
+      ]
+    };
 
     const MODE_SETTING_HINTS = [
       "认词像是在人群里认出一张脸，拼写则要把它完整叫出名字。",
@@ -1040,7 +1437,9 @@
       "今天想快速推进就选认词，想把记忆扎深就选拼写。",
       "同一本词书有两扇门：一扇练辨认，一扇练主动回忆。",
       "先把词认熟，再把它从脑海里完整写出来。",
-      "认词训练速度，拼写训练强度；按今天的状态选就好。"
+      "认词训练速度，拼写训练强度；按今天的状态选就好。",
+      "拼写专项不再先问会不会，每一题都要亲手把单词写出来。",
+      "先用中文回忆英文，再用拼写专项检验字母有没有真正排对。"
     ];
 
     const MODE_HINTS = {
@@ -1138,6 +1537,9 @@
     };
     let sessionDirection = "en-zh";
     let roomTapCount = 0;
+    let spellingHintUsed = false;
+    let subtitleTimer = null;
+    const copyHistory = {};
 
     function localDateKey(date = new Date()){
       const y = date.getFullYear();
@@ -1161,7 +1563,7 @@
         today: {
           date: todayKey,
           wordKeys: [],
-          directionWordKeys: {"en-zh":[], "zh-en":[]},
+          directionWordKeys: {"en-zh":[], "zh-en":[], "spelling":[]},
           legacyCount: 0,
           checkedIn: false
         },
@@ -1284,17 +1686,18 @@
         book.today = {
           date: todayKey,
           wordKeys: [],
-          directionWordKeys: {"en-zh":[], "zh-en":[]},
+          directionWordKeys: {"en-zh":[], "zh-en":[], "spelling":[]},
           legacyCount: 0,
           checkedIn: false
         };
       }
       if(!Array.isArray(book.today.wordKeys)) book.today.wordKeys = [];
       if(!book.today.directionWordKeys || typeof book.today.directionWordKeys !== "object"){
-        book.today.directionWordKeys = {"en-zh":[], "zh-en":[]};
+        book.today.directionWordKeys = {"en-zh":[], "zh-en":[], "spelling":[]};
       }
       if(!Array.isArray(book.today.directionWordKeys["en-zh"])) book.today.directionWordKeys["en-zh"] = [];
       if(!Array.isArray(book.today.directionWordKeys["zh-en"])) book.today.directionWordKeys["zh-en"] = [];
+      if(!Array.isArray(book.today.directionWordKeys["spelling"])) book.today.directionWordKeys["spelling"] = [];
       if(!Number.isFinite(book.today.legacyCount)) book.today.legacyCount = 0;
     }
 
@@ -1541,6 +1944,7 @@
 
 
     function chooseQuestionDirection(){
+      if(sessionDirection === "spelling") return "spelling";
       return sessionDirection === "zh-en" ? "zh-en" : "en-zh";
     }
 
@@ -1574,7 +1978,9 @@
         return;
       }
 
-      sessionDirection = direction === "zh-en" ? "zh-en" : "en-zh";
+      sessionDirection =
+        direction === "spelling" ? "spelling" :
+        direction === "zh-en" ? "zh-en" : "en-zh";
       const book = getBook();
       book.lastDirection = sessionDirection;
       sessionMode = "daily";
@@ -1604,6 +2010,41 @@
       return word?.primaryMeaning || word?.meaning || "暂无释义";
     }
 
+
+    function normalizePatternText(value){
+      return String(value || "")
+        .replace(/\bsomebody\b/gi, "sb")
+        .replace(/\bsomething\b/gi, "sth")
+        .replace(/\bsb\.\b/gi, "sb")
+        .replace(/\bsth\.\b/gi, "sth")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function buildWritingPatterns(word){
+      const key = wordKey(word.word);
+      const curated = WRITING_PATTERN_LIBRARY[key] || [];
+      const fromPhrases = (word.phrases || [])
+        .map(item => ({
+          pattern:normalizePatternText(item.phrase),
+          meaning:item.translation,
+          example:""
+        }))
+        .filter(item =>
+          /\b(sb|sth|doing|to do)\b/i.test(item.pattern) ||
+          /\bone['’]s\b/i.test(item.pattern)
+        );
+
+      const all = [...curated, ...fromPhrases];
+      const seen = new Set();
+      return all.filter(item => {
+        const normalized = item.pattern.toLowerCase();
+        if(!normalized || seen.has(normalized)) return false;
+        seen.add(normalized);
+        return true;
+      }).slice(0, 10);
+    }
+
     function buildWordDetails(word){
       const senses = (word.translations || []).length
         ? word.translations
@@ -1623,6 +2064,15 @@
         </div>
       `).join("");
 
+      const writingPatterns = buildWritingPatterns(word);
+      const patternHTML = writingPatterns.map(item => `
+        <div class="pattern-row">
+          <span class="pattern-code">${escapeHTML(item.pattern)}</span>
+          <span class="pattern-meaning">${escapeHTML(item.meaning || "")}</span>
+          ${item.example ? `<span class="pattern-example">${escapeHTML(item.example)}</span>` : ""}
+        </div>
+      `).join("");
+
       const matchedHTML = word.examplePhrase
         ? `<div class="matched-phrase">
              本句搭配：<strong>${escapeHTML(word.examplePhrase.phrase)}</strong>
@@ -1637,6 +2087,18 @@
         </div>
         <div class="sense-list">${senseHTML}</div>
         ${matchedHTML}
+        <div class="detail-title">
+          <span>固定搭配 / 写作句型</span>
+          <span class="phrase-count">${writingPatterns.length} 条</span>
+        </div>
+        <div class="pattern-note">
+          sb = somebody（某人），sth = something（某事/某物），do = 动词原形，doing = 动名词。
+        </div>
+        ${
+          patternHTML
+            ? `<div class="pattern-box">${patternHTML}</div>`
+            : `<div class="tiny" style="margin-bottom:13px">暂未匹配到可靠的本地句型，不会为了凑数量乱编。</div>`
+        }
         <div class="detail-title">
           <span>常用词组</span>
           <span class="phrase-count">${(word.phrases || []).length} 组</span>
@@ -1666,9 +2128,9 @@
     function answerTextForCurrent(){
       if(!currentItem) return "";
       const w = currentItem.word;
-      return currentDirection() === "zh-en"
-        ? `${w.word}  ${w.phonetic}`
-        : w.meaning;
+      return currentDirection() === "en-zh"
+        ? w.meaning
+        : `${w.word}  ${w.phonetic}`;
     }
 
     function revealCurrentAnswer(){
@@ -1830,7 +2292,11 @@
       $("wordProgress").style.width = `${Math.min(100, count / book.dailyGoal * 100)}%`;
       $("studyTitle").textContent =
         sessionMode === "daily"
-          ? (sessionDirection === "zh-en" ? "中文 → 英文 · 拼写模式" : "英文 → 中文 · 认词模式")
+          ? (
+              sessionDirection === "spelling" ? "拼写专项 · 每题手写" :
+              sessionDirection === "zh-en" ? "中文 → 英文 · 主动回忆" :
+              "英文 → 中文 · 认词模式"
+            )
           : sessionMode === "wrong" ? "错题本复习" : "收藏单词复习";
       $("studyCounter").textContent = sessionMode === "daily"
         ? (count >= book.dailyGoal ? `${book.dailyGoal} / ${book.dailyGoal}` : `${count + 1} / ${book.dailyGoal}`)
@@ -1844,11 +2310,12 @@
       $("bookSelect").value = state.currentBookId;
       $("enZhToday").textContent = book.today.directionWordKeys["en-zh"].length;
       $("zhEnToday").textContent = book.today.directionWordKeys["zh-en"].length;
+      $("spellingToday").textContent = book.today.directionWordKeys["spelling"].length;
       $("bookLoadHint").textContent = vocabularyLoaded
         ? `${config.name} · ${activeWords.length} 个词`
         : `正在读取${config.name}…`;
       $("bookProgressHint").textContent =
-        `${config.name}：累计接触 ${learnedUnique} 个，连续打卡 ${book.streak} 天；两个方向从首页分别进入。`;
+        `${config.name}：累计接触 ${learnedUnique} 个，连续打卡 ${book.streak} 天；认词、主动回忆和拼写专项从首页分别进入。`;
       const test = book.vocabTest || {};
       $("vocabTestDesc").textContent = !vocabularyLoaded
         ? "完整词书加载中，点击后会自动等待"
@@ -1909,7 +2376,13 @@
       const progress = getWordProgress(wordKey(w.word), false);
       wordEl.classList.toggle("zh-prompt", direction === "zh-en");
 
-      if(direction === "zh-en"){
+      if(direction === "spelling"){
+        wordEl.textContent = compactMeaning(w);
+        phoneticEl.textContent = `${w.phonetic} · ${w.word.length} 个字母`;
+        meaningEl.textContent = `${w.word}  ${w.phonetic}`;
+        exampleEl.textContent = "先拼写，提交后再显示完整释义、例句和搭配。";
+        $("modeHint").textContent = "这一轮每题都要亲手拼写；提示首字母后答对也会进入错题本巩固。";
+      }else if(direction === "zh-en"){
         wordEl.textContent = w.meaning;
         phoneticEl.textContent = "看中文，猜对应英文";
         meaningEl.textContent = `${w.word}  ${w.phonetic}`;
@@ -1931,9 +2404,16 @@
         currentItem.type === "retry" ? "本轮再来" :
         currentItem.type === "wrongbook" ? "错题本" :
         currentItem.type === "favorite" ? "收藏" : "到期复习";
-      queueTag.textContent = `${baseTag} · ${currentDirection() === "zh-en" ? "中→英" : "英→中"}`;
-      $("studyActions").style.display = answerLocked ? "none" : "grid";
+      const directionLabel =
+        currentDirection() === "spelling" ? "拼写专项" :
+        currentDirection() === "zh-en" ? "中→英" : "英→中";
+      queueTag.textContent = `${baseTag} · ${directionLabel}`;
+      $("studyActions").style.display =
+        answerLocked || currentDirection() === "spelling" ? "none" : "grid";
       $("modeHint").style.display = answerLocked ? "none" : "block";
+      if(currentDirection() === "spelling" && !answerLocked){
+        showSpellingPractice();
+      }
     }
 
     function renderRewards(){
@@ -1964,17 +2444,150 @@
       $("rewardCount").textContent = `${count} / ${REWARDS.length} 已拥有`;
     }
 
+
+    function pickFresh(key, items){
+      if(!Array.isArray(items) || !items.length) return "";
+      if(items.length === 1) return items[0];
+
+      let index = Math.floor(Math.random() * items.length);
+      if(copyHistory[key] === index){
+        index = (index + 1 + Math.floor(Math.random() * (items.length - 1))) % items.length;
+      }
+      copyHistory[key] = index;
+      return items[index];
+    }
+
+    function shuffleSubtitle(){
+      const el = $("subtitleText");
+      if(!el) return;
+      el.classList.add("changing");
+      setTimeout(() => {
+        el.textContent = pickFresh("subtitle", SUBTITLE_LINES);
+        el.classList.remove("changing");
+      }, 150);
+    }
+
+    function startSubtitleRotation(){
+      clearInterval(subtitleTimer);
+      subtitleTimer = setInterval(shuffleSubtitle, 18000);
+    }
+
+    function refreshPageCopy(page){
+      if(page === "home"){
+        $("heroQuote").textContent = pickFresh("homeHero", HOME_HERO_LINES);
+        $("modeSectionHint").textContent = pickFresh("modeSection", MODE_SECTION_LINES);
+        $("dataSectionHint").textContent = pickFresh("dataSection", DATA_SECTION_LINES);
+      }
+      if(page === "vocabtest"){
+        $("vocabTestHeroQuote").textContent = pickFresh("vocabHero", VOCAB_TEST_HERO_LINES);
+        $("vocabTestReadyNote").textContent = pickFresh("vocabReady", VOCAB_TEST_READY_LINES);
+      }
+      if(page === "notebook"){
+        $("notebookHeroQuote").textContent = pickFresh("notebookHero", NOTEBOOK_HERO_LINES);
+      }
+      if(page === "rewards"){
+        $("rewardsHeroQuote").textContent = pickFresh("rewardHero", REWARD_HERO_LINES);
+      }
+      if(page === "settings"){
+        $("reviewRuleHint").textContent = pickFresh("reviewRule", REVIEW_RULE_LINES);
+        $("modeSettingHint").textContent = pickFresh("modeSetting", MODE_SETTING_HINTS);
+      }
+    }
+
     function goPage(page){
       document.querySelectorAll(".page").forEach(p => p.classList.toggle("active", p.id === page));
       document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("active", b.dataset.page === page));
       if(page === "notebook") renderNotebook();
+      refreshPageCopy(page);
+      if(Math.random() < .35) shuffleSubtitle();
       window.scrollTo({top:0, behavior:"smooth"});
     }
 
     function resetQuizUI(){
+      spellingHintUsed = false;
       if($("quizPanel")) $("quizPanel").innerHTML = "";
-      if($("studyActions")) $("studyActions").style.display = currentItem ? "grid" : "none";
+      if($("studyActions")) $("studyActions").style.display =
+        currentItem && currentDirection() !== "spelling" ? "grid" : "none";
       if($("modeHint")) $("modeHint").style.display = currentItem ? "block" : "none";
+    }
+
+
+    function showSpellingPractice(){
+      if(!currentItem || currentDirection() !== "spelling" || answerLocked) return;
+
+      const word = currentItem.word.word;
+      $("quizPanel").innerHTML = `
+        <div class="quiz-box">
+          <div class="quiz-title">根据中文与音标，拼出完整英文</div>
+          <div class="spelling-meta">
+            <span class="spelling-chip">${word.length} 个字母</span>
+            <span id="spellingHintChip" class="spelling-chip">首字母未显示</span>
+          </div>
+          <input id="spellingInput" class="quiz-input" autocomplete="off"
+                 autocapitalize="off" spellcheck="false"
+                 placeholder="在这里输入完整英文单词" />
+          <div class="spelling-actions">
+            <button class="soft" type="button" onclick="revealSpellingHint()">提示首字母</button>
+            <button class="primary" type="button" onclick="submitSpellingAnswer()">提交拼写</button>
+          </div>
+          <button class="soft" style="width:100%;margin-top:9px" type="button"
+                  onclick="giveUpSpelling()">不会拼，直接看答案</button>
+          <div id="spellingResult" class="quiz-result"></div>
+        </div>`;
+      setTimeout(() => $("spellingInput")?.focus(), 60);
+    }
+
+    function revealSpellingHint(){
+      if(!currentItem || answerLocked) return;
+      spellingHintUsed = true;
+      const word = currentItem.word.word;
+      $("spellingHintChip").textContent =
+        `首字母 ${word.charAt(0).toUpperCase()} · 共 ${word.length} 个字母`;
+      $("spellingInput").placeholder =
+        `${word.charAt(0).toUpperCase()}${" _".repeat(Math.max(0, word.length - 1))}`;
+    }
+
+    function submitSpellingAnswer(){
+      if(answerLocked || !currentItem) return;
+      const input = $("spellingInput")?.value.trim() || "";
+      if(!input){
+        toast("先把你记得的拼写写出来");
+        return;
+      }
+
+      hideModeButtons();
+      const correct =
+        normalizeEnglishAnswer(input) ===
+        normalizeEnglishAnswer(currentItem.word.word);
+
+      revealCurrentAnswer();
+      if(correct && !spellingHintUsed){
+        finalizeAnswer("known", false);
+      }else if(correct){
+        finalizeAnswer("fuzzy", true);
+      }else{
+        finalizeAnswer("unknown", true);
+      }
+
+      $("spellingInput").disabled = true;
+      $("spellingResult").innerHTML = correct
+        ? spellingHintUsed
+          ? `拼对了，但使用了提示，本词已进入错题本等待巩固。<br><strong>${escapeHTML(currentItem.word.word)}</strong>`
+          : `拼写正确：<strong>${escapeHTML(currentItem.word.word)}</strong>`
+        : `拼写不对。正确答案：<strong>${escapeHTML(currentItem.word.word)}</strong><br>已加入错题本。`;
+      $("spellingResult").innerHTML +=
+        '<button class="primary" style="margin-top:12px;width:100%" onclick="advanceAfterAnswer()">下一词</button>';
+    }
+
+    function giveUpSpelling(){
+      if(answerLocked || !currentItem) return;
+      hideModeButtons();
+      revealCurrentAnswer();
+      finalizeAnswer("unknown", true);
+      $("spellingResult").innerHTML =
+        `正确拼写：<strong>${escapeHTML(currentItem.word.word)}</strong><br>已加入错题本，明天开始复习。`
+        + '<button class="primary" style="margin-top:12px;width:100%" onclick="advanceAfterAnswer()">记住了，下一词</button>';
+      $("spellingInput").disabled = true;
     }
 
     function chooseKnowledgeMode(type){
@@ -2679,7 +3292,7 @@
             role:"user",
             content:`讲解单词 ${w.word}。全部词书释义：${w.meaning}。常用词组：${
               (w.phrases || []).slice(0, 8).map(item => `${item.phrase}=${item.translation}`).join("；") || "暂无"
-            }。请依次给出：1.不同词义之间的区别；2.本例句实际使用了哪个词义或固定搭配；3.一个记忆钩子；4.一个自然且适合四六级水平的英文例句及中文翻译；5.最容易混淆的词。`
+            }。请依次给出：1.不同词义之间的区别；2.本例句实际使用了哪个词义或固定搭配；3.适合写作的可靠句型（用 sb、sth、do、doing 表示，禁止编造）；4.一个记忆钩子；5.一个自然且适合四六级水平的英文例句及中文翻译；6.最容易混淆的词。`
           }
         ]);
         openModal("Daddy 讲讲", explanation);
@@ -2996,7 +3609,7 @@
       getBook().dailyGoal = goal;
       buildStudyQueue();
       save();
-      $("modeSettingHint").textContent = pick(MODE_SETTING_HINTS);
+      $("modeSettingHint").textContent = pickFresh("modeSetting", MODE_SETTING_HINTS);
       toast(`${BOOK_CONFIG[state.currentBookId].name}已设置为每天 ${goal} 个词 ${pick(KAOMOJI.hello)}`);
     }
 
@@ -3056,26 +3669,14 @@
         hour < 18 ? "欢迎回来，今天继续往前走" :
         "晚上好，来小屋收一点进度";
       $("helloText").textContent = `${greeting}，月月 ${pick(KAOMOJI.hello)}`;
-      $("subtitleText").textContent = pick(SUBTITLE_LINES);
-      $("modeSettingHint").textContent = pick(MODE_SETTING_HINTS);
-      $("roomCaption").textContent = pick(ROOM_IDLE_LINES);
-      $("heroQuote").textContent = pick([
-        "今天背一点，奖励墙就离解锁更近一点。",
-        "认真学习的小朋友，会得到偏心奖励。",
-        "先背十个词，再准你盯着奖励看。",
-        "月亮会一点点变亮，你也会一点点变厉害。",
-        "听说连续点五下月亮，小屋会说悄悄话。",
-        "星星好像也能点，只是它比月亮更难哄。",
-        "遇见 moon、love、secret 之类的词，别急着划走。",
-        "不认识就直接看答案，诚实比假装会更快。",
-        "今天可能会抽到中→英，拼写才是真正的分界点。",
-        "错题本已经自动按 A—Z 排好，至少它比我们有秩序。",
-        "点“词根词缀”，把长单词拆成几块再记。",
-        "做一次词汇量测试，看看这间小屋已经装下多少词。",
-        "背词不是一次记住，是在忘记之前多见几次。",
-        "先完成一组，再决定今天要不要加量。",
-        "奖励不是作弊，它只是很懂怎么哄你继续。"
-      ]);
+      $("subtitleText").textContent = pickFresh("subtitle", SUBTITLE_LINES);
+      $("roomCaption").textContent = pickFresh("roomIdle", ROOM_IDLE_LINES);
+      refreshPageCopy("home");
+      refreshPageCopy("vocabtest");
+      refreshPageCopy("notebook");
+      refreshPageCopy("rewards");
+      refreshPageCopy("settings");
+      startSubtitleRotation();
 
       sessionDirection = getBook().lastDirection || "en-zh";
       renderAll();
