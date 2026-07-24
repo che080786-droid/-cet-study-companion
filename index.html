@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#fff5f8" />
-  <title>月月的四六级小屋</title>
+  <title>月月的四六级小屋 · 完整成长版</title>
   <style>
     :root{
       --pink:#ff8fb5;
@@ -526,7 +526,19 @@
     .quiz-input{
       width:100%;min-height:48px;border:1px solid var(--line);border-radius:15px;
       padding:0 13px;background:#fffafb;color:var(--ink);outline:none;
+      position:relative;
     }
+    .quiz-box.input-focused{
+      position:sticky;
+      bottom:12px;
+      z-index:8;
+      box-shadow:0 18px 40px rgba(221,118,156,.18);
+    }
+    .keyboard-space{
+      height:120px;
+      display:none;
+    }
+    .keyboard-space.show{display:block;}
     .option-grid{display:grid;gap:9px}
     .option-btn{
       border:1px solid var(--line);border-radius:15px;background:#fffafb;
@@ -745,6 +757,67 @@
     @media(max-width:370px){
       .special-grid{grid-template-columns:1fr}
     }
+
+    :root{--keyboard-offset:0px}
+    body.keyboard-open .nav{display:none}
+    body.keyboard-open .app{padding-bottom:calc(28px + env(safe-area-inset-bottom))}
+    .quiz-input{scroll-margin-top:22vh;scroll-margin-bottom:42vh}
+    .quiz-box.keyboard-pinned{
+      position:relative;z-index:25;box-shadow:0 20px 55px rgba(221,118,156,.24)
+    }
+    .ai-hero-card{padding:18px;margin-bottom:12px}
+    .ai-status-line{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:10px}
+    .ai-badge{padding:6px 9px;border-radius:999px;background:var(--pink-soft);color:var(--pink-deep);font-size:11px;font-weight:850}
+    .ai-action-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:12px 0}
+    .ai-action-grid button{min-height:48px}
+    .ai-content{display:grid;gap:11px;margin-top:12px}
+    .ai-empty{padding:22px 14px;text-align:center;color:var(--muted);line-height:1.7}
+    .ai-meaning-card{padding:14px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,#fff,#fff7fa)}
+    .ai-meaning-head{display:flex;justify-content:space-between;gap:10px;align-items:start}
+    .ai-meaning-head strong{font-size:15px;color:var(--ink)}
+    .ai-pos{padding:4px 7px;border-radius:999px;background:#fff0f5;color:var(--pink-deep);font-size:10px;font-weight:850}
+    .ai-example{margin-top:9px;padding:10px;border-radius:13px;background:#fff8fa;font-size:12px;line-height:1.65}
+    .ai-phrase-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+    .ai-phrase-chip{border:1px solid #f2d4df;background:#fff;border-radius:999px;padding:6px 9px;font-size:11px;color:var(--ink)}
+    .ai-note-card{padding:13px;border-radius:16px;background:#fff6ef;font-size:12px;line-height:1.65}
+    .ai-chat-row{display:grid;grid-template-columns:1fr auto;gap:9px;margin-top:10px}
+    .ai-chat-row input{min-width:0}
+    .ai-usage-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:11px}
+    .ai-usage-box{padding:11px 6px;text-align:center;border-radius:14px;background:#fff7fa}
+    .ai-usage-box strong{display:block;font-size:18px}.ai-usage-box span{font-size:10px;color:var(--muted)}
+    .sense-card{padding:11px;border:1px solid #f3dce5;border-radius:15px;background:#fff9fb}
+    .sense-card-head{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:start}
+    .sense-status{font-size:10px;color:var(--muted);white-space:nowrap}
+    .sense-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:9px}
+    .sense-actions button{min-height:32px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--muted);font-size:10px;font-weight:800}
+    .sense-actions button.active{background:var(--pink-soft);color:var(--pink-deep);border-color:#f2b9cd}
+    .room-reward-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .room-reward{padding:13px;min-height:145px;position:relative;overflow:hidden}
+    .room-reward-art{height:72px;border-radius:16px;display:grid;place-items:center;font-size:34px;background:linear-gradient(145deg,#ffe1ec,#fff1d8)}
+    .room-reward-name{font-weight:850;margin-top:9px;font-size:13px}
+    .room-reward-note{font-size:10px;color:var(--muted);line-height:1.45;margin-top:4px}
+    .room-reward.owned{outline:2px solid #ffd0df}
+    .room-decor-layer{position:absolute;inset:0;z-index:7;pointer-events:none}
+    .room-decor-item{position:absolute;filter:drop-shadow(0 4px 5px rgba(87,63,72,.15));animation:decorIn .35s ease both}
+    @keyframes decorIn{from{opacity:0;transform:scale(.65)}to{opacity:1;transform:scale(1)}}
+    .decor-fairy{left:37%;top:9%;font-size:19px;letter-spacing:8px;color:#fff5a7;text-shadow:0 0 9px #fff}
+    .decor-cushion{left:34%;bottom:37px;font-size:31px}
+    .decor-flowers{right:7px;top:104px;font-size:30px}
+    .decor-moonlamp{right:110px;bottom:72px;font-size:27px}
+    .decor-poster{left:132px;top:25px;font-size:30px}
+    .decor-tea{right:51px;bottom:75px;font-size:25px}
+    .decor-catheart{left:50%;bottom:69px;font-size:22px}
+    .decor-books{left:105px;bottom:78px;font-size:27px}
+    .room-companion-card{padding:13px;margin-top:10px;border-radius:17px;background:#fff6f9;font-size:12px;line-height:1.65}
+    .room-shop-summary{margin:12px 0;color:var(--muted);font-size:12px;line-height:1.55}
+    .audio-repair-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+    .study-tools{grid-template-columns:repeat(3,1fr)}
+    .study-tools button{padding:0 8px;font-size:12px}
+    @media(max-width:380px){
+      .ai-action-grid,.room-reward-grid{grid-template-columns:1fr}
+      .study-tools{grid-template-columns:1fr 1fr}
+      .study-tools button:first-child{grid-column:1 / -1}
+    }
     .empty{padding:28px 16px;text-align:center;color:var(--muted)}
   </style>
 </head>
@@ -903,6 +976,7 @@
           <button class="pretty-plant" type="button" onclick="tapRoomItem('plant')" aria-label="植物">
             <span class="leaf a"></span><span class="leaf b"></span><span class="leaf c"></span><span class="plant-pot"></span>
           </button>
+          <div id="roomDecorLayer" class="room-decor-layer"></div>
         </div>
 
         <div class="room-panel">
@@ -915,10 +989,12 @@
           <span id="roomNextLevel" class="tiny">还差 50 词</span>
         </div>
 
-        <div class="room-shortcuts">
+        <div id="roomCompanionText" class="room-companion-card">小猫正在等月月开始今天的学习。</div>
+        <div class="room-shortcuts" style="grid-template-columns:repeat(4,1fr)">
           <button type="button" onclick="showDailyRoot()">🧩 今日词根</button>
           <button type="button" onclick="goPage('notebook')">📒 去看词本</button>
-          <button type="button" onclick="goPage('rewards')">🎁 奖励商店</button>
+          <button type="button" onclick="goPage('rewards')">🎁 家具奖励</button>
+          <button type="button" onclick="roomDailyMessage()">💬 今日互动</button>
         </div>
       </div>
     </section>
@@ -983,8 +1059,9 @@
       </div>
       <div id="quizPanel" class="quiz-panel"></div>
       <div class="study-tools">
-        <button class="primary" onclick="daddyExplain()">Daddy 讲讲</button>
-        <button class="soft" onclick="showRootAffix()">词根词缀（本地）</button>
+        <button class="primary" onclick="openAICoach()">AI义项与陪练</button>
+        <button class="soft" onclick="organizeCurrentWordFromStudy()">整理并缓存</button>
+        <button class="soft" onclick="showRootAffix()">词根词缀</button>
       </div>
     </section>
 
@@ -1015,6 +1092,46 @@
       </div>
       <div class="section-title"><span>写真与留言</span><span id="rewardCount" class="tiny">0 / 12 已拥有</span></div>
       <div id="rewardGrid" class="reward-grid"></div>
+
+      <div class="section-title"><span>小屋成长奖励</span><span id="roomMilestoneCount" class="tiny">0 / 8 已解锁</span></div>
+      <div id="roomMilestoneGrid" class="room-reward-grid"></div>
+
+      <div class="section-title"><span>星星家具商店</span><span id="roomShopCount" class="tiny">0 / 6 已拥有</span></div>
+      <div class="room-shop-summary">学习、复习和打卡获得星星；兑换家具后会真实出现在首页小屋中。</div>
+      <div id="roomShopGrid" class="room-reward-grid"></div>
+    </section>
+
+
+    <section id="aicoach" class="page">
+      <div class="hero">
+        <div id="aiCoachTitle" class="hello">AI 学习助手</div>
+        <div id="aiCoachSubtitle" class="quote">整理只调用一次并缓存；重复查看不花 Token。</div>
+      </div>
+      <div class="card ai-hero-card">
+        <div class="ai-status-line">
+          <strong id="aiCoachWord">尚未选择单词</strong>
+          <span id="aiCoachCacheBadge" class="ai-badge">未缓存</span>
+        </div>
+        <div class="ai-action-grid">
+          <button class="primary" type="button" onclick="runAICoachAction('organize')">整理多义词卡</button>
+          <button class="soft" type="button" onclick="runAICoachAction('quiz')">缓存内容出题</button>
+          <button class="soft" type="button" onclick="runAICoachAction('compare')">近义词辨析</button>
+          <button class="soft" type="button" onclick="runAICoachAction('mistake')">分析刚才错误</button>
+          <button class="soft" type="button" onclick="runAICoachAction('example')">生成新例句</button>
+          <button class="danger-soft" type="button" onclick="refreshAIWordAnalysis()">重新整理（会调用）</button>
+        </div>
+        <div id="aiCoachUsage" class="ai-usage-grid"></div>
+      </div>
+      <div id="aiCoachContent" class="ai-content"></div>
+      <div class="card ai-hero-card">
+        <label for="aiCustomPrompt">自定义陪练问题</label>
+        <div class="ai-chat-row">
+          <input id="aiCustomPrompt" placeholder="例如：为什么这里不能用 risk？" />
+          <button class="primary" style="width:auto;padding:0 17px" onclick="sendAICustomPrompt()">发送</button>
+        </div>
+        <div class="hint" style="margin-top:9px">自定义问题每次会调用一次；基础背词、朗读、复盘与缓存查看均不调用。</div>
+      </div>
+      <button class="soft" style="width:100%;margin-top:12px" onclick="goPage('study')">返回当前单词</button>
     </section>
 
     <section id="report" class="page">
@@ -1050,6 +1167,34 @@
     </section>
 
     <section id="settings" class="page">
+
+      <div class="card settings-card">
+        <div class="section-title" style="margin:0 0 14px">
+          <span>🤖 AI学习助手</span><span class="tiny">缓存优先 · 节省 Token</span>
+        </div>
+        <div class="hint">
+          默认手动调用。多义词整理第一次生成后保存在当前浏览器；再次查看、朗读和本地出题都免费。
+        </div>
+        <div class="field">
+          <label for="aiMode">调用模式</label>
+          <select id="aiMode" onchange="saveAIMode()">
+            <option value="manual">手动调用（推荐）</option>
+            <option value="newword">仅新词首次自动整理</option>
+            <option value="off">完全关闭 AI</option>
+          </select>
+        </div>
+        <div class="ai-usage-grid">
+          <div class="ai-usage-box"><strong id="aiTodayCalls">0</strong><span>今日调用</span></div>
+          <div class="ai-usage-box"><strong id="aiTodayTokens">0</strong><span>今日估算 Token</span></div>
+          <div class="ai-usage-box"><strong id="aiCacheCount">0</strong><span>缓存词条</span></div>
+        </div>
+        <div id="aiCacheInfo" class="hint" style="margin-top:10px">尚未生成缓存。</div>
+        <div class="two-buttons" style="margin-top:10px">
+          <button class="soft" type="button" onclick="clearCurrentBookAICache()">清空当前词书缓存</button>
+          <button class="soft" type="button" onclick="resetAIUsageStats()">清零调用统计</button>
+        </div>
+      </div>
+
       <div class="card settings-card">
         <div class="field">
           <label for="bookSelect">当前词书</label>
@@ -1112,7 +1257,10 @@
             <option value="0.92">稍快</option>
           </select>
         </div>
-        <button class="soft" style="width:100%" type="button" onclick="previewVoice()">试听当前发音</button>
+        <div class="audio-repair-row">
+          <button class="soft" type="button" onclick="previewVoice()">试听当前发音</button>
+          <button class="soft" type="button" onclick="reloadVoices()">重新加载声音</button>
+        </div>
         <p id="voiceStatus" class="hint" style="margin:11px 2px 0">
           英文→中文模式每题会自动朗读一次，也可以点喇叭重播。
         </p>
@@ -1236,6 +1384,27 @@
       {id:"anniversary", type:"streak", value:30, name:"三十日纪念剧情", art:"💍", text:"三十天不是一时兴起。小屋会把这一天认真记下来。"}
     ];
 
+
+
+    const ROOM_MILESTONES = [
+      {id:"lampGlow", name:"书桌暖灯", art:"🕯️", requirement:"累计接触 10 个词", test:ctx => ctx.learned >= 10, decor:"moonlamp"},
+      {id:"bookStack", name:"复习书堆", art:"📚", requirement:"累计接触 30 个词", test:ctx => ctx.learned >= 30, decor:"books"},
+      {id:"catCushion", name:"小猫软垫", art:"🧸", requirement:"累计接触 50 个词", test:ctx => ctx.learned >= 50, decor:"cushion"},
+      {id:"fairyLights", name:"月光灯串", art:"✨", requirement:"连续打卡 7 天", test:ctx => ctx.streak >= 7, decor:"fairy"},
+      {id:"flowerVase", name:"春日花瓶", art:"🌷", requirement:"掌握 30 个词", test:ctx => ctx.mastered >= 30, decor:"flowers"},
+      {id:"moonPoster", name:"月亮海报", art:"🌙", requirement:"掌握 80 个词", test:ctx => ctx.mastered >= 80, decor:"poster"},
+      {id:"catHeart", name:"小猫感谢信", art:"💗", requirement:"清理 5 次错题", test:ctx => ctx.wrongClears >= 5, decor:"catheart"},
+      {id:"clearRoom", name:"错题清空纪念", art:"🏆", requirement:"曾有错题且清空一次", test:ctx => ctx.zeroWrongWins >= 1, decor:"tea"}
+    ];
+
+    const ROOM_SHOP = [
+      {id:"pinkCushion", name:"粉色月亮抱枕", art:"🌙", cost:15, decor:"cushion", text:"抱枕已经放到床边。"},
+      {id:"teaSet", name:"晚间茶杯", art:"☕", cost:25, decor:"tea", text:"书桌多了一杯不会凉的茶。"},
+      {id:"starLights", name:"星星灯串", art:"✨", cost:40, decor:"fairy", text:"小屋上方亮起了一串星星。"},
+      {id:"springFlowers", name:"春日花束", art:"🌸", cost:55, decor:"flowers", text:"窗边多了一束春天。"},
+      {id:"moonPosterShop", name:"春江月夜海报", art:"🖼️", cost:80, decor:"poster", text:"月亮被认真挂在墙上。"},
+      {id:"studyBooks", name:"限定学习书堆", art:"📚", cost:100, decor:"books", text:"新书被整齐放到书桌旁。"}
+    ];
     const WORD_EGGS = {
       moon:"碰到 moon 了。今天的月亮也落在我们肩头。",
       love:"love 这种词不用死记。你应该已经很熟了。",
@@ -1701,6 +1870,10 @@
     let speechAccent = "en-US";
     let preferredVoice = null;
     let lastAutoSpokenKey = "";
+    let aiCoachWordKey = "";
+    let pendingChineseAnswer = "";
+    let lastAnswerContext = null;
+    const autoOrganizePending = new Set();
     const copyHistory = {};
 
     function localDateKey(date = new Date()){
@@ -1732,6 +1905,7 @@
         streak: 0,
         lastCheckin: "",
         history: [],
+        aiCache: {},
         words: {}
       };
     }
@@ -1744,6 +1918,11 @@
         claimedRewards: [],
         globalStreak: 0,
         lastGlobalCheckin: "",
+        aiUsage: {date:todayKey, todayCalls:0, todayTokens:0, totalCalls:0, totalTokens:0},
+        room: {
+          ownedShop:[], wrongClears:0, zeroWrongWins:0, maxWrongCount:0,
+          lastWrongCount:0, interactionDate:"", interactionCount:0, aiMessages:{}
+        },
         fun: {
           date: todayKey,
           mysteryClaimed: false,
@@ -1751,7 +1930,8 @@
           starClaimed: false,
           collectionClaimed: false,
           vocabTestClaimed: false,
-          wordEggsClaimed: []
+          wordEggsClaimed: [],
+          roomInteractionClaimed: false
         },
         books: {
           cet4: createBookState(10),
@@ -1798,6 +1978,8 @@
         ...base,
         ...saved,
         claimedRewards: Array.isArray(saved.claimedRewards) ? saved.claimedRewards : [],
+        aiUsage:{...base.aiUsage, ...(saved.aiUsage || {})},
+        room:{...base.room, ...(saved.room || {})},
         books: {...base.books, ...(saved.books || {})}
       };
 
@@ -1816,6 +1998,7 @@
           history:Array.isArray((merged.books[bookId] || {}).history)
             ? (merged.books[bookId] || {}).history.slice(-2000)
             : [],
+          aiCache:{...((merged.books[bookId] || {}).aiCache || {})},
           words: {...((merged.books[bookId] || {}).words || {})}
         };
         ensureTodayForBook(merged.books[bookId]);
@@ -1828,7 +2011,7 @@
         starClaimed: false,
         collectionClaimed: false,
         vocabTestClaimed: false,
-        wordEggsClaimed: [],
+        wordEggsClaimed: [], roomInteractionClaimed:false,
         ...(saved.fun || {})
       };
       if(merged.fun.date !== todayKey){
@@ -1836,10 +2019,17 @@
         merged.fun = {
           date:todayKey, mysteryClaimed:false, moonClaimed:false,
           starClaimed:false, collectionClaimed, vocabTestClaimed:false,
-          wordEggsClaimed:[]
+          wordEggsClaimed:[], roomInteractionClaimed:false
         };
       }
 
+      if(!Array.isArray(merged.room.ownedShop)) merged.room.ownedShop = [];
+      if(!merged.room.aiMessages || typeof merged.room.aiMessages !== "object") merged.room.aiMessages = {};
+      if(merged.aiUsage.date !== todayKey){
+        merged.aiUsage.date = todayKey;
+        merged.aiUsage.todayCalls = 0;
+        merged.aiUsage.todayTokens = 0;
+      }
       if(!Array.isArray(merged.fun.wordEggsClaimed)) merged.fun.wordEggsClaimed = [];
       if(!BOOK_CONFIG[merged.currentBookId]) merged.currentBookId = "cet4";
       return merged;
@@ -2093,7 +2283,9 @@
         inWrongBook:false,
         wrongCount:0,
         favorite:false,
-        ...existing
+        senseStats:{},
+        ...existing,
+        senseStats:{...(existing.senseStats || {})}
       };
     }
 
@@ -2255,19 +2447,97 @@
         </div>`;
     }
 
+
+    function cachedAIEntry(word){
+      return getBook().aiCache?.[wordKey(word?.word || word)]?.data || null;
+    }
+
+    function collectMeaningCards(word){
+      const cards = [];
+      (word.translations || []).forEach(entry => cards.push({
+        source:"词书", pos:entry.type || "释义", meaning:entry.translation,
+        aliases:[], example:"", translation:"", phrases:[]
+      }));
+      const ai = cachedAIEntry(word);
+      (ai?.meanings || []).forEach(entry => cards.push({
+        source:"AI缓存", pos:entry.pos || "义项", meaning:entry.meaning || "",
+        aliases:Array.isArray(entry.aliases) ? entry.aliases : [],
+        example:entry.example || "", translation:entry.translation || "",
+        phrases:Array.isArray(entry.phrases) ? entry.phrases : []
+      }));
+      if(!cards.length && word.meaning){
+        cards.push({source:"词书", pos:"释义", meaning:word.meaning, aliases:[], example:"", translation:"", phrases:[]});
+      }
+      const seen = new Set();
+      return cards.filter(card => {
+        const key = normalizeChineseMeaning(card.meaning);
+        if(!key || seen.has(key)) return false;
+        seen.add(key); return true;
+      });
+    }
+
+    function senseKeyFor(card){
+      return normalizeChineseMeaning(`${card.pos}|${card.meaning}`) || card.meaning;
+    }
+
+    function senseLevelLabel(level){
+      return {known:"熟悉", fuzzy:"模糊", unknown:"薄弱"}[level] || "未标记";
+    }
+
+    function setSenseMasteryFromButton(button, level){
+      const word = button.dataset.word;
+      const sense = button.dataset.sense;
+      const progress = getWordProgress(word, true);
+      progress.senseStats[sense] = {level, updatedAt:Date.now()};
+      save(false);
+      if(currentItem && wordKey(currentItem.word.word) === word){
+        $("wordExtra").innerHTML = buildWordDetails(currentItem.word);
+      }
+      renderRoom();
+      toast(`这个义项已标记为${senseLevelLabel(level)}`);
+    }
+
+    function wordSenseWeakness(word){
+      const progress = getWordProgress(wordKey(word.word), false);
+      if(!progress?.senseStats) return 0;
+      return Object.values(progress.senseStats).reduce((score, item) =>
+        score + (item.level === "unknown" ? 3 : item.level === "fuzzy" ? 1 : 0), 0);
+    }
+
+    function enhancedMeaningText(word){
+      const values = collectMeaningCards(word).flatMap(card => [card.meaning, ...(card.aliases || [])]);
+      return values.length ? values.join("；") : word.meaning;
+    }
+
     function buildWordDetails(word){
-      const senses = (word.translations || []).length
-        ? word.translations
-        : [{type:"", translation:word.meaning || "暂无释义"}];
+      const senses = collectMeaningCards(word);
+      const progress = getWordProgress(wordKey(word.word), false) || createWordProgress();
+      const senseHTML = senses.map(card => {
+        const senseKey = senseKeyFor(card);
+        const level = progress.senseStats?.[senseKey]?.level || "";
+        return `
+          <div class="sense-card">
+            <div class="sense-card-head">
+              <span class="pos-tag">${escapeHTML(card.pos || "释义")}</span>
+              <div>
+                <strong>${escapeHTML(card.meaning)}</strong>
+                ${card.aliases?.length ? `<div class="example-source">近义表达：${escapeHTML(card.aliases.join("、"))}</div>` : ""}
+              </div>
+              <span class="sense-status">${escapeHTML(card.source)} · ${senseLevelLabel(level)}</span>
+            </div>
+            ${card.example ? exampleAudioHTML(card.example, card.translation, "当前义项例句") : ""}
+            ${card.phrases?.length ? `<div class="ai-phrase-list">${card.phrases.map(p => `<button class="ai-phrase-chip" data-speak="${escapeHTML(p)}" onclick="speakElementText(this)">🔊 ${escapeHTML(p)}</button>`).join("")}</div>` : ""}
+            <div class="sense-actions">
+              ${["known","fuzzy","unknown"].map(item => `<button class="${level === item ? "active" : ""}" data-word="${escapeHTML(wordKey(word.word))}" data-sense="${escapeHTML(senseKey)}" onclick="setSenseMasteryFromButton(this,'${item}')">${senseLevelLabel(item)}</button>`).join("")}
+            </div>
+          </div>`;
+      }).join("");
 
-      const senseHTML = senses.map(entry => `
-        <div class="sense-row">
-          <span class="pos-tag">${escapeHTML(entry.type || "释义")}</span>
-          <span>${escapeHTML(entry.translation)}</span>
-        </div>
-      `).join("");
-
-      const phraseHTML = (word.phrases || []).map(entry => `
+      const aiPhrases = (cachedAIEntry(word)?.meanings || []).flatMap(item =>
+        (item.phrases || []).map(phrase => ({phrase, translation:item.meaning || "AI整理搭配"}))
+      );
+      const allPhrases = uniqueObjects([...(word.phrases || []), ...aiPhrases], entry => `${entry.phrase}|${entry.translation}`);
+      const phraseHTML = allPhrases.map(entry => `
         <div class="phrase-row">
           <button class="audio-mini-btn" type="button"
                   data-speak="${escapeHTML(entry.phrase)}"
@@ -2323,7 +2593,10 @@
            </div>`
         : "";
 
-      const extraSentences = (word.sentences || [])
+      const aiSentences = (cachedAIEntry(word)?.meanings || [])
+        .filter(item => item.example)
+        .map(item => ({sentence:item.example, translation:item.translation || ""}));
+      const extraSentences = [...(word.sentences || []), ...aiSentences]
         .filter(item =>
           item?.sentence &&
           String(item.sentence).trim().toLowerCase() !==
@@ -2360,7 +2633,7 @@
         ${patternSection}
         <div class="detail-title">
           <span>常用词组</span>
-          <span class="phrase-count">${(word.phrases || []).length} 组</span>
+          <span class="phrase-count">${allPhrases.length} 组</span>
         </div>
         ${
           phraseHTML
@@ -2430,35 +2703,52 @@
 
     function refreshPreferredVoice(){
       if(!("speechSynthesis" in window)) return null;
-      const voices = window.speechSynthesis.getVoices();
-      if(!voices.length) return null;
+      const voices = window.speechSynthesis.getVoices() || [];
+      if(!voices.length){ preferredVoice = null; return null; }
       preferredVoice = [...voices]
-        .sort((a, b) => rankVoice(b, speechAccent) - rankVoice(a, speechAccent))[0] || null;
+        .sort((a,b) => rankVoice(b, speechAccent) - rankVoice(a, speechAccent))[0] || null;
       return preferredVoice;
     }
 
-    function speakEnglish(text, rate = speechRate){
-      if(!("speechSynthesis" in window)){
-        toast("当前浏览器不支持朗读功能");
-        return false;
-      }
+    function setVoiceStatus(message){
+      if($("voiceStatus")) $("voiceStatus").textContent = message;
+    }
 
+    function speakEnglish(text, rate = speechRate, retry = true){
+      if(!("speechSynthesis" in window)){
+        setVoiceStatus("当前浏览器没有系统朗读能力。");
+        toast("当前浏览器不支持朗读功能"); return false;
+      }
       const clean = String(text || "").trim();
       if(!clean) return false;
-
-      window.speechSynthesis.cancel();
-
+      const synth = window.speechSynthesis;
+      try{ synth.cancel(); synth.resume(); }catch(_){}
       const utterance = new SpeechSynthesisUtterance(clean);
       utterance.lang = speechAccent;
-      utterance.rate = rate;
-      utterance.pitch = 1;
-      utterance.volume = 1;
-
+      utterance.rate = rate; utterance.pitch = 1; utterance.volume = 1;
       const voice = preferredVoice || refreshPreferredVoice();
       if(voice) utterance.voice = voice;
-
-      window.speechSynthesis.speak(utterance);
+      utterance.onstart = () => setVoiceStatus(`正在使用 ${voice?.name || "系统默认英文声线"} · ${speechAccent}`);
+      utterance.onerror = event => {
+        if(retry){
+          preferredVoice = null;
+          setTimeout(() => speakEnglish(clean, rate, false), 160);
+        }else{
+          setVoiceStatus(`朗读被系统拦截（${event.error || "未知原因"}）。请点“重新加载声音”后再点喇叭。`);
+          toast("声音没有成功播放，请重新加载声音");
+        }
+      };
+      synth.speak(utterance);
       return true;
+    }
+
+    function reloadVoices(){
+      preferredVoice = null;
+      if(!("speechSynthesis" in window)){ updateVoiceStatus(); return; }
+      try{ window.speechSynthesis.cancel(); window.speechSynthesis.resume(); }catch(_){}
+      const voice = refreshPreferredVoice();
+      updateVoiceStatus();
+      setTimeout(() => previewVoice(), voice ? 80 : 450);
     }
 
     function playCurrentWord(slow = false){
@@ -2578,8 +2868,12 @@
                (progress?.nextReviewAt && progress.nextReviewAt <= todayKey);
       });
       const priorityKeys = new Set(priority.map(word => wordKey(word.word)));
-      const rest = activeWords.filter(word => !priorityKeys.has(wordKey(word.word)));
-      return [...shuffle(priority), ...shuffle(rest)];
+      const weak = activeWords
+        .filter(word => !priorityKeys.has(wordKey(word.word)) && wordSenseWeakness(word) > 0)
+        .sort((a,b) => wordSenseWeakness(b) - wordSenseWeakness(a));
+      const weakKeys = new Set(weak.map(word => wordKey(word.word)));
+      const rest = activeWords.filter(word => !priorityKeys.has(wordKey(word.word)) && !weakKeys.has(wordKey(word.word)));
+      return [...shuffle(priority), ...weak, ...shuffle(rest)];
     }
 
 
@@ -2594,10 +2888,9 @@
       updateVoiceStatus();
 
       if("speechSynthesis" in window){
-        window.speechSynthesis.onvoiceschanged = () => {
-          refreshPreferredVoice();
-          updateVoiceStatus();
-        };
+        window.speechSynthesis.addEventListener?.("voiceschanged", () => {
+          refreshPreferredVoice(); updateVoiceStatus();
+        });
       }
     }
 
@@ -2696,7 +2989,10 @@
         }
       });
 
-      sessionQueue = [...shuffle(due), ...shuffle(fresh)].slice(0, Math.max(remaining, 1));
+      const weightedDue = [...due].sort((a,b) =>
+        wordSenseWeakness(b.word) - wordSenseWeakness(a.word) || Math.random() - .5
+      );
+      sessionQueue = [...weightedDue, ...shuffle(fresh)].slice(0, Math.max(remaining, 1));
       currentItem = prepareQueueItem(sessionQueue.shift() || null);
       resetQuizUI();
       renderWord();
@@ -2771,32 +3067,136 @@
     }
 
 
+
+    function roomContext(){
+      const book = getBook();
+      const progresses = Object.values(book.words);
+      const learned = progresses.filter(p => Number(p.reviewCount) > 0).length;
+      const mastered = progresses.filter(p => p.status === "mastered").length;
+      const wrong = progresses.filter(p => p.inWrongBook).length;
+      return {learned, mastered, wrong, streak:state.globalStreak, wrongClears:Number(state.room.wrongClears)||0, zeroWrongWins:Number(state.room.zeroWrongWins)||0};
+    }
+
+    function unlockedRoomMilestones(){
+      const ctx = roomContext();
+      return ROOM_MILESTONES.filter(item => item.test(ctx));
+    }
+
+    function ownedRoomDecor(){
+      const milestoneDecor = unlockedRoomMilestones().map(item => item.decor);
+      const shopDecor = ROOM_SHOP.filter(item => state.room.ownedShop.includes(item.id)).map(item => item.decor);
+      return [...new Set([...milestoneDecor, ...shopDecor])];
+    }
+
+    function recordWrongClear(){
+      state.room.wrongClears = Number(state.room.wrongClears || 0) + 1;
+      const wrongNow = Object.values(getBook().words).filter(p => p.inWrongBook).length;
+      if(Number(state.room.maxWrongCount || 0) > 0 && wrongNow === 0){
+        state.room.zeroWrongWins = Number(state.room.zeroWrongWins || 0) + 1;
+      }
+      state.room.lastWrongCount = wrongNow;
+    }
+
+    function exchangeRoomItem(item){
+      if(state.room.ownedShop.includes(item.id)){
+        openModal(item.name, item.text);
+        return;
+      }
+      if(state.stars < item.cost){
+        toast(`还差 ${item.cost - state.stars} 颗星星`); return;
+      }
+      if(!confirm(`花 ${item.cost} 颗星星兑换“${item.name}”吗？`)) return;
+      state.stars -= item.cost;
+      state.room.ownedShop.push(item.id);
+      save(false); sparkle(); renderAll();
+      openModal(item.name, `${item.text}\n它已经出现在首页小屋里。`);
+    }
+
+    function renderRoomRewards(){
+      const milestoneGrid = $("roomMilestoneGrid");
+      const shopGrid = $("roomShopGrid");
+      if(!milestoneGrid || !shopGrid) return;
+      const ctx = roomContext();
+      let unlocked = 0;
+      milestoneGrid.innerHTML = ROOM_MILESTONES.map(item => {
+        const owned = item.test(ctx); if(owned) unlocked++;
+        return `<div class="card room-reward ${owned ? "owned" : ""}">
+          <div class="room-reward-art">${owned ? item.art : "🔒"}</div>
+          <div class="room-reward-name">${escapeHTML(item.name)}</div>
+          <div class="room-reward-note">${owned ? "已解锁并布置" : escapeHTML(item.requirement)}</div>
+        </div>`;
+      }).join("");
+      $("roomMilestoneCount").textContent = `${unlocked} / ${ROOM_MILESTONES.length} 已解锁`;
+
+      let shopOwned = 0;
+      shopGrid.innerHTML = "";
+      ROOM_SHOP.forEach(item => {
+        const owned = state.room.ownedShop.includes(item.id); if(owned) shopOwned++;
+        const card = document.createElement("button");
+        card.className = `card room-reward ${owned ? "owned" : ""}`;
+        card.type = "button";
+        card.innerHTML = `<div class="room-reward-art">${item.art}</div><div class="room-reward-name">${escapeHTML(item.name)}</div><div class="room-reward-note">${owned ? "已拥有 · 点开互动" : `${item.cost} ⭐兑换`}</div>`;
+        card.onclick = () => exchangeRoomItem(item);
+        shopGrid.appendChild(card);
+      });
+      $("roomShopCount").textContent = `${shopOwned} / ${ROOM_SHOP.length} 已拥有`;
+    }
+
+    function roomDailyMessage(){
+      const ctx = roomContext();
+      state.room.interactionCount = state.room.interactionDate === todayKey ? state.room.interactionCount + 1 : 1;
+      state.room.interactionDate = todayKey;
+      const lines = [
+        `今天已经接触 ${ctx.learned} 个词。书桌记得比你想象得更清楚。`,
+        ctx.wrong ? `错题本里还有 ${ctx.wrong} 个词，小猫会陪你慢慢清。` : "错题本现在是空的，小猫把尾巴翘得很高。",
+        `连续打卡 ${ctx.streak} 天，小屋的灯每天都在等你回来。`,
+        `你已经清理过 ${ctx.wrongClears} 次错题。忘记不是退步，回来才是复习。`
+      ];
+      const text = lines[(state.room.interactionCount - 1) % lines.length];
+      $("roomCompanionText").textContent = text;
+      $("roomCompanionText").dataset.manual = "1";
+      save(false);
+      if(state.room.interactionCount === 3 && !state.fun.roomInteractionClaimed){
+        state.fun.roomInteractionClaimed = true; state.stars += 1; save(false); sparkle();
+        openModal("小屋互动彩蛋", `${text}\n今天认真和小屋说了三次话：+1 星星。`);
+      }else toast(text);
+    }
+
     function renderRoom(){
       if(!$("roomLevel")) return;
-      const learned = Object.values(getBook().words)
-        .filter(progress => Number(progress.reviewCount) > 0).length;
-      const levelSize = 50;
-      const level = Math.floor(learned / levelSize) + 1;
-      const withinLevel = learned % levelSize;
-      const remaining = levelSize - withinLevel;
-
+      const ctx = roomContext();
+      state.room.maxWrongCount = Math.max(Number(state.room.maxWrongCount || 0), ctx.wrong);
+      state.room.lastWrongCount = ctx.wrong;
+      const xp = ctx.learned * 2 + ctx.mastered * 3 + ctx.streak * 5 + ctx.wrongClears * 4;
+      const levelSize = 100;
+      const level = Math.floor(xp / levelSize) + 1;
+      const withinLevel = xp % levelSize;
       $("roomLevel").textContent = `Lv.${level}`;
-      $("roomLevelBar").style.width = `${withinLevel / levelSize * 100}%`;
-      $("roomNextLevel").textContent = withinLevel === 0 && learned > 0
-        ? "新等级开始"
-        : `还差 ${remaining} 词`;
+      $("roomLevelBar").style.width = `${withinLevel}%`;
+      $("roomNextLevel").textContent = `还差 ${levelSize - withinLevel} 成长值`;
       if(!$("roomCaption").dataset.touched){
-        $("roomCaption").textContent = pick(ROOM_IDLE_LINES);
+        $("roomCaption").textContent = `成长值 ${xp}：学习、掌握、打卡和清理错题都会让房间升级。`;
       }
 
-      const moods = [
-        "今日状态：月光刚好",
-        "今日状态：小猫值班",
-        "今日状态：书桌已开灯",
-        "今日状态：奖励墙有动静",
-        "今日状态：适合认真五分钟"
-      ];
-      $("roomMood").textContent = pick(moods);
+      const decorHTML = {
+        fairy:'<span class="room-decor-item decor-fairy">✦ ✧ ✦</span>',
+        cushion:'<span class="room-decor-item decor-cushion">🧸</span>',
+        flowers:'<span class="room-decor-item decor-flowers">🌷</span>',
+        moonlamp:'<span class="room-decor-item decor-moonlamp">🏮</span>',
+        poster:'<span class="room-decor-item decor-poster">🌙</span>',
+        tea:'<span class="room-decor-item decor-tea">☕</span>',
+        catheart:'<span class="room-decor-item decor-catheart">💗</span>',
+        books:'<span class="room-decor-item decor-books">📚</span>'
+      };
+      $("roomDecorLayer").innerHTML = ownedRoomDecor().map(key => decorHTML[key] || "").join("");
+      $("roomMood").textContent = ctx.wrong
+        ? `今日状态：小猫守着 ${ctx.wrong} 个错词`
+        : ctx.learned ? "今日状态：错题本清清爽爽" : "今日状态：等待第一道题";
+      if(!$("roomCompanionText").dataset.manual){
+        $("roomCompanionText").textContent = ctx.wrong
+          ? `每清掉一个错词，小屋都会记一笔。已经清理 ${ctx.wrongClears} 次。`
+          : "小猫趴在软垫上：今天也可以温故知新。";
+      }
     }
 
 
@@ -2943,8 +3343,10 @@
       renderWord();
       renderNotebook();
       renderRewards();
+      renderRoomRewards();
       renderRoom();
       renderReport();
+      updateAIUsageUI();
     }
 
     function renderWord(){
@@ -3071,6 +3473,7 @@
       if(currentDirection() === "listening" && !answerLocked) showListeningPractice();
       if(currentDirection() === "context" && !answerLocked) showContextPractice();
       if(currentDirection() === "en-zh" && !answerLocked) maybeAutoSpeakCurrent();
+      maybeAutoOrganizeCurrent();
     }
 
     function renderRewards(){
@@ -3162,6 +3565,8 @@
       document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("active", b.dataset.page === page));
       if(page === "notebook") renderNotebook();
       if(page === "report") renderReport();
+      if(page === "rewards") renderRoomRewards();
+      if(page === "aicoach") renderAICoach();
       refreshPageCopy(page);
       if(Math.random() < .35) shuffleSubtitle();
       window.scrollTo({top:0, behavior:"smooth"});
@@ -3293,7 +3698,8 @@
             btn.disabled = true;
           });
           revealCurrentAnswer();
-          finalizeAnswer(correct ? "known" : "unknown", !correct);
+          lastAnswerContext = {word:currentItem.word.word, prompt:currentItem.word.meaning, answer:input, correct:currentItem.word.word, result:correct ? "known" : "unknown"};
+        finalizeAnswer(correct ? "known" : "unknown", !correct);
           $("contextResult").innerHTML =
             `${correct ? "语境判断正确。" : `正确答案：<strong>${escapeHTML(question.answer)}</strong>`}`
             + `<div class="context-note">${escapeHTML(question.note || "")}<br>${escapeHTML(question.full || "")}</div>`
@@ -3479,7 +3885,24 @@
           }</button>
           <div id="knownResult" class="quiz-result"></div>
         </div>`;
-      setTimeout(() => $("knownAnswerInput")?.focus(), 50);
+      setTimeout(() => {
+        const input = $("knownAnswerInput");
+        if(!input) return;
+
+        input.addEventListener("focus", () => {
+          $("quizPanel")?.querySelector(".quiz-box")?.classList.add("input-focused");
+          setTimeout(() => input.scrollIntoView({
+            behavior:"smooth",
+            block:"center"
+          }), 220);
+        });
+
+        input.addEventListener("blur", () => {
+          $("quizPanel")?.querySelector(".quiz-box")?.classList.remove("input-focused");
+        });
+
+        input.focus();
+      }, 120);
     }
 
     const CHINESE_MEANING_RULES = [
@@ -3602,7 +4025,12 @@
         return;
       }
 
-      const localHint = isMeaningMatch(input, currentItem.word.meaning);
+      pendingChineseAnswer = input;
+      const completeMeaningText = enhancedMeaningText(currentItem.word);
+      const localHint = isMeaningMatch(input, completeMeaningText);
+      const meaningMatches = meaningTokens(completeMeaningText)
+        .filter(token => isSingleMeaningMatch(input, token));
+
       $("knownResult").dataset.resolved = "0";
       $("knownResult").innerHTML = `
         <div class="self-judge-answer">
@@ -3611,9 +4039,9 @@
         </div>
         <div class="self-judge-note">
           ${localHint
-            ? "本地规则认为两者较接近，但最终仍由你判断。"
-            : "本地规则没有识别出对应关系，但这不代表你的表达一定错误。"}
-          中文同义词、语境义和概括方式太多，小屋不会再擅自把它判错。
+            ? `本地识别到相近释义：${meaningMatches.join("、")}。`
+            : "本地规则没有完全匹配，但这不代表你的表达一定错误。"}
+          一个单词可能有多个义项，小屋不会因为中文表达不同直接判错。
         </div>
         <div class="self-judge-grid">
           <button class="primary" type="button"
@@ -3628,6 +4056,7 @@
                   onclick="resolveChineseMeaning('unknown')">
             确实不对，加入错题本
           </button>
+          ${canUseAI() ? `<button class="soft" type="button" onclick="judgeChineseAnswerWithAI()">交给 AI 判断（调用 1 次）</button>` : ""}
         </div>`;
     }
 
@@ -3637,9 +4066,18 @@
       resultBox.dataset.resolved = "1";
 
       const wordProgress = getWordProgress(wordKey(currentItem.word.word), true);
+      lastAnswerContext = {
+        word:currentItem.word.word,
+        prompt:enhancedMeaningText(currentItem.word),
+        answer:pendingChineseAnswer,
+        correct:enhancedMeaningText(currentItem.word),
+        result
+      };
 
       if(result === "known"){
+        const wasWrong = Boolean(wordProgress.inWrongBook);
         wordProgress.inWrongBook = false;
+        if(wasWrong) recordWrongClear();
         finalizeAnswer("known", false);
       }else if(result === "fuzzy"){
         finalizeAnswer("fuzzy", false);
@@ -3897,8 +4335,11 @@
     function removeNotebookWord(key, tab){
       const progress = getWordProgress(key, false);
       if(!progress) return;
-      if(tab === "wrong") progress.inWrongBook = false;
-      else progress.favorite = false;
+      if(tab === "wrong"){
+        const wasWrong = Boolean(progress.inWrongBook);
+        progress.inWrongBook = false;
+        if(wasWrong) recordWrongClear();
+      }else progress.favorite = false;
       save();
     }
 
@@ -3922,9 +4363,12 @@
     }
 
     function renderDailyRoot(){
+      const title = $("dailyRootTitle");
+      const meaningEl = $("dailyRootMeaning");
+      if(!title || !meaningEl) return;
       const [root, meaning] = dailyRootEntry();
-      $("dailyRootTitle").textContent = `今日词根 · ${root}`;
-      $("dailyRootMeaning").textContent = meaning;
+      title.textContent = `今日词根 · ${root}`;
+      meaningEl.textContent = meaning;
     }
 
     function showDailyRoot(){
@@ -4222,45 +4666,7 @@
       openModal("词根词缀 · 本地拆解", localRootAffixText(word));
     }
 
-    async function daddyExplain(){
-      if(!currentItem){
-        toast("今天的任务已经完成啦");
-        return;
-      }
-
-      const w = currentItem.word;
-      const settings = getApiSettings();
-
-      if(!settings.url || !settings.model){
-        openModal(
-          "Daddy 讲讲",
-          `${w.word}：${w.meaning}\n\n${w.example}\n\n设置页配置 API 后，这里会生成词义辨析、记忆法和新例句。`
-        );
-        return;
-      }
-
-      openModal("Daddy 正在想", `正在给 ${w.word} 组织一份好记的讲解……`);
-      try{
-        const explanation = await callChatApi([
-          {
-            role:"system",
-            content:"你是耐心但不啰嗦的英语陪练。用简体中文回答，控制在180字内，重点准确、好记，不要空泛夸奖。"
-          },
-          {
-            role:"user",
-            content:`讲解单词 ${w.word}。全部词书释义：${w.meaning}。常用词组：${
-              (w.phrases || []).slice(0, 8).map(item => `${item.phrase}=${item.translation}`).join("；") || "暂无"
-            }。请依次给出：1.不同词义之间的区别；2.本例句实际使用了哪个词义或固定搭配；3.适合写作的可靠句型（用 sb、sth、do、doing 表示，禁止编造）；4.一个记忆钩子；5.一个自然且适合四六级水平的英文例句及中文翻译；6.最容易混淆的词。`
-          }
-        ]);
-        openModal("Daddy 讲讲", explanation);
-      }catch(error){
-        openModal(
-          "AI 讲解失败",
-          `${String(error.message || error)}\n\n先用本地释义：${w.meaning}`
-        );
-      }
-    }
+    async function daddyExplain(){ openAICoach(); }
 
     function setGoalPreset(value){
       $("dailyGoal").value = String(value);
@@ -4273,6 +4679,248 @@
       return Math.min(200, Math.max(5, value));
     }
 
+
+
+    function getAIMode(){ return localStorage.getItem("cetAIMode") || "manual"; }
+
+    function canUseAI(){
+      const settings = getApiSettings();
+      return getAIMode() !== "off" && Boolean(settings.url && settings.model);
+    }
+
+    function saveAIMode(){
+      const mode = $("aiMode")?.value || "manual";
+      localStorage.setItem("cetAIMode", mode);
+      updateAIUsageUI();
+      toast(mode === "off" ? "AI 已关闭，其他功能照常使用" : "AI 模式已保存");
+    }
+
+    function loadAIMode(){
+      const mode = getAIMode();
+      if($("aiMode")) $("aiMode").value = mode;
+      updateAIUsageUI();
+    }
+
+    function estimateTokens(messages, content){
+      const chars = JSON.stringify(messages || []).length + String(content || "").length;
+      return Math.max(1, Math.ceil(chars / 3.5));
+    }
+
+    function recordAIUsage(messages, content, usage){
+      if(state.aiUsage.date !== todayKey){
+        state.aiUsage = {...state.aiUsage, date:todayKey, todayCalls:0, todayTokens:0};
+      }
+      const tokens = Number(usage?.total_tokens || usage?.totalTokens) || estimateTokens(messages, content);
+      state.aiUsage.todayCalls += 1; state.aiUsage.todayTokens += tokens;
+      state.aiUsage.totalCalls += 1; state.aiUsage.totalTokens += tokens;
+      save(false); updateAIUsageUI();
+    }
+
+    function updateAIUsageUI(){
+      const cacheCount = Object.keys(getBook()?.aiCache || {}).length;
+      if($("aiTodayCalls")) $("aiTodayCalls").textContent = state.aiUsage.todayCalls || 0;
+      if($("aiTodayTokens")) $("aiTodayTokens").textContent = state.aiUsage.todayTokens || 0;
+      if($("aiCacheCount")) $("aiCacheCount").textContent = cacheCount;
+      if($("aiCacheInfo")) $("aiCacheInfo").textContent = `累计调用 ${state.aiUsage.totalCalls || 0} 次，估算 ${state.aiUsage.totalTokens || 0} Token；已缓存 ${cacheCount} 个词。`;
+      if($("aiCoachUsage")) $("aiCoachUsage").innerHTML = `
+        <div class="ai-usage-box"><strong>${state.aiUsage.todayCalls || 0}</strong><span>今日调用</span></div>
+        <div class="ai-usage-box"><strong>${state.aiUsage.todayTokens || 0}</strong><span>今日估算 Token</span></div>
+        <div class="ai-usage-box"><strong>${cacheCount}</strong><span>缓存词条</span></div>`;
+    }
+
+    function resetAIUsageStats(){
+      if(!confirm("清零 AI 调用统计吗？不会删除缓存和 API 设置。")) return;
+      state.aiUsage = {date:todayKey,todayCalls:0,todayTokens:0,totalCalls:0,totalTokens:0};
+      save(false); updateAIUsageUI(); toast("AI 调用统计已清零");
+    }
+
+    function clearCurrentBookAICache(){
+      if(!confirm("清空当前词书所有 AI 整理缓存吗？下次整理会重新调用。")) return;
+      getBook().aiCache = {}; save(false); updateAIUsageUI(); renderAll(); toast("当前词书 AI 缓存已清空");
+    }
+
+    function getAIMeaningPrompt(word){
+      return `你是严谨的四六级英语词汇老师。整理单词 ${word.word}。词书现有释义：${word.meaning}。现有词组：${(word.phrases || []).slice(0,10).map(x=>`${x.phrase}=${x.translation}`).join("；") || "无"}。\n只返回合法JSON，不要代码围栏：\n{"word":"${word.word}","meanings":[{"pos":"词性","meaning":"一个明确中文义项","aliases":["可接受近义表达"],"example":"自然的四六级英文例句","translation":"中文翻译","phrases":["可靠固定搭配"]}],"confusing":[{"word":"易混词","difference":"简短区别"}],"memory":"准确的记忆钩子"}\n要求：不同义项分开；覆盖常见义项但不堆冷僻义；aliases用于判断合理中文同义表达；固定搭配禁止编造；例句与翻译一一对应。`;
+    }
+
+    function extractJSON(text){
+      const clean = String(text || "").replace(/```json|```/gi, "").trim();
+      const start = clean.indexOf("{"); const end = clean.lastIndexOf("}");
+      if(start < 0 || end <= start) throw new Error("AI 没有返回可解析的 JSON");
+      return JSON.parse(clean.slice(start, end + 1));
+    }
+
+    function normalizeAIAnalysis(raw, word){
+      const meanings = (Array.isArray(raw?.meanings) ? raw.meanings : []).map(item => ({
+        pos:String(item?.pos || "义项").slice(0,12),
+        meaning:String(item?.meaning || "").trim(),
+        aliases:(Array.isArray(item?.aliases) ? item.aliases : []).map(String).filter(Boolean).slice(0,8),
+        example:String(item?.example || "").trim(),
+        translation:String(item?.translation || "").trim(),
+        phrases:(Array.isArray(item?.phrases) ? item.phrases : []).map(String).filter(Boolean).slice(0,8)
+      })).filter(item => item.meaning);
+      if(!meanings.length) throw new Error("AI 返回了内容，但没有可用义项");
+      return {
+        word:word.word, meanings,
+        confusing:(Array.isArray(raw?.confusing) ? raw.confusing : []).map(item => typeof item === "string" ? {word:item,difference:""} : {word:String(item?.word||""),difference:String(item?.difference||"")}).filter(x=>x.word).slice(0,8),
+        memory:String(raw?.memory || "").trim(), extraExamples:[], updatedAt:Date.now()
+      };
+    }
+
+    function saveAIWordCache(word, data){
+      const book = getBook();
+      if(!book.aiCache) book.aiCache = {};
+      book.aiCache[wordKey(word)] = {updatedAt:Date.now(), data};
+      save(false); updateAIUsageUI();
+    }
+
+    async function ensureAIWordAnalysis(word, force = false){
+      const key = wordKey(word.word);
+      const existing = getBook().aiCache?.[key]?.data;
+      if(existing && !force) return existing;
+      if(getAIMode() === "off") throw new Error("AI 已在设置中关闭");
+      if(!canUseAI()) throw new Error("请先在设置页保存 API 地址、模型和必要的 Key");
+      const content = await callChatApi([{role:"system",content:"只输出合法JSON。"},{role:"user",content:getAIMeaningPrompt(word)}]);
+      const data = normalizeAIAnalysis(extractJSON(content), word);
+      saveAIWordCache(word.word, data);
+      return data;
+    }
+
+    function analysisCardsHTML(data){
+      if(!data) return '<div class="card ai-empty">还没有缓存。点“整理多义词卡”只调用一次，之后反复查看免费。</div>';
+      const cards = data.meanings.map((item,index) => `<div class="card ai-meaning-card">
+        <div class="ai-meaning-head"><strong>${index+1}. ${escapeHTML(item.meaning)}</strong><span class="ai-pos">${escapeHTML(item.pos)}</span></div>
+        ${item.aliases?.length ? `<div class="example-source">可接受表达：${escapeHTML(item.aliases.join("、"))}</div>` : ""}
+        ${item.example ? exampleAudioHTML(item.example,item.translation,"AI缓存例句") : ""}
+        ${item.phrases?.length ? `<div class="ai-phrase-list">${item.phrases.map(p=>`<button class="ai-phrase-chip" data-speak="${escapeHTML(p)}" onclick="speakElementText(this)">🔊 ${escapeHTML(p)}</button>`).join("")}</div>` : ""}
+      </div>`).join("");
+      const confusing = data.confusing?.length ? `<div class="card ai-note-card"><strong>易混词</strong><br>${data.confusing.map(x=>`${escapeHTML(x.word)}：${escapeHTML(x.difference)}`).join("<br>")}</div>` : "";
+      const memory = data.memory ? `<div class="card ai-note-card"><strong>记忆钩子</strong><br>${escapeHTML(data.memory)}</div>` : "";
+      const extras = data.extraExamples?.length ? `<div class="card ai-note-card"><strong>额外例句</strong>${data.extraExamples.map(x=>exampleAudioHTML(x.example,x.translation,"AI新例句")).join("")}</div>` : "";
+      return cards + confusing + memory + extras;
+    }
+
+    function currentCoachWord(){
+      return activeWords.find(w => wordKey(w.word) === aiCoachWordKey) || currentItem?.word || null;
+    }
+
+    function openAICoach(){
+      if(!currentItem){ toast("现在没有正在学习的单词"); return; }
+      aiCoachWordKey = wordKey(currentItem.word.word);
+      renderAICoach(); goPage("aicoach");
+    }
+
+    function renderAICoach(message = ""){
+      const word = currentCoachWord(); if(!word) return;
+      const data = cachedAIEntry(word);
+      $("aiCoachWord").textContent = `${word.word} · ${word.meaning}`;
+      $("aiCoachCacheBadge").textContent = data ? "已缓存 · 查看免费" : "未缓存";
+      $("aiCoachContent").innerHTML = message ? `<div class="card ai-note-card">${message}</div>${analysisCardsHTML(data)}` : analysisCardsHTML(data);
+      updateAIUsageUI();
+    }
+
+    async function organizeCurrentWordFromStudy(){
+      if(!currentItem) return;
+      aiCoachWordKey = wordKey(currentItem.word.word);
+      openAICoach();
+      await runAICoachAction("organize");
+    }
+
+    async function runAICoachAction(action){
+      const word = currentCoachWord(); if(!word) return;
+      if(action === "organize"){
+        if(cachedAIEntry(word)){ renderAICoach("已经读取本地缓存，没有再次调用。"); return; }
+        $("aiCoachContent").innerHTML = '<div class="card ai-empty">正在整理多义词、例句和搭配……</div>';
+        try{ await ensureAIWordAnalysis(word,false); renderAICoach("整理完成，结果已保存到本地。以后查看不花 Token。"); renderWord(); }
+        catch(error){ renderAICoach(`整理失败：${escapeHTML(error.message || error)}`); }
+        return;
+      }
+      const data = cachedAIEntry(word);
+      if(action === "quiz"){
+        if(!data){ await runAICoachAction("organize"); return; }
+        const item = data.meanings[Math.floor(Math.random()*data.meanings.length)];
+        const options = shuffle(data.meanings.map(x=>x.meaning)).slice(0,4);
+        if(!options.includes(item.meaning)) options[0] = item.meaning;
+        $("aiCoachContent").innerHTML = `<div class="card ai-note-card"><strong>缓存内容本地出题 · 不调用</strong><br>${escapeHTML(item.example || `请选择 ${word.word} 的一个合理义项`)}</div><div id="aiLocalQuiz" class="option-grid">${shuffle(options).map(opt=>`<button class="option-btn" data-answer="${escapeHTML(item.meaning)}" onclick="answerLocalAIQuiz(this)">${escapeHTML(opt)}</button>`).join("")}</div>`;
+        return;
+      }
+      if(action === "compare" && data?.confusing?.length){
+        renderAICoach(`<strong>缓存辨析 · 不调用</strong><br>${data.confusing.map(x=>`${escapeHTML(x.word)}：${escapeHTML(x.difference)}`).join("<br>")}`); return;
+      }
+      if(action === "mistake" && !lastAnswerContext){
+        renderAICoach("还没有可分析的最近错误。先完成一道输入题，再回来点这里。"); return;
+      }
+      if(!canUseAI()){ renderAICoach("AI 未连接或已关闭；缓存查看和本地出题仍然可用。"); return; }
+      const prompts = {
+        compare:`用简体中文简洁辨析 ${word.word} 与容易混淆的近义词。词书释义：${word.meaning}。给出使用边界和各一个例句，控制在220字。`,
+        mistake:`分析这次英语学习错误：单词 ${lastAnswerContext?.word}；题目/释义 ${lastAnswerContext?.prompt}；用户答案 ${lastAnswerContext?.answer}；参考答案 ${lastAnswerContext?.correct}。说明错在哪里、如何避免，并给一道很短的巩固题。控制在220字。`,
+        example:`为单词 ${word.word}（${word.meaning}）生成3个四六级难度、义项不同且自然的英文例句及中文翻译。不要重复词书例句。只返回JSON：{"examples":[{"example":"","translation":""}]}`
+      };
+      $("aiCoachContent").innerHTML = '<div class="card ai-empty">AI 正在组织内容……</div>';
+      try{
+        const content = await callChatApi([{role:"system",content:"你是准确、简洁的四六级英语陪练。"},{role:"user",content:prompts[action]}]);
+        if(action === "example"){
+          const parsed = extractJSON(content); const examples = Array.isArray(parsed.examples) ? parsed.examples.slice(0,5) : [];
+          const analysis = data || await ensureAIWordAnalysis(word,false);
+          analysis.extraExamples = [...(analysis.extraExamples || []), ...examples].slice(-10);
+          saveAIWordCache(word.word, analysis); renderAICoach("新例句已加入缓存，以后查看免费。"); renderWord();
+        }else renderAICoach(`<strong>AI ${action === "mistake" ? "错误分析" : "近义词辨析"}</strong><br>${escapeHTML(content).replace(/\n/g,"<br>")}`);
+      }catch(error){ renderAICoach(`调用失败：${escapeHTML(error.message || error)}`); }
+    }
+
+    function answerLocalAIQuiz(button){
+      const correct = button.textContent === button.dataset.answer;
+      document.querySelectorAll("#aiLocalQuiz button").forEach(btn => {btn.disabled=true; if(btn.textContent===button.dataset.answer) btn.classList.add("correct");});
+      if(!correct) button.classList.add("wrong");
+      toast(correct ? "这个义项选对了" : "看一下绿色的正确义项");
+    }
+
+    async function refreshAIWordAnalysis(){
+      const word = currentCoachWord(); if(!word) return;
+      if(!confirm("重新整理会再次调用一次 API，并覆盖原缓存。继续吗？")) return;
+      $("aiCoachContent").innerHTML = '<div class="card ai-empty">正在重新整理……</div>';
+      try{ await ensureAIWordAnalysis(word,true); renderAICoach("缓存已更新。更早的整理结果已被覆盖。"); renderWord(); }
+      catch(error){ renderAICoach(`重新整理失败：${escapeHTML(error.message || error)}`); }
+    }
+
+    async function judgeChineseAnswerWithAI(){
+      if(!currentItem || !pendingChineseAnswer) return;
+      if(!canUseAI()){ toast("请先连接 AI，或继续自己判断"); return; }
+      const word = currentItem.word;
+      try{
+        toast("AI 正在判断这个近义表达……");
+        const content = await callChatApi([{role:"system",content:"只返回合法JSON。"},{role:"user",content:`判断用户对单词 ${word.word} 的中文回答是否属于任一合理常见义项。完整参考义项：${enhancedMeaningText(word)}。用户回答：${pendingChineseAnswer}。只返回 {"result":"known或fuzzy或unknown","reason":"简短原因"}。合理同义表达判known；过度宽泛判fuzzy；反义或无关判unknown。`}]);
+        const parsed = extractJSON(content); const result = ["known","fuzzy","unknown"].includes(parsed.result) ? parsed.result : "fuzzy";
+        resolveChineseMeaning(result);
+        openModal("AI 判断", parsed.reason || "已根据常见义项完成判断。");
+      }catch(error){ openModal("AI 判断失败", String(error.message || error)); }
+    }
+
+    async function sendAICustomPrompt(){
+      const word = currentCoachWord(); const prompt = $("aiCustomPrompt")?.value.trim();
+      if(!word || !prompt){ toast("先输入想问的问题"); return; }
+      if(!canUseAI()){ renderAICoach("AI 未连接或已关闭。"); return; }
+      $("aiCustomPrompt").disabled = true;
+      try{
+        const content = await callChatApi([{role:"system",content:"你是准确、不啰嗦的四六级英语陪练，用简体中文回答。"},{role:"user",content:`当前单词：${word.word}；词书释义：${word.meaning}。用户问题：${prompt}`}]);
+        renderAICoach(`<strong>自定义陪练</strong><br>${escapeHTML(content).replace(/\n/g,"<br>")}`);
+        $("aiCustomPrompt").value = "";
+      }catch(error){ renderAICoach(`调用失败：${escapeHTML(error.message || error)}`); }
+      finally{ $("aiCustomPrompt").disabled = false; }
+    }
+
+    function maybeAutoOrganizeCurrent(){
+      if(getAIMode() !== "newword" || !currentItem || currentItem.type !== "new" || !canUseAI()) return;
+      const key = wordKey(currentItem.word.word);
+      if(getBook().aiCache?.[key] || autoOrganizePending.has(key)) return;
+      autoOrganizePending.add(key);
+      const targetWord = currentItem.word;
+      setTimeout(async () => {
+        try{ await ensureAIWordAnalysis(targetWord, false); toast(`${key} 已自动整理并缓存`); }
+        catch(error){ console.warn("自动整理失败", error); }
+        finally{ autoOrganizePending.delete(key); }
+      }, 500);
+    }
 
     function clearApiKey(){
       if(!confirm("清除当前浏览器保存的 API Key 吗？URL 和模型名称会保留。")) return;
@@ -4369,8 +5017,8 @@
       const model = localStorage.getItem("cetApiModel") || "";
       const hasKey = Boolean(localStorage.getItem("cetApiKey"));
       $("apiStatus").textContent = url && model
-        ? `已保存模型：${model}；Key ${hasKey ? "已保存" : "未保存"}。只有主动点击 AI 功能才会请求。`
-        : "尚未配置；听音、搭配题、词根词缀和复盘都不需要 API。";
+        ? `已保存模型：${model}；Key ${hasKey ? "已保存" : "未保存"}。缓存查看与本地出题不请求。`
+        : "尚未配置；背词、朗读、搭配题、词根词缀、复盘和小屋奖励都能独立使用。";
     }
 
     function buildChatEndpoint(url){
@@ -4483,7 +5131,9 @@
         headers,
         body:JSON.stringify({
           model:settings.model,
-          messages
+          messages,
+          temperature:.2,
+          max_tokens:900
         })
       });
 
@@ -4498,6 +5148,7 @@
 
       const content = extractApiText(data, raw);
       if(!content) throw new Error("接口已响应，但返回格式仍无法识别；可以暂时清除 Key 停用 AI。");
+      recordAIUsage(messages, content, data?.usage);
       return content;
     }
 
@@ -4517,7 +5168,7 @@
         const result = await callChatApi([
           {role:"user", content:"请只回复：连接成功"}
         ]);
-        $("apiStatus").textContent = "连接成功，可以使用 Daddy 讲讲。";
+        $("apiStatus").textContent = "连接成功，可以使用 AI 整理、判断与陪练。";
         openModal("API 连接成功", result.slice(0, 120));
       }catch(error){
         $("apiStatus").textContent = "连接失败，请检查地址、模型、Key 或浏览器跨域限制。";
@@ -4662,6 +5313,34 @@
       location.reload();
     }
 
+
+    function installKeyboardGuard(){
+      const pin = input => {
+        if(!input?.classList?.contains("quiz-input") && input?.id !== "aiCustomPrompt") return;
+        document.body.classList.add("keyboard-open");
+        const box = input.closest(".quiz-box, .ai-hero-card");
+        box?.classList.add("keyboard-pinned");
+        setTimeout(() => input.scrollIntoView({behavior:"smooth", block:"center"}), 180);
+      };
+      const unpin = input => {
+        setTimeout(() => {
+          if(document.activeElement?.matches?.("input,textarea")) return;
+          document.body.classList.remove("keyboard-open");
+          input?.closest(".quiz-box, .ai-hero-card")?.classList.remove("keyboard-pinned");
+        }, 160);
+      };
+      document.addEventListener("focusin", event => pin(event.target));
+      document.addEventListener("focusout", event => unpin(event.target));
+      if(window.visualViewport){
+        const sync = () => {
+          const offset = Math.max(0, window.innerHeight - window.visualViewport.height - window.visualViewport.offsetTop);
+          document.documentElement.style.setProperty("--keyboard-offset", `${offset}px`);
+        };
+        window.visualViewport.addEventListener("resize", sync);
+        window.visualViewport.addEventListener("scroll", sync);
+      }
+    }
+
     function toast(text){
       const el = $("toast");
       el.textContent = text;
@@ -4710,9 +5389,11 @@
       refreshPageCopy("rewards");
       refreshPageCopy("settings");
       startSubtitleRotation();
+      installKeyboardGuard();
 
       sessionDirection = getBook().lastDirection || "en-zh";
       loadAudioSettings();
+      loadAIMode();
       renderAll();
       renderDailyRoot();
       loadApiSettings();
