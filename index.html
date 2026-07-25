@@ -902,6 +902,92 @@
       .study-tools{grid-template-columns:1fr 1fr}
       .study-tools button:first-child{grid-column:1 / -1}
     }
+    .lookup-token{
+      display:inline;padding:0 1px;border:0;border-bottom:1px dashed #e995b5;
+      border-radius:3px;background:transparent;color:inherit;font:inherit;
+      line-height:inherit;cursor:pointer;
+    }
+    .lookup-token:active,.lookup-token:hover{
+      color:var(--pink-deep);background:#fff0f5;
+    }
+    .lookup-sheet{
+      position:fixed;inset:0;display:none;align-items:flex-end;
+      background:rgba(73,61,69,.3);z-index:85;
+      padding:18px 12px calc(12px + env(safe-area-inset-bottom));
+    }
+    .lookup-sheet.show{display:flex}
+    .lookup-panel{
+      width:min(100%,520px);max-height:min(82vh,720px);overflow:auto;
+      margin:0 auto;padding:18px;border-radius:28px 28px 22px 22px;
+      background:#fffafb;box-shadow:0 26px 80px rgba(65,42,54,.3);
+      position:relative;
+    }
+    .lookup-close{
+      position:absolute;right:14px;top:13px;width:38px;height:38px;
+      border:0;border-radius:50%;background:#fff0f5;color:var(--pink-deep);
+      font-size:19px;font-weight:900;
+    }
+    .lookup-word{
+      padding-right:48px;font-size:29px;font-weight:900;overflow-wrap:anywhere;
+    }
+    .lookup-subline{
+      margin-top:5px;color:var(--muted);font-size:12px;line-height:1.55;
+    }
+    .lookup-badges{display:flex;flex-wrap:wrap;gap:6px;margin:11px 0}
+    .lookup-badge{
+      padding:5px 8px;border-radius:999px;background:var(--pink-soft);
+      color:var(--pink-deep);font-size:11px;font-weight:850;
+    }
+    .lookup-section{
+      margin-top:12px;padding:13px;border:1px solid #f2dde5;
+      border-radius:17px;background:#fff;
+    }
+    .lookup-section-title{
+      display:flex;justify-content:space-between;gap:10px;
+      margin-bottom:8px;font-size:12px;font-weight:900;color:var(--ink);
+    }
+    .lookup-main-meaning{font-size:15px;line-height:1.7}
+    .lookup-context{
+      padding:11px;border-radius:14px;background:#fff6f9;
+      line-height:1.75;font-size:13px;
+    }
+    .lookup-context mark{
+      padding:1px 4px;border-radius:6px;background:#ffe39a;color:#6b4f2e;
+    }
+    .family-list{display:grid;gap:7px}
+    .family-item{
+      display:grid;grid-template-columns:minmax(92px,.9fr) auto 1.2fr;
+      gap:8px;align-items:start;padding:8px 9px;border-radius:12px;background:#fff7fa;
+      font-size:12px;line-height:1.45;
+    }
+    .family-item strong{overflow-wrap:anywhere}
+    .family-pos{color:var(--pink-deep);font-weight:850}
+    .family-meaning{color:var(--muted)}
+    .lookup-actions{
+      display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px;
+    }
+    .lookup-ai-result{
+      margin-top:10px;padding:12px;border-radius:14px;background:#fff5de;
+      color:#6d5b4d;font-size:12px;line-height:1.7;
+    }
+    .lookup-cost-note{
+      margin-top:8px;color:var(--muted);font-size:10px;line-height:1.5;
+    }
+    .phrase-click-hint{
+      margin-left:5px;color:#b68b9d;font-size:10px;font-weight:700;
+    }
+    .ai-phrase-chip.lookup-phrase-chip{
+      display:flex;align-items:center;gap:6px;padding:5px 8px;
+    }
+    .ai-phrase-chip.lookup-phrase-chip .audio-mini-btn{
+      width:28px;height:28px;border-radius:999px;font-size:12px;
+    }
+    @media(max-width:370px){
+      .family-item{grid-template-columns:1fr auto}
+      .family-meaning{grid-column:1 / -1}
+      .lookup-actions{grid-template-columns:1fr}
+    }
+
     .empty{padding:28px 16px;text-align:center;color:var(--muted)}
   </style>
 </head>
@@ -1345,7 +1431,7 @@
 
       <div class="card settings-card">
         <div class="section-title" style="margin:0 0 10px">
-          <span>复习与出题规则</span><span class="tiny">稳定记录版</span>
+          <span>复习与出题规则</span><span class="tiny">点词词形示范版</span>
         </div>
         <p id="reviewRuleHint" class="hint">
           每日任务内不会重复出同一个词；不认识和模糊会进入错题本，次日开始复习；
@@ -1452,6 +1538,14 @@
       <h2 id="modalTitle">奖励解锁</h2>
       <p id="modalText">乖，今天的努力被我看见了。</p>
       <button class="primary" onclick="closeModal()">收下奖励</button>
+    </div>
+  </div>
+
+  <div id="lookupSheet" class="lookup-sheet"
+       onclick="if(event.target===this) closeWordLookup()">
+    <div class="lookup-panel" role="dialog" aria-modal="true" aria-label="单词解释">
+      <button class="lookup-close" type="button" onclick="closeWordLookup()" aria-label="关闭">×</button>
+      <div id="lookupContent"></div>
     </div>
   </div>
 
@@ -1973,6 +2067,181 @@
       ["gen","产生；出生"],["liter","文字"],["numer","数字"],["psych","心灵"]
     ];
 
+    const WORD_FAMILY_LIBRARY = {
+      success:[
+        {word:"success",pos:"n.",meaning:"成功；成功的事",base:"success"},
+        {word:"succeed",pos:"v.",meaning:"成功；达到目的",base:"success"},
+        {word:"successful",pos:"adj.",meaning:"成功的",base:"success"},
+        {word:"successfully",pos:"adv.",meaning:"成功地",base:"successful"}
+      ],
+      decide:[
+        {word:"decision",pos:"n.",meaning:"决定；决策",base:"decide"},
+        {word:"decide",pos:"v.",meaning:"决定",base:"decide"},
+        {word:"decisive",pos:"adj.",meaning:"决定性的；果断的",base:"decide"},
+        {word:"decisively",pos:"adv.",meaning:"果断地；决定性地",base:"decisive"}
+      ],
+      develop:[
+        {word:"development",pos:"n.",meaning:"发展；开发",base:"develop"},
+        {word:"developer",pos:"n.",meaning:"开发者；开发商",base:"develop"},
+        {word:"develop",pos:"v.",meaning:"发展；开发",base:"develop"},
+        {word:"developed",pos:"adj.",meaning:"发达的；成熟的",base:"develop"},
+        {word:"developing",pos:"adj.",meaning:"发展中的",base:"develop"}
+      ],
+      differ:[
+        {word:"difference",pos:"n.",meaning:"差异；不同",base:"differ"},
+        {word:"differ",pos:"v.",meaning:"不同；有差异",base:"differ"},
+        {word:"different",pos:"adj.",meaning:"不同的",base:"differ"},
+        {word:"differently",pos:"adv.",meaning:"不同地",base:"different"}
+      ],
+      create:[
+        {word:"creation",pos:"n.",meaning:"创造；作品",base:"create"},
+        {word:"creator",pos:"n.",meaning:"创造者",base:"create"},
+        {word:"create",pos:"v.",meaning:"创造；创建",base:"create"},
+        {word:"creative",pos:"adj.",meaning:"有创造力的",base:"create"},
+        {word:"creatively",pos:"adv.",meaning:"创造性地",base:"creative"},
+        {word:"creativity",pos:"n.",meaning:"创造力",base:"creative"}
+      ],
+      act:[
+        {word:"act",pos:"v./n.",meaning:"行动；表演；行为",base:"act"},
+        {word:"action",pos:"n.",meaning:"行动；行为",base:"act"},
+        {word:"active",pos:"adj.",meaning:"积极的；活跃的",base:"act"},
+        {word:"actively",pos:"adv.",meaning:"积极地；活跃地",base:"active"},
+        {word:"activity",pos:"n.",meaning:"活动",base:"active"}
+      ],
+      use:[
+        {word:"use",pos:"v./n.",meaning:"使用；用途",base:"use"},
+        {word:"useful",pos:"adj.",meaning:"有用的",base:"use"},
+        {word:"usefully",pos:"adv.",meaning:"有用地",base:"useful"},
+        {word:"useless",pos:"adj.",meaning:"无用的",base:"use"},
+        {word:"user",pos:"n.",meaning:"使用者；用户",base:"use"}
+      ],
+      value:[
+        {word:"value",pos:"v./n.",meaning:"重视；价值",base:"value"},
+        {word:"valuable",pos:"adj.",meaning:"有价值的；贵重的",base:"value"},
+        {word:"invaluable",pos:"adj.",meaning:"极其宝贵的",base:"value"},
+        {word:"valueless",pos:"adj.",meaning:"无价值的",base:"value"}
+      ],
+      care:[
+        {word:"care",pos:"v./n.",meaning:"关心；照料",base:"care"},
+        {word:"careful",pos:"adj.",meaning:"小心的；认真的",base:"care"},
+        {word:"carefully",pos:"adv.",meaning:"小心地；认真地",base:"careful"},
+        {word:"careless",pos:"adj.",meaning:"粗心的",base:"care"},
+        {word:"carelessly",pos:"adv.",meaning:"粗心地",base:"careless"}
+      ],
+      help:[
+        {word:"help",pos:"v./n.",meaning:"帮助",base:"help"},
+        {word:"helpful",pos:"adj.",meaning:"有帮助的",base:"help"},
+        {word:"helpfully",pos:"adv.",meaning:"有帮助地",base:"helpful"},
+        {word:"helpless",pos:"adj.",meaning:"无助的",base:"help"}
+      ],
+      danger:[
+        {word:"danger",pos:"n.",meaning:"危险",base:"danger"},
+        {word:"dangerous",pos:"adj.",meaning:"危险的",base:"danger"},
+        {word:"dangerously",pos:"adv.",meaning:"危险地",base:"dangerous"},
+        {word:"endanger",pos:"v.",meaning:"危及；使处于危险",base:"danger"}
+      ],
+      possible:[
+        {word:"possibility",pos:"n.",meaning:"可能性",base:"possible"},
+        {word:"possible",pos:"adj.",meaning:"可能的",base:"possible"},
+        {word:"possibly",pos:"adv.",meaning:"可能地；也许",base:"possible"},
+        {word:"impossible",pos:"adj.",meaning:"不可能的",base:"possible"}
+      ],
+      responsible:[
+        {word:"responsibility",pos:"n.",meaning:"责任；职责",base:"responsible"},
+        {word:"responsible",pos:"adj.",meaning:"负责的；有责任的",base:"responsible"},
+        {word:"responsibly",pos:"adv.",meaning:"负责任地",base:"responsible"},
+        {word:"irresponsible",pos:"adj.",meaning:"不负责任的",base:"responsible"}
+      ],
+      complete:[
+        {word:"completion",pos:"n.",meaning:"完成；结束",base:"complete"},
+        {word:"complete",pos:"v./adj.",meaning:"完成；完整的",base:"complete"},
+        {word:"completely",pos:"adv.",meaning:"完全地",base:"complete"},
+        {word:"incomplete",pos:"adj.",meaning:"不完整的",base:"complete"}
+      ],
+      analyze:[
+        {word:"analysis",pos:"n.",meaning:"分析",base:"analyze"},
+        {word:"analyst",pos:"n.",meaning:"分析师",base:"analyze"},
+        {word:"analyze",pos:"v.",meaning:"分析",base:"analyze"},
+        {word:"analytical",pos:"adj.",meaning:"分析的；善于分析的",base:"analyze"},
+        {word:"analytically",pos:"adv.",meaning:"分析地",base:"analytical"}
+      ],
+      benefit:[
+        {word:"benefit",pos:"v./n.",meaning:"使受益；好处",base:"benefit"},
+        {word:"beneficial",pos:"adj.",meaning:"有益的",base:"benefit"},
+        {word:"beneficiary",pos:"n.",meaning:"受益人",base:"benefit"}
+      ],
+      accurate:[
+        {word:"accuracy",pos:"n.",meaning:"准确性",base:"accurate"},
+        {word:"accurate",pos:"adj.",meaning:"准确的",base:"accurate"},
+        {word:"accurately",pos:"adv.",meaning:"准确地",base:"accurate"},
+        {word:"inaccurate",pos:"adj.",meaning:"不准确的",base:"accurate"}
+      ],
+      adapt:[
+        {word:"adaptation",pos:"n.",meaning:"适应；改编作品",base:"adapt"},
+        {word:"adapt",pos:"v.",meaning:"适应；改编",base:"adapt"},
+        {word:"adaptable",pos:"adj.",meaning:"适应性强的",base:"adapt"},
+        {word:"adaptive",pos:"adj.",meaning:"适应的；自适应的",base:"adapt"}
+      ],
+      employ:[
+        {word:"employment",pos:"n.",meaning:"就业；雇用",base:"employ"},
+        {word:"employer",pos:"n.",meaning:"雇主",base:"employ"},
+        {word:"employee",pos:"n.",meaning:"雇员",base:"employ"},
+        {word:"employ",pos:"v.",meaning:"雇用；使用",base:"employ"},
+        {word:"unemployed",pos:"adj.",meaning:"失业的",base:"employ"}
+      ]
+    };
+
+    const BASIC_FUNCTION_WORDS = {
+      a:{pos:"article",meaning:"一个；用于单数可数名词前"},
+      an:{pos:"article",meaning:"一个；用于元音音素开头的单数可数名词前"},
+      the:{pos:"article",meaning:"这/那；表示特指"},
+      in:{pos:"prep.",meaning:"在……里；在……方面"},
+      on:{pos:"prep.",meaning:"在……上；关于；处于……状态"},
+      at:{pos:"prep.",meaning:"在；向；以"},
+      for:{pos:"prep.",meaning:"为了；对于；持续"},
+      with:{pos:"prep.",meaning:"和；带有；用"},
+      by:{pos:"prep.",meaning:"被；通过；在……旁"},
+      of:{pos:"prep.",meaning:"……的；属于"},
+      to:{pos:"prep./inf.",meaning:"向；到；也可构成不定式 to do"},
+      from:{pos:"prep.",meaning:"从；来自"},
+      as:{pos:"prep./conj.",meaning:"作为；像；当……时；因为"},
+      about:{pos:"prep./adv.",meaning:"关于；大约"},
+      into:{pos:"prep.",meaning:"进入；变成"},
+      through:{pos:"prep./adv.",meaning:"穿过；通过"},
+      before:{pos:"prep./conj./adv.",meaning:"在……之前"},
+      after:{pos:"prep./conj./adv.",meaning:"在……之后"},
+      between:{pos:"prep.",meaning:"在两者之间"},
+      among:{pos:"prep.",meaning:"在三者或更多之中"},
+      without:{pos:"prep.",meaning:"没有；不带"},
+      and:{pos:"conj.",meaning:"和；并且"},
+      but:{pos:"conj.",meaning:"但是；除……以外"},
+      or:{pos:"conj.",meaning:"或者；否则"},
+      because:{pos:"conj.",meaning:"因为"},
+      although:{pos:"conj.",meaning:"虽然；尽管"},
+      if:{pos:"conj.",meaning:"如果；是否"},
+      that:{pos:"pron./conj./det.",meaning:"那；那个；引导从句"},
+      which:{pos:"pron./det.",meaning:"哪一个；引导定语从句"},
+      who:{pos:"pron.",meaning:"谁；引导指人的定语从句"},
+      where:{pos:"adv./conj.",meaning:"在哪里；引导地点相关从句"},
+      when:{pos:"adv./conj.",meaning:"什么时候；当……时"},
+      is:{pos:"v.",meaning:"be 的第三人称单数现在式"},
+      are:{pos:"v.",meaning:"be 的复数/第二人称现在式"},
+      was:{pos:"v.",meaning:"be 的第一、三人称单数过去式"},
+      were:{pos:"v.",meaning:"be 的复数/第二人称过去式"},
+      been:{pos:"v.",meaning:"be 的过去分词"},
+      being:{pos:"v.",meaning:"be 的现在分词"},
+      have:{pos:"v.",meaning:"有；也可作完成时助动词"},
+      has:{pos:"v.",meaning:"have 的第三人称单数"},
+      had:{pos:"v.",meaning:"have 的过去式/过去分词"},
+      can:{pos:"modal",meaning:"能够；可以"},
+      could:{pos:"modal",meaning:"能够；可能；语气更委婉"},
+      may:{pos:"modal",meaning:"可能；可以"},
+      might:{pos:"modal",meaning:"可能；语气比 may 更弱"},
+      must:{pos:"modal",meaning:"必须；一定"},
+      should:{pos:"modal",meaning:"应该"},
+      would:{pos:"modal",meaning:"会；愿意；用于虚拟或委婉表达"}
+    };
+
     const STORAGE_KEY = "cetRoomStateV2";
     const BACKUP_KEY = "cetRoomStateV31EmergencyBackup";
     const LEGACY_KEY = "cetRoomState";
@@ -2008,6 +2277,10 @@
     let aiCoachWordKey = "";
     let pendingChineseAnswer = "";
     let lastAnswerContext = null;
+    let lookupState = {
+      surface:"", lemma:"", context:"", source:"",
+      entry:null, family:null, pos:"", meaning:"", grammarHint:""
+    };
     const autoOrganizePending = new Set();
     const copyHistory = {};
 
@@ -2041,6 +2314,7 @@
         lastCheckin: "",
         history: [],
         aiCache: {},
+        grammarCache: {},
         wrongMigrationV31:false,
         words: {}
       };
@@ -2147,6 +2421,7 @@
             ? (merged.books[bookId] || {}).history.slice(-20000)
             : [],
           aiCache:{...((merged.books[bookId] || {}).aiCache || {})},
+          grammarCache:{...((merged.books[bookId] || {}).grammarCache || {})},
           words: {...((merged.books[bookId] || {}).words || {})}
         };
         ensureTodayForBook(merged.books[bookId]);
@@ -2615,6 +2890,394 @@
       speakTextValue(text, slow);
     }
 
+    const IRREGULAR_LEMMAS = {
+      am:"be",is:"be",are:"be",was:"be",were:"be",been:"be",being:"be",
+      has:"have",had:"have",does:"do",did:"do",done:"do",
+      went:"go",gone:"go",made:"make",took:"take",taken:"take",
+      wrote:"write",written:"write",gave:"give",given:"give",
+      found:"find",thought:"think",brought:"bring",bought:"buy",
+      taught:"teach",spoke:"speak",spoken:"speak",chose:"choose",
+      chosen:"choose",became:"become",began:"begin",begun:"begin",
+      kept:"keep",left:"leave",felt:"feel",built:"build",sent:"send",
+      spent:"spend",meant:"mean",children:"child",people:"person",
+      men:"man",women:"woman",feet:"foot",teeth:"tooth",mice:"mouse"
+    };
+
+    function cleanLookupToken(value){
+      return String(value || "")
+        .toLowerCase()
+        .replace(/[’]/g, "'")
+        .replace(/^[^a-z]+|[^a-z']+$/g, "");
+    }
+
+    function allVocabularyEntries(){
+      const groups = Object.values(vocabularyBooks || {}).filter(Array.isArray);
+      const merged = [...activeWords, ...DEMO_WORDS, ...groups.flat()];
+      const seen = new Set();
+      return merged.filter(entry => {
+        const key = wordKey(entry?.word);
+        if(!key || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    }
+
+    function inflectionCandidates(surface){
+      const word = cleanLookupToken(surface);
+      const result = [word];
+      if(IRREGULAR_LEMMAS[word]) result.push(IRREGULAR_LEMMAS[word]);
+
+      if(word.endsWith("'s")) result.push(word.slice(0,-2));
+      if(word.endsWith("ies") && word.length > 4) result.push(`${word.slice(0,-3)}y`);
+      if(word.endsWith("ied") && word.length > 4) result.push(`${word.slice(0,-3)}y`);
+      if(word.endsWith("ves") && word.length > 4){
+        result.push(`${word.slice(0,-3)}f`, `${word.slice(0,-3)}fe`);
+      }
+      if(word.endsWith("ing") && word.length > 5){
+        const stem = word.slice(0,-3);
+        result.push(stem, `${stem}e`);
+        if(stem.length > 2 && stem.at(-1) === stem.at(-2)) result.push(stem.slice(0,-1));
+      }
+      if(word.endsWith("ed") && word.length > 4){
+        const stem = word.slice(0,-2);
+        result.push(stem, `${stem}e`);
+        if(stem.length > 2 && stem.at(-1) === stem.at(-2)) result.push(stem.slice(0,-1));
+      }
+      if(word.endsWith("es") && word.length > 4){
+        result.push(word.slice(0,-2), word.slice(0,-1));
+      }
+      if(word.endsWith("s") && !word.endsWith("ss") && word.length > 3){
+        result.push(word.slice(0,-1));
+      }
+      if(word.endsWith("er") && word.length > 4) result.push(word.slice(0,-2));
+      if(word.endsWith("est") && word.length > 5) result.push(word.slice(0,-3));
+
+      return [...new Set(result.filter(Boolean))];
+    }
+
+    function findVocabularyEntry(surface){
+      const candidates = inflectionCandidates(surface);
+      const entries = allVocabularyEntries();
+      for(const candidate of candidates){
+        const entry = entries.find(item => wordKey(item.word) === candidate);
+        if(entry) return {entry, lemma:candidate};
+      }
+      return {entry:null, lemma:candidates[1] || candidates[0] || cleanLookupToken(surface)};
+    }
+
+    function findFamily(surface){
+      const clean = cleanLookupToken(surface);
+      for(const [root, forms] of Object.entries(WORD_FAMILY_LIBRARY)){
+        const matched = forms.find(item => item.word === clean);
+        if(matched) return {root, forms, matched};
+      }
+
+      const {lemma} = findVocabularyEntry(clean);
+      for(const [root, forms] of Object.entries(WORD_FAMILY_LIBRARY)){
+        const matched = forms.find(item => item.word === lemma);
+        if(matched) return {root, forms, matched};
+      }
+      return null;
+    }
+
+    function posFromMeaning(meaning){
+      const text = String(meaning || "").toLowerCase();
+      const found = text.match(/(^|[；;]\s*)(n|v|adj|adv|prep|conj|pron|modal)\./);
+      return found ? `${found[2]}.` : "";
+    }
+
+    function inferLocalPOS(surface, entry, family){
+      const clean = cleanLookupToken(surface);
+      if(BASIC_FUNCTION_WORDS[clean]) return BASIC_FUNCTION_WORDS[clean].pos;
+      if(family?.matched?.pos) return family.matched.pos;
+
+      const entryPos = posFromMeaning(entry?.meaning || entry?.primaryMeaning);
+      if(entryPos) return entryPos;
+
+      if(clean.endsWith("ly")) return "adv.（词尾推测）";
+      if(/(tion|sion|ment|ness|ity|ance|ence|ship|ism|ist|er|or)$/.test(clean)) return "n.（词尾推测）";
+      if(/(ous|ful|less|ive|al|able|ible|ic|ary|ory)$/.test(clean)) return "adj.（词尾推测）";
+      if(/(ize|ise|ify|en)$/.test(clean)) return "v.（词尾推测）";
+      if(clean.endsWith("ing")) return "v.-ing / 动名词（需结合句子）";
+      if(clean.endsWith("ed")) return "v.-ed / 过去分词（需结合句子）";
+      return "词性待结合语境判断";
+    }
+
+    function localMeaningFor(surface, entry, family){
+      const clean = cleanLookupToken(surface);
+      if(entry?.meaning) return entry.meaning;
+      if(BASIC_FUNCTION_WORDS[clean]) return BASIC_FUNCTION_WORDS[clean].meaning;
+      if(family?.matched?.meaning) return family.matched.meaning;
+      return "当前本地词书暂未收录这个词；可以先看词形推测，仍不理解时再手动调用 AI。";
+    }
+
+    function contextWords(context){
+      return (String(context || "").match(/[A-Za-z]+(?:['’][A-Za-z]+)?/g) || [])
+        .map(cleanLookupToken);
+    }
+
+    function inferGrammarHint(surface, context, pos){
+      const clean = cleanLookupToken(surface);
+      const words = contextWords(context);
+      const index = words.indexOf(clean);
+      const prev = index > 0 ? words[index - 1] : "";
+      const next = index >= 0 && index < words.length - 1 ? words[index + 1] : "";
+      const beWords = new Set(["am","is","are","was","were","be","been","being"]);
+      const modals = new Set(["can","could","may","might","must","should","would","will","shall"]);
+      const determiners = new Set(["a","an","the","this","that","these","those","my","your","his","her","our","their","each","every"]);
+      const prepositions = new Set(["in","on","at","for","with","by","of","from","about","into","through","after","before","without"]);
+
+      if(clean.endsWith("ly")){
+        return `本地推测：${surface} 是副词形式，通常修饰动词、形容词或整句话。这里${prev ? `前一个词是 “${prev}”` : "位于句首/短语开头"}${next ? `，后面接 “${next}”` : ""}；准确修饰对象可再点 AI 深讲。`;
+      }
+      if(prev === "to"){
+        return `本地推测：“to + ${surface}” 很可能是不定式结构，因此这里通常使用动词原形。`;
+      }
+      if(modals.has(prev)){
+        return `本地推测：情态动词 ${prev} 后通常接动词原形，所以 ${surface} 在这里更可能作动词。`;
+      }
+      if(beWords.has(prev) && clean.endsWith("ing")){
+        return `本地推测：be + doing 常构成进行时；也可能是现在分词作表语，需要结合完整句意判断。`;
+      }
+      if(beWords.has(prev) && clean.endsWith("ed")){
+        return `本地推测：be + done 可能是被动语态，也可能是过去分词形容词。`;
+      }
+      if(prepositions.has(prev) && clean.endsWith("ing")){
+        return `本地推测：介词 ${prev} 后的 -ing 形式通常按动名词理解。`;
+      }
+      if(determiners.has(prev)){
+        return `本地推测：限定词 ${prev} 后面常出现名词；若 ${surface} 后还有名词，它也可能是形容词修饰该名词。`;
+      }
+      if(String(pos).startsWith("adj")){
+        return next
+          ? `本地推测：形容词常修饰名词或放在系动词后作表语；这里它后面接 “${next}”。`
+          : "本地推测：形容词常修饰名词，或放在 be、become、seem 等系动词后作表语。";
+      }
+      if(String(pos).startsWith("n")){
+        return "本地提示：名词可以作主语、宾语或表语；前面常出现冠词、形容词或所有格。";
+      }
+      if(String(pos).startsWith("v")){
+        return "本地提示：动词承担句子的动作或状态；注意主谓一致、时态、语态以及后面接 to do 还是 doing。";
+      }
+      if(String(pos).startsWith("prep")){
+        return "本地提示：介词后通常接名词、代词或动名词，形成介词短语。";
+      }
+      return "本地只能先给基础词形提示；复杂的句法作用需要结合整句分析，只有你主动点按钮时才会调用 AI。";
+    }
+
+    function clickableEnglishHTML(text, context = "", source = "example"){
+      const raw = String(text || "");
+      const parts = raw.match(/[A-Za-z]+(?:['’][A-Za-z]+)?|[^A-Za-z]+/g) || [];
+      return parts.map(part => {
+        if(!/^[A-Za-z]/.test(part)) return escapeHTML(part);
+        const clean = cleanLookupToken(part);
+        if(["sb","sth"].includes(clean)) return escapeHTML(part);
+        return `<button class="lookup-token" type="button"
+                  data-token="${escapeHTML(part)}"
+                  data-context="${escapeHTML(context || raw)}"
+                  data-source="${escapeHTML(source)}"
+                  onclick="openWordLookupFromButton(this)">${escapeHTML(part)}</button>`;
+      }).join("");
+    }
+
+    function highlightedLookupContext(context, target){
+      const raw = String(context || "");
+      if(!raw) return "当前没有完整句子语境。";
+      const targetClean = cleanLookupToken(target);
+      let marked = false;
+      const parts = raw.match(/[A-Za-z]+(?:['’][A-Za-z]+)?|[^A-Za-z]+/g) || [];
+      return parts.map(part => {
+        const escaped = escapeHTML(part);
+        if(!marked && /^[A-Za-z]/.test(part) && cleanLookupToken(part) === targetClean){
+          marked = true;
+          return `<mark>${escaped}</mark>`;
+        }
+        return escaped;
+      }).join("");
+    }
+
+    function lookupCacheKey(){
+      return `${cleanLookupToken(lookupState.surface)}|${String(lookupState.context || "").trim().toLowerCase()}`;
+    }
+
+    function openWordLookupFromButton(button){
+      const surface = button?.dataset?.token || "";
+      const context = button?.dataset?.context || "";
+      const source = button?.dataset?.source || "text";
+      const found = findVocabularyEntry(surface);
+      const family = findFamily(surface);
+      const pos = inferLocalPOS(surface, found.entry, family);
+
+      lookupState = {
+        surface,
+        lemma:found.lemma || cleanLookupToken(surface),
+        context,
+        source,
+        entry:found.entry,
+        family,
+        pos,
+        meaning:localMeaningFor(surface, found.entry, family),
+        grammarHint:inferGrammarHint(surface, context, pos)
+      };
+      renderWordLookup();
+      $("lookupSheet").classList.add("show");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeWordLookup(){
+      $("lookupSheet").classList.remove("show");
+      document.body.style.overflow = "";
+    }
+
+    function lookupProgressButtons(){
+      const entry = lookupState.entry;
+      if(!entry) return "";
+      const key = wordKey(entry.word);
+      const progress = getWordProgress(key, false) || createWordProgress();
+      return `
+        <button class="soft" type="button" onclick="toggleLookupFavorite()">
+          ${progress.favorite ? "取消收藏" : "收藏这个词"}
+        </button>
+        <button class="soft" type="button" onclick="addLookupWrong()">
+          ${progress.inWrongBook ? "已在错题本" : "加入错题本"}
+        </button>`;
+    }
+
+    function renderWordLookup(message = ""){
+      const content = $("lookupContent");
+      if(!content) return;
+
+      const family = lookupState.family;
+      const familyHTML = family?.forms?.length
+        ? family.forms.map(item => `
+            <div class="family-item">
+              <strong>${escapeHTML(item.word)}</strong>
+              <span class="family-pos">${escapeHTML(item.pos)}</span>
+              <span class="family-meaning">${escapeHTML(item.meaning)}</span>
+            </div>`).join("")
+        : `<div class="tiny">这版示范词族表暂未收录完整家族；仍可识别复数、过去式、-ing 等常见变形。</div>`;
+
+      const cache = getBook().grammarCache?.[lookupCacheKey()] || "";
+      const directBase = family?.matched?.base || lookupState.lemma;
+      const entryName = lookupState.entry?.word || "";
+      const sourceName = {
+        example:"例句", phrase:"常用词组", pattern:"固定搭配",
+        "pattern-example":"句型例句", "sense-phrase":"义项词组"
+      }[lookupState.source] || "英文内容";
+
+      content.innerHTML = `
+        <div class="lookup-word">
+          ${escapeHTML(lookupState.surface)}
+          <button class="audio-mini-btn" style="display:inline-grid;vertical-align:middle;margin-left:7px"
+                  type="button" onclick="speakTextValue('${escapeHTML(lookupState.surface)}')">🔊</button>
+        </div>
+        <div class="lookup-subline">来自${escapeHTML(sourceName)} · 点击的是当前实际词形</div>
+
+        <div class="lookup-badges">
+          <span class="lookup-badge">词典原形：${escapeHTML(entryName || lookupState.lemma || "未确认")}</span>
+          <span class="lookup-badge">直接基础词：${escapeHTML(directBase || "未确认")}</span>
+          <span class="lookup-badge">${escapeHTML(lookupState.pos)}</span>
+          ${family ? `<span class="lookup-badge">词族核心：${escapeHTML(family.root)}</span>` : ""}
+        </div>
+
+        <div class="lookup-section">
+          <div class="lookup-section-title"><span>这个词本身的意思</span><span>本地解释</span></div>
+          <div class="lookup-main-meaning">${escapeHTML(lookupState.meaning)}</div>
+        </div>
+
+        <div class="lookup-section">
+          <div class="lookup-section-title"><span>当前语境</span><span>只高亮当前词</span></div>
+          <div class="lookup-context">${highlightedLookupContext(lookupState.context, lookupState.surface)}</div>
+          <div class="lookup-subline" style="margin-top:8px">${escapeHTML(lookupState.grammarHint)}</div>
+        </div>
+
+        <div class="lookup-section">
+          <div class="lookup-section-title"><span>词形与词族</span><span>${family?.forms?.length || 0} 个示范</span></div>
+          <div class="family-list">${familyHTML}</div>
+        </div>
+
+        ${message ? `<div class="lookup-ai-result">${message}</div>` : ""}
+        ${cache ? `<div class="lookup-ai-result"><strong>已读取缓存 · 本次不调用</strong><br>${escapeHTML(cache).replace(/\n/g,"<br>")}</div>` : ""}
+
+        <div class="lookup-actions">
+          ${lookupProgressButtons()}
+          <button class="primary" type="button" onclick="askLookupGrammarAI()">
+            ${cache ? "查看已缓存的 AI 讲解" : "AI 详细讲这一处"}
+          </button>
+        </div>
+        <div class="lookup-cost-note">
+          基础释义、原形、词族和词性提示均为本地功能。只有点击“AI 详细讲这一处”并确认后才调用一次；同一词形＋同一语境会缓存。
+        </div>`;
+    }
+
+    function toggleLookupFavorite(){
+      const entry = lookupState.entry;
+      if(!entry){ toast("当前词书还没有这个词条"); return; }
+      const progress = getWordProgress(wordKey(entry.word), true);
+      progress.favorite = !progress.favorite;
+      save(false);
+      renderWordLookup(progress.favorite ? "已收藏到当前词书。" : "已取消收藏。");
+      renderNotebook();
+    }
+
+    function addLookupWrong(){
+      const entry = lookupState.entry;
+      if(!entry){ toast("当前词书还没有这个词条"); return; }
+      const progress = getWordProgress(wordKey(entry.word), true);
+      progress.inWrongBook = true;
+      progress.everWrong = true;
+      progress.manuallyRemovedWrong = false;
+      progress.lastWrongAt = todayKey;
+      progress.wrongCount = Math.max(1, Number(progress.wrongCount) || 0);
+      save(false);
+      renderWordLookup("已加入当前词书错题本。");
+      renderNotebook();
+    }
+
+    async function askLookupGrammarAI(){
+      if(!lookupState.surface) return;
+      const key = lookupCacheKey();
+      const existing = getBook().grammarCache?.[key];
+      if(existing){
+        renderWordLookup();
+        return;
+      }
+      if(!canUseAI()){
+        renderWordLookup("AI 尚未连接或已经关闭。先到设置页配置；本地解释仍然可以继续使用。");
+        return;
+      }
+      if(!confirm("这次会调用一次 API。讲解完成后会缓存，同一词形和同一句子以后不再重复消耗。继续吗？")){
+        return;
+      }
+
+      renderWordLookup("AI 正在分析当前词形和句法位置……");
+      const prompt = `
+目标词形：${lookupState.surface}
+本地推测原形：${lookupState.entry?.word || lookupState.lemma}
+本地推测词性：${lookupState.pos}
+当前句子或词组：${lookupState.context}
+
+请用简体中文，只解释目标词，不要展开整篇语法课，控制在220字内：
+1. 这个词在当前语境的准确意思；
+2. 它在句中是什么词性和成分；
+3. 为什么用当前词形，而不是同词族的名词/动词/形容词/副词；
+4. 给一个极短的替换或仿写例子。
+`;
+      try{
+        const result = await callChatApi([
+          {role:"system",content:"你是准确、克制的英语词形与句法老师。只讲目标词在当前语境中的用法。"},
+          {role:"user",content:prompt}
+        ]);
+        const book = getBook();
+        book.grammarCache ||= {};
+        book.grammarCache[key] = String(result).trim();
+        save(false);
+        renderWordLookup();
+      }catch(error){
+        renderWordLookup(`调用失败：${escapeHTML(error.message || error)}`);
+      }
+    }
+
     function exampleAudioHTML(sentence, translation = "", source = ""){
       if(!sentence) return "";
       return `
@@ -2624,7 +3287,7 @@
                   onclick="speakElementText(this)"
                   aria-label="朗读例句">🔊</button>
           <div class="audio-text-copy">
-            <div class="example-en">${escapeHTML(sentence)}</div>
+            <div class="example-en">${clickableEnglishHTML(sentence, sentence, "example")}</div>
             ${translation ? `<div class="example-zh">｜${escapeHTML(translation)}</div>` : ""}
             ${source ? `<div class="example-source">${escapeHTML(source)}</div>` : ""}
           </div>
@@ -2710,7 +3373,12 @@
               <span class="sense-status">${escapeHTML(card.source)} · ${senseLevelLabel(level)}</span>
             </div>
             ${card.example ? exampleAudioHTML(card.example, card.translation, "当前义项例句") : ""}
-            ${card.phrases?.length ? `<div class="ai-phrase-list">${card.phrases.map(p => `<button class="ai-phrase-chip" data-speak="${escapeHTML(p)}" onclick="speakElementText(this)">🔊 ${escapeHTML(p)}</button>`).join("")}</div>` : ""}
+            ${card.phrases?.length ? `<div class="ai-phrase-list">${card.phrases.map(p => `
+              <div class="ai-phrase-chip lookup-phrase-chip">
+                <button class="audio-mini-btn" type="button" data-speak="${escapeHTML(p)}"
+                        onclick="speakElementText(this)" aria-label="朗读词组">🔊</button>
+                <span>${clickableEnglishHTML(p, p, "sense-phrase")}</span>
+              </div>`).join("")}</div>` : ""}
             <div class="sense-actions">
               ${["known","fuzzy","unknown"].map(item => `<button class="${level === item ? "active" : ""}" data-word="${escapeHTML(wordKey(word.word))}" data-sense="${escapeHTML(senseKey)}" onclick="setSenseMasteryFromButton(this,'${item}')">${senseLevelLabel(item)}</button>`).join("")}
             </div>
@@ -2727,7 +3395,7 @@
                   data-speak="${escapeHTML(entry.phrase)}"
                   onclick="speakElementText(this)"
                   aria-label="朗读词组">🔊</button>
-          <span class="phrase-en">${escapeHTML(entry.phrase)}</span>
+          <span class="phrase-en">${clickableEnglishHTML(entry.phrase, entry.phrase, "phrase")}<span class="phrase-click-hint">点词解释</span></span>
           <span class="phrase-zh">${escapeHTML(entry.translation)}</span>
         </div>
       `).join("");
@@ -2739,11 +3407,11 @@
                   data-speak="${escapeHTML(ttsReadableText(item.pattern))}"
                   onclick="speakElementText(this)"
                   aria-label="朗读固定搭配">🔊</button>
-          <span class="pattern-code">${escapeHTML(item.pattern)}</span>
+          <span class="pattern-code">${clickableEnglishHTML(item.pattern, item.pattern, "pattern")}</span>
           <span class="pattern-meaning">${escapeHTML(item.meaning || "")}</span>
           ${item.example
             ? `<span class="pattern-example">
-                 ${escapeHTML(item.example)}
+                 ${clickableEnglishHTML(item.example, item.example, "pattern-example")}
                  <button class="audio-mini-btn" style="position:static;display:inline-grid;width:30px;height:30px;margin-left:6px;vertical-align:middle"
                          type="button" data-speak="${escapeHTML(item.example)}"
                          onclick="speakElementText(this)" aria-label="朗读句型例句">🔊</button>
@@ -2772,7 +3440,7 @@
                      data-speak="${escapeHTML(word.examplePhrase.phrase)}"
                      onclick="speakElementText(this)"
                      aria-label="朗读本句搭配">🔊</button>
-             本句搭配：<strong>${escapeHTML(word.examplePhrase.phrase)}</strong>
+             本句搭配：<strong>${clickableEnglishHTML(word.examplePhrase.phrase, word.examplePhrase.phrase, "phrase")}</strong>
              = ${escapeHTML(word.examplePhrase.translation)}
            </div>`
         : "";
@@ -5102,7 +5770,12 @@ ${stage.reward}。
         <div class="ai-meaning-head"><strong>${index+1}. ${escapeHTML(item.meaning)}</strong><span class="ai-pos">${escapeHTML(item.pos)}</span></div>
         ${item.aliases?.length ? `<div class="example-source">可接受表达：${escapeHTML(item.aliases.join("、"))}</div>` : ""}
         ${item.example ? exampleAudioHTML(item.example,item.translation,"AI缓存例句") : ""}
-        ${item.phrases?.length ? `<div class="ai-phrase-list">${item.phrases.map(p=>`<button class="ai-phrase-chip" data-speak="${escapeHTML(p)}" onclick="speakElementText(this)">🔊 ${escapeHTML(p)}</button>`).join("")}</div>` : ""}
+        ${item.phrases?.length ? `<div class="ai-phrase-list">${item.phrases.map(p=>`
+          <div class="ai-phrase-chip lookup-phrase-chip">
+            <button class="audio-mini-btn" type="button" data-speak="${escapeHTML(p)}"
+                    onclick="speakElementText(this)">🔊</button>
+            <span>${clickableEnglishHTML(p,p,"sense-phrase")}</span>
+          </div>`).join("")}</div>` : ""}
       </div>`).join("");
       const confusing = data.confusing?.length ? `<div class="card ai-note-card"><strong>易混词</strong><br>${data.confusing.map(x=>`${escapeHTML(x.word)}：${escapeHTML(x.difference)}`).join("<br>")}</div>` : "";
       const memory = data.memory ? `<div class="card ai-note-card"><strong>记忆钩子</strong><br>${escapeHTML(data.memory)}</div>` : "";
@@ -5730,6 +6403,12 @@ ${stage.reward}。
         setTimeout(() => s.remove(), 1300);
       }
     }
+
+    document.addEventListener("keydown", event => {
+      if(event.key === "Escape" && $("lookupSheet")?.classList.contains("show")){
+        closeWordLookup();
+      }
+    });
 
     async function init(){
       const hour = new Date().getHours();
