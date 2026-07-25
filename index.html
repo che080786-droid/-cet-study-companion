@@ -1056,6 +1056,43 @@
     .family-item strong{overflow-wrap:anywhere}
     .family-pos{color:var(--pink-deep);font-weight:850}
     .family-meaning{color:var(--muted)}
+    .lookup-mini-quiz{
+      margin-top:12px;padding:14px;border:1px solid #f2dde5;
+      border-radius:18px;background:linear-gradient(180deg,#fff,#fff8fb);
+    }
+    .lookup-mini-quiz-head{
+      display:flex;justify-content:space-between;gap:10px;align-items:center;
+      margin-bottom:9px;font-size:12px;font-weight:900;
+    }
+    .lookup-mini-question{
+      margin-bottom:10px;padding:11px 12px;border-radius:14px;
+      background:#fff2f7;font-size:14px;line-height:1.75;
+    }
+    .lookup-mini-question strong{color:var(--pink-deep)}
+    .lookup-mini-options{
+      display:grid;grid-template-columns:1fr 1fr;gap:8px;
+    }
+    .lookup-mini-option{
+      min-height:46px;padding:9px;border:1px solid #edd7df;border-radius:13px;
+      background:#fff;color:var(--ink);font-size:12px;line-height:1.45;
+      text-align:left;
+    }
+    .lookup-mini-option.correct{
+      border-color:#8fc9a1;background:#eefaf2;color:#39774a;
+    }
+    .lookup-mini-option.wrong{
+      border-color:#ef9aae;background:#fff0f3;color:#b4526c;
+    }
+    .lookup-mini-result{
+      margin-top:9px;color:var(--muted);font-size:11px;line-height:1.6;
+    }
+    .lookup-mini-tools{
+      display:flex;justify-content:flex-end;margin-top:8px;
+    }
+    @media(max-width:370px){
+      .lookup-mini-options{grid-template-columns:1fr}
+    }
+
     .lookup-actions{
       display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px;
     }
@@ -1525,7 +1562,7 @@
 
       <div class="card settings-card">
         <div class="section-title" style="margin:0 0 10px">
-          <span>复习与出题规则</span><span class="tiny">英美音标补全版</span>
+          <span>复习与出题规则</span><span class="tiny">点词本地小测版</span>
         </div>
         <p id="reviewRuleHint" class="hint">
           每日任务内不会重复出同一个词；认识和模糊都用四选一确认，不再输入中文；不认识和模糊会进入错题本，次日开始复习；
@@ -2376,7 +2413,8 @@
     let lookupState = {
       surface:"", lemma:"", context:"", source:"",
       entry:null, family:null, pos:"", meaning:"", grammarHint:"",
-      phonetics:{uk:"",us:""}, phoneticSource:"", phoneticLoading:false
+      phonetics:{uk:"",us:""}, phoneticSource:"", phoneticLoading:false,
+      quiz:null, quizAnswered:false, quizSelected:"", quizMessage:""
     };
     const autoOrganizePending = new Set();
     const copyHistory = {};
@@ -3448,7 +3486,11 @@
         phoneticSource:(localPhonetics.uk || localPhonetics.us)
           ? "当前词书本地音标"
           : "等待补查",
-        phoneticLoading:false
+        phoneticLoading:false,
+        quiz:null,
+        quizAnswered:false,
+        quizSelected:"",
+        quizMessage:""
       };
       renderWordLookup();
       $("lookupSheet").classList.add("show");
@@ -3473,6 +3515,166 @@
         <button class="soft" type="button" onclick="addLookupWrong()">
           ${progress.inWrongBook ? "已在错题本" : "加入错题本"}
         </button>`;
+    }
+
+    function lookupDistractorWords(correct, pos, limit = 3){
+      const correctKey = wordKey(correct);
+      const candidates = allVocabularyEntries()
+        .filter(item => wordKey(item.word) !== correctKey)
+        .map(item => ({
+          word:item.word,
+          pos:posFromMeaning(item.meaning || item.primaryMeaning || "")
+        }));
+
+      const samePos = pos
+        ? shuffle(candidates.filter(item => item.pos === pos))
+        : [];
+      const fallback = shuffle(candidates.filter(item => !samePos.includes(item)));
+
+      return [...samePos, ...fallback]
+        .map(item => item.word)
+        .filter((value, index, array) => value && array.indexOf(value) === index)
+        .slice(0, limit);
+    }
+
+    function lookupDistractorMeanings(correct, pos, limit = 3){
+      const candidates = allVocabularyEntries()
+        .filter(item => wordKey(item.word) !== wordKey(lookupState.entry?.word || lookupState.lemma))
+        .map(item => ({
+          meaning:compactMeaning(item),
+          pos:posFromMeaning(item.meaning || item.primaryMeaning || "")
+        }))
+        .filter(item => item.meaning && item.meaning !== correct);
+
+      const samePos = pos
+        ? shuffle(candidates.filter(item => item.pos === pos))
+        : [];
+      const fallback = shuffle(candidates.filter(item => !samePos.includes(item)));
+
+      return [...samePos, ...fallback]
+        .map(item => item.meaning)
+        .filter((value, index, array) => value && array.indexOf(value) === index)
+        .slice(0, limit);
+    }
+
+    function blankLookupContext(context, surface){
+      const raw = String(context || "");
+      if(!raw) return "";
+      const escaped = String(surface || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const regex = new RegExp(`\\b${escaped}\\b`, "i");
+      return regex.test(raw) ? raw.replace(regex, "_____") : "";
+    }
+
+    function buildLookupMiniQuiz(forceNew = false){
+      if(lookupState.quiz && !forceNew) return lookupState.quiz;
+
+      const surface = cleanLookupToken(lookupState.surface);
+      const contextBlank = blankLookupContext(lookupState.context, lookupState.surface);
+      const pos = posFromMeaning(
+        lookupState.entry?.meaning ||
+        lookupState.entry?.primaryMeaning ||
+        lookupState.meaning
+      );
+
+      const canUseContext =
+        contextBlank &&
+        contextWords(lookupState.context).length >= 2 &&
+        surface.length > 1;
+
+      if(canUseContext){
+        const distractors = lookupDistractorWords(surface, pos, 3);
+        lookupState.quiz = {
+          type:"context",
+          title:"把刚才点到的词放回原句",
+          prompt:contextBlank,
+          correct:surface,
+          options:shuffle([surface, ...distractors])
+        };
+      }else{
+        const correct = lookupState.entry
+          ? compactMeaning(lookupState.entry)
+          : lookupState.meaning;
+        const distractors = lookupDistractorMeanings(correct, pos, 3);
+        lookupState.quiz = {
+          type:"meaning",
+          title:"选出这个词最接近的意思",
+          prompt:lookupState.surface,
+          correct,
+          options:shuffle([correct, ...distractors])
+        };
+      }
+
+      lookupState.quizAnswered = false;
+      lookupState.quizSelected = "";
+      lookupState.quizMessage = "";
+      return lookupState.quiz;
+    }
+
+    function renderLookupMiniQuiz(){
+      const quiz = buildLookupMiniQuiz();
+      if(!quiz?.correct || !quiz?.options?.length) return "";
+
+      const promptHTML = quiz.type === "context"
+        ? escapeHTML(quiz.prompt)
+        : `<strong>${escapeHTML(quiz.prompt)}</strong>`;
+
+      const optionsHTML = quiz.options.map(option => {
+        let cls = "lookup-mini-option";
+        if(lookupState.quizAnswered){
+          if(option === quiz.correct) cls += " correct";
+          else if(option === lookupState.quizSelected) cls += " wrong";
+        }
+        return `<button class="${cls}" type="button"
+                  data-option="${escapeHTML(option)}"
+                  onclick="answerLookupMiniQuiz(this)"
+                  ${lookupState.quizAnswered ? "disabled" : ""}>
+                  ${escapeHTML(option)}
+                </button>`;
+      }).join("");
+
+      return `
+        <div class="lookup-mini-quiz">
+          <div class="lookup-mini-quiz-head">
+            <span>${escapeHTML(quiz.title)}</span>
+            <span class="lookup-badge">本地 0 API</span>
+          </div>
+          <div class="lookup-mini-question">${promptHTML}</div>
+          <div class="lookup-mini-options">${optionsHTML}</div>
+          <div class="lookup-mini-result">${
+            lookupState.quizMessage ||
+            (quiz.type === "context"
+              ? "从四个单词中选出最适合放回原句的那个。"
+              : "从四个中文释义中选出最接近的一项。")
+          }</div>
+          <div class="lookup-mini-tools">
+            <button class="soft" type="button" onclick="refreshLookupMiniQuiz()">换一道本地题</button>
+          </div>
+        </div>`;
+    }
+
+    function answerLookupMiniQuiz(button){
+      if(lookupState.quizAnswered || !lookupState.quiz) return;
+      const selected = button?.dataset?.option || "";
+      lookupState.quizSelected = selected;
+      lookupState.quizAnswered = true;
+
+      if(selected === lookupState.quiz.correct){
+        lookupState.quizMessage =
+          "选对了。这个小测只帮助你确认理解，不会重复计入今日背词数量。";
+      }else{
+        lookupState.quizMessage =
+          "选错了，绿色的是正确答案。觉得这个词还不稳，可以点下面“加入错题本”。";
+      }
+      renderWordLookup();
+    }
+
+    function refreshLookupMiniQuiz(){
+      lookupState.quiz = null;
+      lookupState.quizAnswered = false;
+      lookupState.quizSelected = "";
+      lookupState.quizMessage = "";
+      buildLookupMiniQuiz(true);
+      renderWordLookup();
     }
 
     function renderWordLookup(message = ""){
@@ -3542,6 +3744,8 @@
             <div><strong>${shortReviewDate(lookupProgress.nextReviewAt)}</strong><span>下次复习</span></div>
           </div>
         </div>` : ""}
+
+        ${renderLookupMiniQuiz()}
 
         ${message ? `<div class="lookup-ai-result">${message}</div>` : ""}
         ${cache ? `<div class="lookup-ai-result"><strong>已读取缓存 · 本次不调用</strong><br>${escapeHTML(cache).replace(/\n/g,"<br>")}</div>` : ""}
