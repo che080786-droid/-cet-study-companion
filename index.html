@@ -1118,6 +1118,125 @@
       .lookup-actions{grid-template-columns:1fr}
     }
 
+    .exam-home-card{
+      width:100%;display:grid;grid-template-columns:auto minmax(0,1fr) auto;
+      gap:13px;align-items:center;padding:16px;text-align:left;
+      border:1px solid #f0dbe3;background:linear-gradient(145deg,#fff,#fff4f8);
+    }
+    .exam-home-icon{
+      width:54px;height:54px;border-radius:18px;display:grid;place-items:center;
+      background:#ffe8f1;font-size:27px;
+    }
+    .exam-home-title{font-weight:900;font-size:15px}
+    .exam-home-desc{margin-top:4px;color:var(--muted);font-size:11px;line-height:1.55}
+    .exam-home-meta{margin-top:7px;color:var(--pink-deep);font-size:10px;font-weight:800}
+    .exam-arrow{font-size:22px;color:#c58a9f}
+    .exam-topbar{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      margin-bottom:12px;
+    }
+    .exam-pack-tabs{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px;
+    }
+    .exam-pack-tab{
+      min-height:42px;padding:8px 5px;border:1px solid #efd9e2;border-radius:13px;
+      background:#fff;color:var(--muted);font-size:11px;font-weight:850;
+    }
+    .exam-pack-tab.active{
+      background:var(--pink);border-color:var(--pink);color:#fff;
+      box-shadow:0 7px 16px rgba(235,126,164,.2);
+    }
+    .exam-pack-card{padding:17px;margin-bottom:12px}
+    .exam-pack-head{
+      display:flex;justify-content:space-between;gap:12px;align-items:flex-start;
+    }
+    .exam-pack-name{font-size:18px;font-weight:950}
+    .exam-pack-subtitle{margin-top:5px;color:var(--muted);font-size:11px;line-height:1.6}
+    .exam-zero-api{
+      flex:none;padding:6px 9px;border-radius:999px;background:#eaf8ee;
+      color:#4b8b60;font-size:10px;font-weight:900;
+    }
+    .exam-source-note{
+      margin-top:10px;padding:9px 10px;border-radius:12px;background:#fff6e8;
+      color:#806849;font-size:10px;line-height:1.55;
+    }
+    .exam-stats{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:12px;
+    }
+    .exam-stat{
+      padding:9px 4px;text-align:center;border-radius:12px;background:#fff6f9;
+    }
+    .exam-stat strong{display:block;font-size:16px}
+    .exam-stat span{display:block;margin-top:3px;color:var(--muted);font-size:9px}
+    .exam-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+    .exam-stage{margin-bottom:18px}
+    .exam-welcome{
+      padding:24px 17px;text-align:center;border:1px dashed #ebcdd9;
+      border-radius:20px;background:#fffafd;color:var(--muted);
+    }
+    .exam-welcome-icon{font-size:40px}
+    .exam-welcome strong{display:block;margin-top:8px;color:var(--ink);font-size:16px}
+    .exam-welcome p{margin:7px auto 0;max-width:400px;font-size:11px;line-height:1.65}
+    .exam-question-card{padding:17px}
+    .exam-question-head{
+      display:flex;justify-content:space-between;gap:10px;align-items:center;
+    }
+    .exam-type-tag{
+      padding:5px 8px;border-radius:999px;background:var(--pink-soft);
+      color:var(--pink-deep);font-size:10px;font-weight:900;
+    }
+    .exam-counter{color:var(--muted);font-size:10px;font-weight:800}
+    .exam-stem{
+      margin:14px 0;padding:14px;border-radius:16px;background:#fff6f9;
+      font-size:16px;line-height:1.75;font-weight:750;
+    }
+    .exam-options{display:grid;gap:9px}
+    .exam-option{
+      width:100%;min-height:48px;padding:11px 12px;border:1px solid #ecd5de;
+      border-radius:14px;background:#fff;color:var(--ink);font-size:13px;
+      line-height:1.45;text-align:left;
+    }
+    .exam-option.correct{
+      border-color:#83c899;background:#edf9f1;color:#347348;
+    }
+    .exam-option.wrong{
+      border-color:#ef98ad;background:#fff0f3;color:#b54e68;
+    }
+    .exam-feedback{
+      margin-top:12px;padding:12px 13px;border-radius:15px;
+      background:#fff7e7;color:#6f5d48;font-size:11px;line-height:1.7;
+    }
+    .exam-feedback strong{color:var(--ink)}
+    .exam-question-source{
+      margin-top:8px;color:var(--muted);font-size:9px;line-height:1.5;
+    }
+    .exam-next{width:100%;margin-top:11px}
+    .exam-result{padding:20px 17px;text-align:center}
+    .exam-result-score{font-size:40px;font-weight:950;color:var(--pink-deep)}
+    .exam-result-title{margin-top:4px;font-size:17px;font-weight:900}
+    .exam-result-copy{margin-top:7px;color:var(--muted);font-size:11px;line-height:1.65}
+    .exam-type-summary{
+      display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:14px;
+      text-align:left;
+    }
+    .exam-type-summary div{
+      padding:10px;border-radius:13px;background:#fff6f9;font-size:11px;
+    }
+    .lookup-exam-bridge{
+      margin-top:12px;padding:12px;border:1px solid #f1dbe4;border-radius:17px;
+      background:#fff9fb;
+    }
+    .lookup-exam-bridge strong{display:block;font-size:12px}
+    .lookup-exam-bridge p{
+      margin:5px 0 9px;color:var(--muted);font-size:10px;line-height:1.55;
+    }
+    @media(max-width:380px){
+      .exam-home-card{grid-template-columns:auto 1fr}
+      .exam-arrow{display:none}
+      .exam-stats{grid-template-columns:repeat(2,1fr)}
+      .exam-actions{grid-template-columns:1fr}
+    }
+
     .empty{padding:28px 16px;text-align:center;color:var(--muted)}
   </style>
 </head>
@@ -1167,6 +1286,19 @@
           <div class="direction-count">今日拼写 <span id="spellingToday">0</span> 个</div>
         </button>
       </div>
+
+      <div class="section-title">
+        <span>从考点出发</span><span class="tiny">本地题库 · 0 API</span>
+      </div>
+      <button class="card exam-home-card" type="button" onclick="openExamPage()">
+        <div class="exam-home-icon">📝</div>
+        <div>
+          <div id="examHomeTitle" class="exam-home-title">四级考点精选</div>
+          <div id="examHomeDesc" class="exam-home-desc">语境选词、固定搭配、词形变化与近义辨析。</div>
+          <div id="examHomeMeta" class="exam-home-meta">内置 12 道框架验证题 · 非历年真题</div>
+        </div>
+        <div class="exam-arrow">›</div>
+      </button>
 
       <div class="section-title">
         <span>今日总任务</span>
@@ -1322,6 +1454,54 @@
           <button type="button" onclick="goPage('notebook')">📒 去看词本</button>
           <button type="button" onclick="goPage('rewards')">🎁 家具奖励</button>
           <button type="button" onclick="roomDailyMessage()">💬 今日互动</button>
+        </div>
+      </div>
+    </section>
+
+
+    <section id="exam" class="page">
+      <div class="exam-topbar">
+        <button class="soft" type="button" onclick="goPage('home')">‹ 返回小屋</button>
+        <span class="tiny">题目、判分与解析均来自本地题库 · 0 API</span>
+      </div>
+
+      <div class="hero">
+        <div class="hello">考点精选练习</div>
+        <div class="quote">不把刚看过的答案原样送回来，而是在新语境里检验你会不会用。</div>
+      </div>
+
+      <div class="exam-pack-tabs">
+        <button class="exam-pack-tab" data-exam-pack="cet4" type="button" onclick="selectExamPack('cet4')">四级</button>
+        <button class="exam-pack-tab" data-exam-pack="cet6" type="button" onclick="selectExamPack('cet6')">六级</button>
+        <button class="exam-pack-tab" data-exam-pack="ielts" type="button" onclick="selectExamPack('ielts')">雅思</button>
+      </div>
+
+      <div class="card exam-pack-card">
+        <div class="exam-pack-head">
+          <div>
+            <div id="examPackName" class="exam-pack-name">四级考点精选</div>
+            <div id="examPackSubtitle" class="exam-pack-subtitle"></div>
+          </div>
+          <span class="exam-zero-api">本次 0 API</span>
+        </div>
+        <div id="examSourceNote" class="exam-source-note"></div>
+        <div class="exam-stats">
+          <div class="exam-stat"><strong id="examBankCount">0</strong><span>已加载题目</span></div>
+          <div class="exam-stat"><strong id="examAttemptCount">0</strong><span>累计作答</span></div>
+          <div class="exam-stat"><strong id="examAccuracy">—</strong><span>累计正确率</span></div>
+          <div class="exam-stat"><strong id="examWrongCount">0</strong><span>待重练错题</span></div>
+        </div>
+        <div class="exam-actions">
+          <button class="primary" type="button" onclick="startExamSession('normal')">开始本轮精选</button>
+          <button id="examWrongButton" class="soft" type="button" onclick="startExamSession('wrong')">重练错题</button>
+        </div>
+      </div>
+
+      <div id="examStage" class="exam-stage">
+        <div class="exam-welcome">
+          <div class="exam-welcome-icon">📚</div>
+          <strong>先用小题库验证框架</strong>
+          <p>每轮最多 10 题；优先抽未做题和旧错题。答错后会保留在考点错题中，连续答对两次才移出。</p>
         </div>
       </div>
     </section>
@@ -1562,7 +1742,7 @@
 
       <div class="card settings-card">
         <div class="section-title" style="margin:0 0 10px">
-          <span>复习与出题规则</span><span class="tiny">点词本地小测版</span>
+          <span>复习与出题规则</span><span class="tiny">考点题库框架版</span>
         </div>
         <p id="reviewRuleHint" class="hint">
           每日任务内不会重复出同一个词；认识和模糊都用四选一确认，不再输入中文；不认识和模糊会进入错题本，次日开始复习；
@@ -1703,6 +1883,494 @@
       {word:"concentrate", phonetic:"/ˈkɒnsntreɪt/", meaning:"v. 集中；专心", example:"Try to concentrate for ten minutes."},
       {word:"consequence", phonetic:"/ˈkɒnsɪkwəns/", meaning:"n. 结果；后果", example:"Every choice has a consequence."}
     ];
+
+    const EXAM_PACKS = {
+      "cet4": {
+            "name": "四级考点精选",
+            "subtitle": "语境选词、固定搭配、词形变化、近义辨析",
+            "path": "./data/exam/CET4/core.json",
+            "bookId": "cet4",
+            "note": "当前为原创考点型验证题，不是历年真题。后续只需替换或增加 JSON 数据，不必重写出题程序。"
+      },
+      "cet6": {
+            "name": "六级考点精选",
+            "subtitle": "抽象词、学术搭配、长句常见用法与近形词",
+            "path": "./data/exam/CET6/core.json",
+            "bookId": "cet6",
+            "note": "当前只放少量框架验证题，不冒充历年真题。"
+      },
+      "ielts": {
+            "name": "雅思词汇考点",
+            "subtitle": "同义替换、学术搭配、阅读语境与写作用词",
+            "path": "./data/exam/IELTS/core.json",
+            "bookId": "",
+            "note": "当前只验证雅思词汇题型框架，不复制官方试题。"
+      }
+};
+
+    const BUILTIN_EXAM_BANKS = {
+      "cet4": [
+            {
+                  "id": "cet4_context_pressure",
+                  "type": "context",
+                  "stem": "The company is under increasing _____ to reduce its energy use.",
+                  "options": [
+                        "pressure",
+                        "strength",
+                        "power",
+                        "force"
+                  ],
+                  "answer": "pressure",
+                  "explanation": "under pressure 是常见搭配，表示“处于压力之下”。strength 强调力量或优点，power 强调权力/能力，force 常指外力或武力。",
+                  "targetWords": [
+                        "pressure"
+                  ],
+                  "sourceType": "original_exam_style",
+                  "sourceNote": "依据四级语境选词与固定搭配考点设计"
+            },
+            {
+                  "id": "cet4_collocation_responsibility",
+                  "type": "collocation",
+                  "stem": "Which expression is the most natural?",
+                  "options": [
+                        "take responsibility for",
+                        "make responsibility for",
+                        "do responsibility for",
+                        "hold responsibility to"
+                  ],
+                  "answer": "take responsibility for",
+                  "explanation": "take responsibility for 表示“为……承担责任”，是固定搭配。",
+                  "targetWords": [
+                        "responsibility"
+                  ],
+                  "sourceType": "original_exam_style",
+                  "sourceNote": "依据四级固定搭配考点设计"
+            },
+            {
+                  "id": "cet4_wordform_successfully",
+                  "type": "word_form",
+                  "stem": "The research team _____ completed the experiment.",
+                  "options": [
+                        "success",
+                        "succeed",
+                        "successful",
+                        "successfully"
+                  ],
+                  "answer": "successfully",
+                  "explanation": "空格修饰动词 completed，需要副词 successfully。success 是名词，succeed 是动词，successful 是形容词。",
+                  "targetWords": [
+                        "success",
+                        "succeed",
+                        "successful",
+                        "successfully"
+                  ],
+                  "sourceType": "original_exam_style",
+                  "sourceNote": "依据四级词形变化考点设计"
+            },
+            {
+                  "id": "cet4_context_access",
+                  "type": "context",
+                  "stem": "All students should have equal _____ to educational resources.",
+                  "options": [
+                        "access",
+                        "entrance",
+                        "approach",
+                        "arrival"
+                  ],
+                  "answer": "access",
+                  "explanation": "have access to 表示“有机会/权利使用……”。entrance 多指入口；approach 可指方法或接近；arrival 指到达。",
+                  "targetWords": [
+                        "access"
+                  ],
+                  "sourceType": "original_exam_style",
+                  "sourceNote": "依据四级常考搭配 have access to 设计"
+            },
+            {
+                  "id": "cet4_wordform_accurately",
+                  "type": "word_form",
+                  "stem": "The machine can measure temperature very _____.",
+                  "options": [
+                        "accuracy",
+                        "accurate",
+                        "accurately",
+                        "inaccuracy"
+                  ],
+                  "answer": "accurately",
+                  "explanation": "空格修饰 measure，需要副词 accurately。",
+                  "targetWords": [
+                        "accuracy",
+                        "accurate",
+                        "accurately"
+                  ],
+                  "sourceType": "original_exam_style",
+                  "sourceNote": "依据四级词性辨析考点设计"
+            },
+            {
+                  "id": "cet4_synonym_appropriate",
+                  "type": "synonym",
+                  "stem": "Choose the closest meaning of “appropriate” in: Wear appropriate clothes for the interview.",
+                  "options": [
+                        "suitable",
+                        "expensive",
+                        "formal",
+                        "comfortable"
+                  ],
+                  "answer": "suitable",
+                  "explanation": "appropriate 在这里表示“合适的、恰当的”，最接近 suitable。formal 可能是面试服装的一种要求，但不是该词本身的同义义。",
+                  "targetWords": [
+                        "appropriate",
+                        "suitable"
+                  ],
+                  "sourceType": "original_exam_style",
+                  "sourceNote": "依据四级语境词义与近义替换考点设计"
+            },
+            {
+                  "id": "cet4_context_available",
+                  "type": "context",
+                  "stem": "The new service will be _____ to the public next month.",
+                  "options": [
+                        "available",
+                        "possible",
+                        "valuable",
+                        "comfortable"
+                  ],
+                  "answer": "available",
+                  "explanation": "be available to 表示“可供……使用/获得”。possible 表示可能的；valuable 表示有价值的。",
+                  "targetWords": [
+                        "available"
+                  ],
+                  "sourceType": "original_exam_style",
+                  "sourceNote": "依据四级语境选词考点设计"
+            },
+            {
+                  "id": "cet4_collocation_adapt",
+                  "type": "collocation",
+                  "stem": "It took her several weeks to _____ the new working environment.",
+                  "options": [
+                        "adapt to",
+                        "adapt with",
+                        "adopt to",
+                        "adjust at"
+                  ],
+                  "answer": "adapt to",
+                  "explanation": "adapt to 表示“适应……”。adopt 是“采用、收养”，不能与 adapt 混淆。",
+                  "targetWords": [
+                        "adapt",
+                        "adopt"
+                  ],
+                  "sourceType": "original_exam_style",
+                  "sourceNote": "依据四级易混词与介词搭配考点设计"
+            },
+            {
+                  "id": "cet4_context_benefit",
+                  "type": "context",
+                  "stem": "Students can _____ greatly from regular reading.",
+                  "options": [
+                        "benefit",
+                        "profit",
+                        "improve",
+                        "receive"
+                  ],
+                  "answer": "benefit",
+                  "explanation": "benefit from 表示“从……中受益”。profit from 也可表示获益，但更常带有经济收益或利用意味；本句学习语境中 benefit 最自然。",
+                  "targetWords": [
+                        "benefit"
+                  ],
+                  "sourceType": "original_exam_style",
+                  "sourceNote": "依据四级动词搭配考点设计"
+            },
+            {
+                  "id": "cet4_wordform_decision",
+                  "type": "word_form",
+                  "stem": "After a long discussion, they finally made a _____.",
+                  "options": [
+                        "decide",
+                        "decision",
+                        "decisive",
+                        "decisively"
+                  ],
+                  "answer": "decision",
+                  "explanation": "冠词 a 后需要名词 decision；make a decision 是固定表达。",
+                  "targetWords": [
+                        "decide",
+                        "decision",
+                        "decisive",
+                        "decisively"
+                  ],
+                  "sourceType": "original_exam_style",
+                  "sourceNote": "依据四级词族与固定搭配考点设计"
+            },
+            {
+                  "id": "cet4_context_approach",
+                  "type": "context",
+                  "stem": "We need a different _____ to solving this problem.",
+                  "options": [
+                        "approach",
+                        "access",
+                        "direction",
+                        "arrival"
+                  ],
+                  "answer": "approach",
+                  "explanation": "an approach to doing sth. 表示“做某事的方法”。注意 to 在这里是介词，后接 solving。",
+                  "targetWords": [
+                        "approach"
+                  ],
+                  "sourceType": "original_exam_style",
+                  "sourceNote": "依据四级名词搭配与 doing 结构设计"
+            },
+            {
+                  "id": "cet4_collocation_contribute",
+                  "type": "collocation",
+                  "stem": "Regular exercise can _____ better sleep.",
+                  "options": [
+                        "contribute to",
+                        "result from",
+                        "depend of",
+                        "take part"
+                  ],
+                  "answer": "contribute to",
+                  "explanation": "contribute to 表示“促成、有助于”。result from 表示“由……导致”，方向相反。",
+                  "targetWords": [
+                        "contribute"
+                  ],
+                  "sourceType": "original_exam_style",
+                  "sourceNote": "依据四级因果搭配考点设计"
+            }
+      ],
+      "cet6": [
+            {
+                  "id": "cet6_context_substantial",
+                  "type": "context",
+                  "stem": "The policy led to a _____ reduction in household energy consumption.",
+                  "options": [
+                        "substantial",
+                        "temporary",
+                        "random",
+                        "narrow"
+                  ],
+                  "answer": "substantial",
+                  "explanation": "substantial 在这里表示“显著的、大量的”，常修饰 increase、reduction、evidence 等抽象名词。",
+                  "targetWords": [
+                        "substantial"
+                  ],
+                  "sourceType": "original_exam_style",
+                  "sourceNote": "六级抽象词语境验证题"
+            },
+            {
+                  "id": "cet6_collocation_pose",
+                  "type": "collocation",
+                  "stem": "Which expression means “对公共健康构成威胁”?",
+                  "options": [
+                        "pose a threat to public health",
+                        "make a threat for public health",
+                        "put a threat on public health",
+                        "raise a threat with public health"
+                  ],
+                  "answer": "pose a threat to public health",
+                  "explanation": "pose a threat to 是六级阅读与写作中常见搭配。",
+                  "targetWords": [
+                        "pose",
+                        "threat"
+                  ],
+                  "sourceType": "original_exam_style",
+                  "sourceNote": "六级学术搭配验证题"
+            },
+            {
+                  "id": "cet6_wordform_inevitably",
+                  "type": "word_form",
+                  "stem": "Rapid technological change will _____ affect the labor market.",
+                  "options": [
+                        "inevitable",
+                        "inevitably",
+                        "inevitability",
+                        "evitable"
+                  ],
+                  "answer": "inevitably",
+                  "explanation": "空格修饰动词 affect，需要副词 inevitably。",
+                  "targetWords": [
+                        "inevitable",
+                        "inevitably",
+                        "inevitability"
+                  ],
+                  "sourceType": "original_exam_style",
+                  "sourceNote": "六级词形变化验证题"
+            },
+            {
+                  "id": "cet6_context_undermine",
+                  "type": "context",
+                  "stem": "Repeated data leaks may _____ public confidence in the platform.",
+                  "options": [
+                        "undermine",
+                        "undertake",
+                        "underline",
+                        "undergo"
+                  ],
+                  "answer": "undermine",
+                  "explanation": "undermine confidence 表示“削弱信心”。其他三个词分别是承担、强调/画线、经历。",
+                  "targetWords": [
+                        "undermine"
+                  ],
+                  "sourceType": "original_exam_style",
+                  "sourceNote": "六级近形词与语境验证题"
+            },
+            {
+                  "id": "cet6_synonym_ambiguous",
+                  "type": "synonym",
+                  "stem": "The instructions were ambiguous. What does “ambiguous” most nearly mean?",
+                  "options": [
+                        "unclear",
+                        "detailed",
+                        "strict",
+                        "reasonable"
+                  ],
+                  "answer": "unclear",
+                  "explanation": "ambiguous 表示“模棱两可的、不明确的”，最接近 unclear。",
+                  "targetWords": [
+                        "ambiguous"
+                  ],
+                  "sourceType": "original_exam_style",
+                  "sourceNote": "六级语境词义验证题"
+            },
+            {
+                  "id": "cet6_context_facilitate",
+                  "type": "context",
+                  "stem": "Digital tools can _____ communication among team members.",
+                  "options": [
+                        "facilitate",
+                        "calculate",
+                        "formulate",
+                        "regulate"
+                  ],
+                  "answer": "facilitate",
+                  "explanation": "facilitate 表示“促进、使便利”，后接 communication 很自然。",
+                  "targetWords": [
+                        "facilitate"
+                  ],
+                  "sourceType": "original_exam_style",
+                  "sourceNote": "六级学术动词验证题"
+            }
+      ],
+      "ielts": [
+            {
+                  "id": "ielts_context_mitigate",
+                  "type": "context",
+                  "stem": "Governments should take action to _____ the negative effects of climate change.",
+                  "options": [
+                        "mitigate",
+                        "imitate",
+                        "estimate",
+                        "motivate"
+                  ],
+                  "answer": "mitigate",
+                  "explanation": "mitigate the negative effects 表示“减轻负面影响”，是雅思写作常见学术搭配。",
+                  "targetWords": [
+                        "mitigate"
+                  ],
+                  "sourceType": "original_exam_style",
+                  "sourceNote": "雅思学术写作搭配验证题"
+            },
+            {
+                  "id": "ielts_collocation_crucial",
+                  "type": "collocation",
+                  "stem": "Which phrase is the most natural in academic writing?",
+                  "options": [
+                        "play a crucial role in",
+                        "do a crucial role on",
+                        "make a crucial role for",
+                        "take crucial role at"
+                  ],
+                  "answer": "play a crucial role in",
+                  "explanation": "play a crucial role in 表示“在……中发挥关键作用”。",
+                  "targetWords": [
+                        "crucial",
+                        "role"
+                  ],
+                  "sourceType": "original_exam_style",
+                  "sourceNote": "雅思写作高频搭配验证题"
+            },
+            {
+                  "id": "ielts_synonym_significant",
+                  "type": "synonym",
+                  "stem": "Which word is the best academic replacement for “big” in “a big increase”?",
+                  "options": [
+                        "significant",
+                        "tall",
+                        "wide",
+                        "heavy"
+                  ],
+                  "answer": "significant",
+                  "explanation": "a significant increase 是学术写作中的自然表达，表示“显著增长”。",
+                  "targetWords": [
+                        "significant"
+                  ],
+                  "sourceType": "original_exam_style",
+                  "sourceNote": "雅思图表写作同义替换验证题"
+            },
+            {
+                  "id": "ielts_context_viable",
+                  "type": "context",
+                  "stem": "Public transport is often seen as a _____ alternative to private cars.",
+                  "options": [
+                        "viable",
+                        "visible",
+                        "various",
+                        "virtual"
+                  ],
+                  "answer": "viable",
+                  "explanation": "viable solution/alternative 表示“可行的解决方案/替代方案”。",
+                  "targetWords": [
+                        "viable"
+                  ],
+                  "sourceType": "original_exam_style",
+                  "sourceNote": "雅思学术形容词验证题"
+            },
+            {
+                  "id": "ielts_context_allocate",
+                  "type": "context",
+                  "stem": "More resources should be _____ to primary healthcare.",
+                  "options": [
+                        "allocated",
+                        "located",
+                        "collected",
+                        "related"
+                  ],
+                  "answer": "allocated",
+                  "explanation": "allocate resources to 表示“把资源分配给……”，被动形式为 be allocated to。",
+                  "targetWords": [
+                        "allocate",
+                        "allocated"
+                  ],
+                  "sourceType": "original_exam_style",
+                  "sourceNote": "雅思写作词形与搭配验证题"
+            },
+            {
+                  "id": "ielts_collocation_enhance",
+                  "type": "collocation",
+                  "stem": "Choose the most natural academic expression.",
+                  "options": [
+                        "enhance academic performance",
+                        "enlarge academic performance",
+                        "rise academic performance",
+                        "grow academic performance"
+                  ],
+                  "answer": "enhance academic performance",
+                  "explanation": "enhance performance 表示“提升表现”，比 enlarge、rise、grow 更符合搭配习惯。",
+                  "targetWords": [
+                        "enhance",
+                        "performance"
+                  ],
+                  "sourceType": "original_exam_style",
+                  "sourceNote": "雅思学术动词搭配验证题"
+            }
+      ]
+};
+
+    const EXAM_TYPE_NAMES = {
+      context:"语境选词",
+      collocation:"固定搭配",
+      word_form:"词形变化",
+      synonym:"近义辨析"
+    };
 
     const BOOK_CONFIG = {
       cet4: {
@@ -2410,6 +3078,12 @@
     let pendingChineseAnswer = "";
     let lastAnswerContext = null;
     let pendingKnowledgeRating = "";
+    const examBankCache = {};
+    const examBankSources = {};
+    let examRuntime = {
+      packId:"cet4", queue:[], index:0, current:null,
+      answered:false, selectedIndex:-1, score:0, typeStats:{}, active:false
+    };
     let lookupState = {
       surface:"", lemma:"", context:"", source:"",
       entry:null, family:null, pos:"", meaning:"", grammarHint:"",
@@ -2455,6 +3129,26 @@
       };
     }
 
+    function createExamPackState(existing = {}){
+      return {
+        attempts:0,
+        correct:0,
+        sessions:0,
+        bestScore:0,
+        lastScore:0,
+        lastDate:"",
+        wrongQuestionIds:[],
+        history:[],
+        questionStats:{},
+        ...existing,
+        wrongQuestionIds:Array.isArray(existing.wrongQuestionIds)
+          ? [...new Set(existing.wrongQuestionIds)]
+          : [],
+        history:Array.isArray(existing.history) ? existing.history.slice(-2000) : [],
+        questionStats:{...(existing.questionStats || {})}
+      };
+    }
+
     function freshState(){
       return {
         version: 2,
@@ -2464,6 +3158,14 @@
         globalStreak: 0,
         lastGlobalCheckin: "",
         aiUsage: {date:todayKey, todayCalls:0, todayTokens:0, totalCalls:0, totalTokens:0},
+        exam: {
+          currentPack:"cet4",
+          packs:{
+            cet4:createExamPackState(),
+            cet6:createExamPackState(),
+            ielts:createExamPackState()
+          }
+        },
         room: {
           ownedShop:[], wrongClears:0, zeroWrongWins:0, maxWrongCount:0,
           lastWrongCount:0, interactionDate:"", interactionCount:0, aiMessages:{}
@@ -2536,6 +3238,11 @@
         ...saved,
         claimedRewards: Array.isArray(saved.claimedRewards) ? saved.claimedRewards : [],
         aiUsage:{...base.aiUsage, ...(saved.aiUsage || {})},
+        exam:{
+          ...base.exam,
+          ...(saved.exam || {}),
+          packs:{...base.exam.packs, ...((saved.exam || {}).packs || {})}
+        },
         room:{...base.room, ...(saved.room || {})},
         books: {...base.books, ...(saved.books || {})}
       };
@@ -2562,6 +3269,15 @@
         ensureTodayForBook(merged.books[bookId]);
         migrateWrongbookHistoryV31(merged.books[bookId]);
       });
+
+      Object.keys(EXAM_PACKS).forEach(packId => {
+        merged.exam.packs[packId] = createExamPackState(
+          merged.exam.packs[packId] || {}
+        );
+      });
+      if(!EXAM_PACKS[merged.exam.currentPack]){
+        merged.exam.currentPack = "cet4";
+      }
 
       merged.fun = {
         date: todayKey,
@@ -3745,7 +4461,11 @@
           </div>
         </div>` : ""}
 
-        ${renderLookupMiniQuiz()}
+        <div class="lookup-exam-bridge">
+          <strong>这张卡只负责把词讲清楚，不把刚看过的答案立刻拿来送分。</strong>
+          <p>真正检验会放到考点精选中，用新的语境、搭配和词形题测试。</p>
+          <button class="soft" type="button" onclick="openExamFromLookup()">去考点精选练习</button>
+        </div>
 
         ${message ? `<div class="lookup-ai-result">${message}</div>` : ""}
         ${cache ? `<div class="lookup-ai-result"><strong>已读取缓存 · 本次不调用</strong><br>${escapeHTML(cache).replace(/\n/g,"<br>")}</div>` : ""}
@@ -4875,6 +5595,368 @@ ${stage.reward}。
         : "完整词书正在加载；加载完成后会显示已学和剩余数量。";
     }
 
+    function getExamPackState(packId = state.exam.currentPack){
+      state.exam ||= {currentPack:"cet4",packs:{}};
+      state.exam.packs ||= {};
+      state.exam.packs[packId] = createExamPackState(state.exam.packs[packId] || {});
+      return state.exam.packs[packId];
+    }
+
+    function validExamQuestion(item){
+      return Boolean(
+        item &&
+        item.id &&
+        item.stem &&
+        Array.isArray(item.options) &&
+        item.options.length >= 2 &&
+        item.options.includes(item.answer)
+      );
+    }
+
+    async function loadExamBank(packId){
+      if(examBankCache[packId]) return examBankCache[packId];
+      const config = EXAM_PACKS[packId];
+      let questions = [];
+      let source = "内置框架验证题";
+
+      try{
+        const response = await fetch(`${config.path}?bank=1`, {cache:"no-store"});
+        if(!response.ok) throw new Error(`题库文件 ${response.status}`);
+        const payload = await response.json();
+        const list = Array.isArray(payload) ? payload : payload.questions;
+        if(!Array.isArray(list) || !list.filter(validExamQuestion).length){
+          throw new Error("题库格式不正确");
+        }
+        questions = list.filter(validExamQuestion);
+        source = "外部本地 JSON 题库";
+      }catch(error){
+        console.info("使用内置考点验证题", packId, error);
+        questions = (BUILTIN_EXAM_BANKS[packId] || []).filter(validExamQuestion);
+      }
+
+      examBankCache[packId] = questions;
+      examBankSources[packId] = source;
+      return questions;
+    }
+
+    function preferredExamPack(){
+      if(state.currentBookId === "cet6") return "cet6";
+      return state.exam?.currentPack || "cet4";
+    }
+
+    function renderExamHome(){
+      if(!$("examHomeTitle")) return;
+      const packId = preferredExamPack();
+      const config = EXAM_PACKS[packId] || EXAM_PACKS.cet4;
+      const count = (examBankCache[packId] || BUILTIN_EXAM_BANKS[packId] || []).length;
+      const progress = getExamPackState(packId);
+
+      $("examHomeTitle").textContent = config.name;
+      $("examHomeDesc").textContent = config.subtitle;
+      $("examHomeMeta").textContent =
+        `${count} 道小规模验证题 · 待重练 ${progress.wrongQuestionIds.length} 题 · 非历年真题`;
+    }
+
+    async function openExamPage(packId = preferredExamPack()){
+      state.exam.currentPack = EXAM_PACKS[packId] ? packId : "cet4";
+      save(false);
+      goPage("exam");
+      await renderExamPage();
+    }
+
+    async function selectExamPack(packId){
+      if(!EXAM_PACKS[packId]) return;
+      state.exam.currentPack = packId;
+      examRuntime = {
+        packId,queue:[],index:0,current:null,answered:false,
+        selectedIndex:-1,score:0,typeStats:{},active:false
+      };
+      save(false);
+      await renderExamPage();
+    }
+
+    async function renderExamPage(){
+      if(!$("examStage")) return;
+      const packId = state.exam.currentPack || "cet4";
+      const config = EXAM_PACKS[packId];
+      const progress = getExamPackState(packId);
+
+      document.querySelectorAll("[data-exam-pack]").forEach(button => {
+        button.classList.toggle("active", button.dataset.examPack === packId);
+      });
+
+      $("examPackName").textContent = config.name;
+      $("examPackSubtitle").textContent = config.subtitle;
+      $("examSourceNote").textContent = "正在读取本地题库…";
+      $("examWrongButton").disabled = progress.wrongQuestionIds.length === 0;
+      $("examWrongButton").style.opacity = progress.wrongQuestionIds.length ? "1" : ".5";
+
+      const bank = await loadExamBank(packId);
+      $("examBankCount").textContent = bank.length;
+      $("examAttemptCount").textContent = progress.attempts;
+      $("examAccuracy").textContent = progress.attempts
+        ? `${Math.round(progress.correct / progress.attempts * 100)}%`
+        : "—";
+      $("examWrongCount").textContent = progress.wrongQuestionIds.length;
+      $("examSourceNote").textContent =
+        `${examBankSources[packId]}。${config.note}`;
+
+      if(examRuntime.active && examRuntime.packId === packId){
+        renderExamQuestion();
+      }else if(!$("examStage").querySelector(".exam-result")){
+        $("examStage").innerHTML = `
+          <div class="exam-welcome">
+            <div class="exam-welcome-icon">📚</div>
+            <strong>${escapeHTML(config.name)}</strong>
+            <p>每轮最多 10 题；优先抽未做题和旧错题。答错会保留，连续答对两次才从考点错题中移出。</p>
+          </div>`;
+      }
+      renderExamHome();
+    }
+
+    function orderedExamPool(bank, packId){
+      const progress = getExamPackState(packId);
+      const wrong = new Set(progress.wrongQuestionIds);
+      const unseen = [];
+      const oldWrong = [];
+      const seen = [];
+
+      shuffle(bank).forEach(question => {
+        const stat = progress.questionStats[question.id];
+        if(!stat || !stat.attempts) unseen.push(question);
+        else if(wrong.has(question.id)) oldWrong.push(question);
+        else seen.push(question);
+      });
+      return [...unseen, ...oldWrong, ...seen];
+    }
+
+    async function startExamSession(mode = "normal"){
+      const packId = state.exam.currentPack || "cet4";
+      const bank = await loadExamBank(packId);
+      const progress = getExamPackState(packId);
+
+      let pool;
+      if(mode === "wrong"){
+        const wrong = new Set(progress.wrongQuestionIds);
+        pool = shuffle(bank.filter(question => wrong.has(question.id)));
+        if(!pool.length){
+          toast("当前没有待重练的考点错题");
+          return;
+        }
+      }else{
+        pool = orderedExamPool(bank, packId);
+      }
+
+      examRuntime = {
+        packId,
+        queue:pool.slice(0, Math.min(10, pool.length)),
+        index:0,
+        current:null,
+        answered:false,
+        selectedIndex:-1,
+        score:0,
+        typeStats:{},
+        active:true
+      };
+      progress.sessions += 1;
+      save(false);
+      renderExamQuestion();
+      window.scrollTo({top:0,behavior:"smooth"});
+    }
+
+    function renderExamQuestion(){
+      const stage = $("examStage");
+      if(!stage || !examRuntime.active) return;
+
+      if(examRuntime.index >= examRuntime.queue.length){
+        finishExamSession();
+        return;
+      }
+
+      const question = examRuntime.queue[examRuntime.index];
+      examRuntime.current = question;
+      const typeName = EXAM_TYPE_NAMES[question.type] || "考点练习";
+      const options = question.options.map((option, index) => {
+        let className = "exam-option";
+        if(examRuntime.answered){
+          if(option === question.answer) className += " correct";
+          else if(index === examRuntime.selectedIndex) className += " wrong";
+        }
+        return `<button class="${className}" type="button"
+                  onclick="answerExamQuestion(${index})"
+                  ${examRuntime.answered ? "disabled" : ""}>
+                  ${String.fromCharCode(65 + index)}. ${escapeHTML(option)}
+                </button>`;
+      }).join("");
+
+      const feedback = examRuntime.answered
+        ? `<div class="exam-feedback">
+             <strong>${question.options[examRuntime.selectedIndex] === question.answer ? "答对了" : `正确答案：${escapeHTML(question.answer)}`}</strong><br>
+             ${escapeHTML(question.explanation)}
+             <div class="exam-question-source">${escapeHTML(question.sourceNote || "原创考点型验证题")} · 非历年真题</div>
+           </div>
+           <button class="primary exam-next" type="button" onclick="nextExamQuestion()">
+             ${examRuntime.index + 1 >= examRuntime.queue.length ? "查看本轮结果" : "下一题"}
+           </button>`
+        : "";
+
+      stage.innerHTML = `
+        <div class="card exam-question-card">
+          <div class="exam-question-head">
+            <span class="exam-type-tag">${escapeHTML(typeName)}</span>
+            <span class="exam-counter">${examRuntime.index + 1} / ${examRuntime.queue.length}</span>
+          </div>
+          <div class="progress" style="margin-top:10px">
+            <div style="width:${(examRuntime.index + (examRuntime.answered ? 1 : 0)) / examRuntime.queue.length * 100}%"></div>
+          </div>
+          <div class="exam-stem">${escapeHTML(question.stem)}</div>
+          <div class="exam-options">${options}</div>
+          ${feedback}
+        </div>`;
+    }
+
+    function examQuestionStat(progress, questionId){
+      progress.questionStats[questionId] ||= {
+        attempts:0,correct:0,wrong:0,correctStreak:0,lastResult:"",lastAt:""
+      };
+      return progress.questionStats[questionId];
+    }
+
+    function addExamTargetsToWrongbook(question, packId){
+      const bookId = EXAM_PACKS[packId]?.bookId;
+      if(!bookId || !state.books[bookId]) return;
+
+      (question.targetWords || []).forEach(word => {
+        const key = wordKey(word);
+        if(!key) return;
+        const existing = state.books[bookId].words[key] || {};
+        const progress = createWordProgress(existing);
+        progress.inWrongBook = true;
+        progress.everWrong = true;
+        progress.manuallyRemovedWrong = false;
+        progress.wrongCount = Number(progress.wrongCount || 0) + 1;
+        progress.wrongRecoveryStreak = 0;
+        progress.lastWrongAt = todayKey;
+        progress.nextReviewAt = todayKey;
+        state.books[bookId].words[key] = progress;
+      });
+    }
+
+    function answerExamQuestion(optionIndex){
+      if(!examRuntime.active || examRuntime.answered) return;
+      const question = examRuntime.current;
+      if(!question) return;
+
+      examRuntime.answered = true;
+      examRuntime.selectedIndex = optionIndex;
+      const selected = question.options[optionIndex];
+      const correct = selected === question.answer;
+      if(correct) examRuntime.score += 1;
+
+      const typeName = EXAM_TYPE_NAMES[question.type] || question.type;
+      examRuntime.typeStats[typeName] ||= {total:0,correct:0};
+      examRuntime.typeStats[typeName].total += 1;
+      if(correct) examRuntime.typeStats[typeName].correct += 1;
+
+      const progress = getExamPackState(examRuntime.packId);
+      const stat = examQuestionStat(progress, question.id);
+      progress.attempts += 1;
+      stat.attempts += 1;
+      stat.lastAt = new Date().toISOString();
+
+      if(correct){
+        progress.correct += 1;
+        stat.correct += 1;
+        stat.correctStreak += 1;
+        stat.lastResult = "correct";
+        if(stat.correctStreak >= 2){
+          progress.wrongQuestionIds =
+            progress.wrongQuestionIds.filter(id => id !== question.id);
+        }
+      }else{
+        stat.wrong += 1;
+        stat.correctStreak = 0;
+        stat.lastResult = "wrong";
+        if(!progress.wrongQuestionIds.includes(question.id)){
+          progress.wrongQuestionIds.push(question.id);
+        }
+        addExamTargetsToWrongbook(question, examRuntime.packId);
+      }
+
+      progress.history.push({
+        id:question.id,
+        date:new Date().toISOString(),
+        result:correct ? "correct" : "wrong",
+        selected,
+        answer:question.answer,
+        type:question.type
+      });
+      progress.history = progress.history.slice(-2000);
+      save(false);
+      renderExamQuestion();
+      renderExamHome();
+    }
+
+    function nextExamQuestion(){
+      if(!examRuntime.answered) return;
+      examRuntime.index += 1;
+      examRuntime.answered = false;
+      examRuntime.selectedIndex = -1;
+      renderExamQuestion();
+      window.scrollTo({top:0,behavior:"smooth"});
+    }
+
+    function finishExamSession(){
+      const progress = getExamPackState(examRuntime.packId);
+      const total = examRuntime.queue.length;
+      const score = examRuntime.score;
+      progress.lastScore = score;
+      progress.lastDate = todayKey;
+      progress.bestScore = Math.max(Number(progress.bestScore || 0), score);
+      save(false);
+
+      const typeSummary = Object.entries(examRuntime.typeStats)
+        .map(([type, stat]) =>
+          `<div><strong>${escapeHTML(type)}</strong><br>${stat.correct} / ${stat.total} 正确</div>`
+        ).join("");
+
+      examRuntime.active = false;
+      $("examStage").innerHTML = `
+        <div class="card exam-result">
+          <div class="exam-result-score">${score} / ${total}</div>
+          <div class="exam-result-title">${score === total ? "这轮全部答对" : score >= Math.ceil(total * .7) ? "框架验证通过，继续查薄弱点" : "错题已经记下，下一轮会优先出现"}</div>
+          <div class="exam-result-copy">
+            这份分数只来自本地考点题库，不调用模型。考点错题需要连续答对两次才会移出。
+          </div>
+          <div class="exam-type-summary">${typeSummary || "<div>本轮暂无分类统计</div>"}</div>
+          <div class="exam-actions">
+            <button class="primary" type="button" onclick="startExamSession('normal')">再练一轮</button>
+            <button class="soft" type="button" onclick="startExamSession('wrong')">重练错题</button>
+          </div>
+        </div>`;
+      renderExamStatsOnly();
+    }
+
+    function renderExamStatsOnly(){
+      if(!$("examAttemptCount")) return;
+      const packId = state.exam.currentPack || "cet4";
+      const progress = getExamPackState(packId);
+      $("examAttemptCount").textContent = progress.attempts;
+      $("examAccuracy").textContent = progress.attempts
+        ? `${Math.round(progress.correct / progress.attempts * 100)}%`
+        : "—";
+      $("examWrongCount").textContent = progress.wrongQuestionIds.length;
+      $("examWrongButton").disabled = progress.wrongQuestionIds.length === 0;
+      $("examWrongButton").style.opacity = progress.wrongQuestionIds.length ? "1" : ".5";
+      renderExamHome();
+    }
+
+    function openExamFromLookup(){
+      closeWordLookup();
+      const packId = state.currentBookId === "cet6" ? "cet6" : "cet4";
+      openExamPage(packId);
+    }
+
     function renderAll(){
       const book = getBook();
       const count = getTodayCount(book);
@@ -4932,6 +6014,7 @@ ${stage.reward}。
       renderReport();
       renderBookOverview();
       renderStreakSpirit();
+      renderExamHome();
       updateAIUsageUI();
     }
 
@@ -5159,11 +6242,13 @@ ${stage.reward}。
 
     function goPage(page){
       document.querySelectorAll(".page").forEach(p => p.classList.toggle("active", p.id === page));
-      document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("active", b.dataset.page === page));
+      const navPage = page === "exam" ? "home" : page;
+      document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("active", b.dataset.page === navPage));
       if(page === "notebook") renderNotebook();
       if(page === "report") renderReport();
       if(page === "rewards") renderRoomRewards();
       if(page === "aicoach") renderAICoach();
+      if(page === "exam") renderExamPage();
       refreshPageCopy(page);
       if(Math.random() < .35) shuffleSubtitle();
       window.scrollTo({top:0, behavior:"smooth"});
