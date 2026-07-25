@@ -902,6 +902,76 @@
       .study-tools{grid-template-columns:1fr 1fr}
       .study-tools button:first-child{grid-column:1 / -1}
     }
+    .study-word-meta{
+      width:100%;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;
+      margin:-8px 0 13px;
+    }
+    .study-meta-chip{
+      padding:5px 8px;border-radius:999px;background:#fff3f7;
+      color:#a36f83;font-size:10px;font-weight:800;
+    }
+    .minute-card{
+      margin-bottom:15px;padding:14px;border-radius:18px;
+      background:linear-gradient(145deg,#fff8fb,#fffdf8);
+      border:1px solid #f2dce5;
+    }
+    .minute-card-head{
+      display:flex;justify-content:space-between;align-items:flex-start;gap:10px;
+      margin-bottom:10px;
+    }
+    .minute-card-title{font-size:14px;font-weight:900;color:var(--ink)}
+    .minute-zero-api{
+      padding:5px 8px;border-radius:999px;background:#edf9f0;
+      color:#43865a;font-size:10px;font-weight:850;white-space:nowrap;
+    }
+    .minute-grid{display:grid;gap:9px}
+    .minute-section{
+      padding:11px 12px;border-radius:14px;background:#fff;
+      border:1px solid #f5e6ec;
+    }
+    .minute-label{
+      display:block;margin-bottom:5px;color:#a08390;font-size:10px;font-weight:850;
+    }
+    .minute-value{font-size:13px;line-height:1.65;color:var(--ink)}
+    .minute-example{padding:10px;border-radius:12px;background:#fff7fa;line-height:1.7}
+    .minute-translation{margin-top:5px;color:var(--muted);font-size:12px}
+    .minute-record{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:9px;
+    }
+    .minute-record div{
+      padding:8px 4px;text-align:center;border-radius:12px;background:#fff5f8;
+    }
+    .minute-record strong{display:block;font-size:14px}
+    .minute-record span{display:block;margin-top:2px;color:var(--muted);font-size:9px}
+    .minute-family{display:flex;flex-wrap:wrap;gap:6px}
+    .minute-family span{
+      padding:5px 7px;border-radius:999px;background:#fff0f5;
+      color:var(--pink-deep);font-size:10px;font-weight:800;
+    }
+    .minute-collocation-list{display:grid;gap:6px}
+    .minute-collocation{
+      display:grid;grid-template-columns:minmax(90px,1fr) 1.2fr;gap:8px;
+      padding:7px 8px;border-radius:11px;background:#fff8fa;font-size:11px;line-height:1.5;
+    }
+    .minute-collocation strong{overflow-wrap:anywhere}
+    .minute-collocation em{color:var(--muted);font-style:normal}
+    .lookup-pronunciation{
+      display:flex;align-items:center;gap:8px;margin-top:5px;
+      color:var(--muted);font-size:13px;font-weight:700;
+    }
+    .lookup-study-record{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:6px;
+    }
+    .lookup-study-record div{
+      text-align:center;padding:8px 3px;border-radius:11px;background:#fff7fa;
+    }
+    .lookup-study-record strong{display:block;font-size:13px}
+    .lookup-study-record span{display:block;margin-top:2px;color:var(--muted);font-size:9px}
+    @media(max-width:370px){
+      .minute-record,.lookup-study-record{grid-template-columns:repeat(2,1fr)}
+      .minute-collocation{grid-template-columns:1fr}
+    }
+
     .lookup-token{
       display:inline;padding:0 1px;border:0;border-bottom:1px dashed #e995b5;
       border-radius:3px;background:transparent;color:inherit;font:inherit;
@@ -1021,13 +1091,13 @@
         <button class="card direction-card" type="button" onclick="startDirectionMode('en-zh')">
           <div class="direction-icon">🔤</div>
           <div class="direction-name">英文 → 中文</div>
-          <div class="direction-desc">看英文，判断或输入中文含义。适合快速认词。</div>
+          <div class="direction-desc">看英文，先选熟悉程度，再用四选一确认中文含义。</div>
           <div class="direction-count">今日练习 <span id="enZhToday">0</span> 个</div>
         </button>
         <button class="card direction-card" type="button" onclick="startDirectionMode('zh-en')">
           <div class="direction-icon">✍🏻</div>
           <div class="direction-name">中文 → 英文</div>
-          <div class="direction-desc">先判断掌握程度；认识时需要自己输入英文。</div>
+          <div class="direction-desc">看中文，先选熟悉程度，再从四个英文中确认答案。</div>
           <div class="direction-count">今日练习 <span id="zhEnToday">0</span> 个</div>
         </button>
         <button class="card direction-card spelling-card" type="button" onclick="startDirectionMode('spelling')">
@@ -1236,6 +1306,7 @@
         <button id="favoriteBtn" class="favorite-btn" type="button" onclick="toggleFavorite()">♡</button>
         <div id="word" class="word">abandon</div>
         <div id="phonetic" class="phonetic">/əˈbændən/</div>
+        <div id="studyWordMeta" class="study-word-meta"></div>
         <div id="pronounceRow" class="pronounce-row">
           <button class="pronounce-btn" type="button" onclick="playCurrentWord(false)">🔊</button>
           <div class="pronounce-label">
@@ -1248,11 +1319,11 @@
         <div id="example" class="example">Never abandon your goal because progress feels slow.</div>
         <div id="wordExtra" class="word-extra hidden"></div>
       </div>
-      <div id="modeHint" class="mode-hint">先诚实判断：不认识、模糊，还是认识？</div>
+      <div id="modeHint" class="mode-hint">先判断熟悉程度；认识和模糊都会进入四选一确认，不需要输入中文。</div>
       <div id="studyActions" class="study-actions">
         <button class="choice" onclick="chooseKnowledgeMode('unknown')">不认识</button>
-        <button class="choice" onclick="chooseKnowledgeMode('fuzzy')">有点模糊</button>
-        <button class="choice good" onclick="chooseKnowledgeMode('known')">认识</button>
+        <button class="choice" onclick="chooseKnowledgeMode('fuzzy')">有点模糊 · 选意思</button>
+        <button class="choice good" onclick="chooseKnowledgeMode('known')">认识 · 选意思</button>
       </div>
       <div id="quizPanel" class="quiz-panel"></div>
       <div class="study-tools">
@@ -1431,10 +1502,10 @@
 
       <div class="card settings-card">
         <div class="section-title" style="margin:0 0 10px">
-          <span>复习与出题规则</span><span class="tiny">点词词形示范版</span>
+          <span>复习与出题规则</span><span class="tiny">四选一学习卡版</span>
         </div>
         <p id="reviewRuleHint" class="hint">
-          每日任务内不会重复出同一个词；不认识和模糊会进入错题本，次日开始复习；
+          每日任务内不会重复出同一个词；认识和模糊都用四选一确认，不再输入中文；不认识和模糊会进入错题本，次日开始复习；
           认识的词 3 天后复习，连续答对 3 次进入已掌握，14 天后再复查。
         </p>
       </div>
@@ -2277,6 +2348,7 @@
     let aiCoachWordKey = "";
     let pendingChineseAnswer = "";
     let lastAnswerContext = null;
+    let pendingKnowledgeRating = "";
     let lookupState = {
       surface:"", lemma:"", context:"", source:"",
       entry:null, family:null, pos:"", meaning:"", grammarHint:""
@@ -3054,6 +3126,9 @@
           : "本地推测：形容词常修饰名词，或放在 be、become、seem 等系动词后作表语。";
       }
       if(String(pos).startsWith("n")){
+        if(next && !["is","are","was","were","has","have","had"].includes(next)){
+          return `本地推测：${surface} 是名词，但这里放在名词 “${next}” 前面，更像名词作定语，说明“哪一种/什么用途的 ${next}”。`;
+        }
         return "本地提示：名词可以作主语、宾语或表语；前面常出现冠词、形容词或所有格。";
       }
       if(String(pos).startsWith("v")){
@@ -3160,6 +3235,10 @@
       const cache = getBook().grammarCache?.[lookupCacheKey()] || "";
       const directBase = family?.matched?.base || lookupState.lemma;
       const entryName = lookupState.entry?.word || "";
+      const lookupProgress = lookupState.entry
+        ? (getWordProgress(wordKey(lookupState.entry.word), false) || createWordProgress())
+        : createWordProgress();
+      const entryPhonetic = lookupState.entry?.phonetic || "音标暂未收录";
       const sourceName = {
         example:"例句", phrase:"常用词组", pattern:"固定搭配",
         "pattern-example":"句型例句", "sense-phrase":"义项词组"
@@ -3170,6 +3249,10 @@
           ${escapeHTML(lookupState.surface)}
           <button class="audio-mini-btn" style="display:inline-grid;vertical-align:middle;margin-left:7px"
                   type="button" onclick="speakTextValue('${escapeHTML(lookupState.surface)}')">🔊</button>
+        </div>
+        <div class="lookup-pronunciation">
+          <span>${escapeHTML(entryPhonetic)}</span>
+          <span>· iPhone 系统朗读</span>
         </div>
         <div class="lookup-subline">来自${escapeHTML(sourceName)} · 点击的是当前实际词形</div>
 
@@ -3191,10 +3274,20 @@
           <div class="lookup-subline" style="margin-top:8px">${escapeHTML(lookupState.grammarHint)}</div>
         </div>
 
-        <div class="lookup-section">
-          <div class="lookup-section-title"><span>词形与词族</span><span>${family?.forms?.length || 0} 个示范</span></div>
+        ${family?.forms?.length ? `<div class="lookup-section">
+          <div class="lookup-section-title"><span>词形与词族</span><span>${family.forms.length} 个</span></div>
           <div class="family-list">${familyHTML}</div>
-        </div>
+        </div>` : ""}
+
+        ${lookupState.entry ? `<div class="lookup-section">
+          <div class="lookup-section-title"><span>我的学习记录</span><span>${wordStatusLabel(lookupProgress.status)}</span></div>
+          <div class="lookup-study-record">
+            <div><strong>${lookupProgress.reviewCount || 0}</strong><span>学习次数</span></div>
+            <div><strong>${lookupProgress.wrongCount || 0}</strong><span>错过次数</span></div>
+            <div><strong>${lookupProgress.correctStreak || 0}</strong><span>连续答对</span></div>
+            <div><strong>${shortReviewDate(lookupProgress.nextReviewAt)}</strong><span>下次复习</span></div>
+          </div>
+        </div>` : ""}
 
         ${message ? `<div class="lookup-ai-result">${message}</div>` : ""}
         ${cache ? `<div class="lookup-ai-result"><strong>已读取缓存 · 本次不调用</strong><br>${escapeHTML(cache).replace(/\n/g,"<br>")}</div>` : ""}
@@ -3356,6 +3449,92 @@
       return values.length ? values.join("；") : word.meaning;
     }
 
+    function wordStatusLabel(status){
+      return {new:"新词",learning:"学习中",mastered:"已掌握"}[status] || "新词";
+    }
+
+    function shortReviewDate(value){
+      if(!value) return "未安排";
+      if(value === todayKey) return "今天";
+      if(value === addDaysKey(1)) return "明天";
+      return value.slice(5).replace("-","/");
+    }
+
+    function currentWordCollocations(word){
+      const cached = (cachedAIEntry(word)?.meanings || []).flatMap(item =>
+        (item.phrases || []).map(phrase => ({phrase,translation:item.meaning || "AI 缓存搭配"}))
+      );
+      const local = [
+        ...(word.examplePhrase ? [word.examplePhrase] : []),
+        ...(word.phrases || []),
+        ...cached
+      ];
+      return uniqueObjects(local, item => `${item?.phrase || ""}|${item?.translation || ""}`)
+        .filter(item => item?.phrase)
+        .slice(0,3);
+    }
+
+    function buildOneMinuteStudyCard(word){
+      const progress = getWordProgress(wordKey(word.word), false) || createWordProgress();
+      const family = findFamily(word.word);
+      const pos = inferLocalPOS(word.word, word, family);
+      const usageHint = inferGrammarHint(word.word, word.example || "", pos);
+      const collocations = currentWordCollocations(word);
+      const sourceName = BOOK_CONFIG[state.currentBookId]?.name || "当前词书";
+      const familyHTML = family?.forms?.length
+        ? `<div class="minute-section">
+             <span class="minute-label">词形与词族</span>
+             <div class="minute-family">${family.forms.map(item =>
+               `<span>${escapeHTML(item.word)} · ${escapeHTML(item.pos)}</span>`
+             ).join("")}</div>
+           </div>`
+        : "";
+      const collocationHTML = collocations.length
+        ? `<div class="minute-section">
+             <span class="minute-label">最常用的搭配</span>
+             <div class="minute-collocation-list">${collocations.map(item => `
+               <div class="minute-collocation">
+                 <strong>${clickableEnglishHTML(item.phrase,item.phrase,"phrase")}</strong>
+                 <em>${escapeHTML(item.translation || "暂未收录中文")}</em>
+               </div>`).join("")}</div>
+           </div>`
+        : "";
+
+      return `
+        <div class="minute-card">
+          <div class="minute-card-head">
+            <div>
+              <div class="minute-card-title">一分钟掌握当前词</div>
+              <div class="lookup-subline">${escapeHTML(sourceName)} · ${escapeHTML(pos)}</div>
+            </div>
+            <span class="minute-zero-api">本地 0 API</span>
+          </div>
+          <div class="minute-grid">
+            <div class="minute-section">
+              <span class="minute-label">当前核心意思</span>
+              <div class="minute-value"><strong>${escapeHTML(compactMeaning(word))}</strong></div>
+            </div>
+            <div class="minute-section">
+              <span class="minute-label">当前例句与用法</span>
+              <div class="minute-example">${clickableEnglishHTML(word.example || "暂无例句",word.example || "","example")}</div>
+              <div class="minute-translation">${escapeHTML(word.exampleTranslation || "当前词库暂未收录例句翻译")}</div>
+              <div class="lookup-subline" style="margin-top:8px">${escapeHTML(usageHint)}</div>
+            </div>
+            ${collocationHTML}
+            ${familyHTML}
+            <div class="minute-section">
+              <span class="minute-label">我的学习记录</span>
+              <div class="minute-record">
+                <div><strong>${progress.reviewCount || 0}</strong><span>学习次数</span></div>
+                <div><strong>${progress.wrongCount || 0}</strong><span>错过次数</span></div>
+                <div><strong>${progress.correctStreak || 0}</strong><span>连续答对</span></div>
+                <div><strong>${escapeHTML(shortReviewDate(progress.nextReviewAt))}</strong><span>下次复习</span></div>
+              </div>
+            </div>
+          </div>
+        </div>`;
+    }
+
     function buildWordDetails(word){
       const senses = collectMeaningCards(word);
       const progress = getWordProgress(wordKey(word.word), false) || createWordProgress();
@@ -3475,6 +3654,7 @@
         : "";
 
       return `
+        ${buildOneMinuteStudyCard(word)}
         <div class="detail-title">
           <span>全部释义</span>
           <span class="phrase-count">${senses.length} 条</span>
@@ -4306,6 +4486,7 @@ ${stage.reward}。
       const favoriteBtn = $("favoriteBtn");
       const wordExtra = $("wordExtra");
       const pronounceRow = $("pronounceRow");
+      const studyWordMeta = $("studyWordMeta");
       wordExtra.classList.add("hidden");
       wordExtra.innerHTML = "";
 
@@ -4340,6 +4521,8 @@ ${stage.reward}。
         $("studyActions").style.display = "none";
         $("modeHint").style.display = "none";
         pronounceRow.style.display = "none";
+        studyWordMeta.innerHTML = "";
+        studyWordMeta.style.display = "none";
         wordExtra.classList.add("hidden");
         return;
       }
@@ -4354,7 +4537,14 @@ ${stage.reward}。
         direction === "en-zh"
           ? "本题会自动朗读一次，也可以点喇叭重播"
           : "点喇叭可听发音；右侧可慢速播放";
-      const progress = getWordProgress(wordKey(w.word), false);
+      const progress = getWordProgress(wordKey(w.word), false) || createWordProgress();
+      studyWordMeta.style.display = "flex";
+      studyWordMeta.innerHTML = `
+        <span class="study-meta-chip">${escapeHTML(BOOK_CONFIG[state.currentBookId]?.name || "当前词书")}</span>
+        <span class="study-meta-chip">${wordStatusLabel(progress.status)}</span>
+        <span class="study-meta-chip">学过 ${progress.reviewCount || 0} 次</span>
+        ${progress.wrongCount ? `<span class="study-meta-chip">错过 ${progress.wrongCount} 次</span>` : ""}
+      `;
       wordEl.classList.toggle("zh-prompt", direction === "zh-en");
 
       if(direction === "listening"){
@@ -4385,7 +4575,7 @@ ${stage.reward}。
         phoneticEl.textContent = "看中文，猜对应英文";
         meaningEl.textContent = `${w.word}  ${w.phonetic}`;
         exampleEl.textContent = "答题后显示例句，避免提前泄露答案。";
-        $("modeHint").textContent = pick(MODE_HINTS["zh-en"]);
+        $("modeHint").textContent = "先选认识、模糊或不认识；认识和模糊都会用四个英文选项确认，不需要输入。";
       }else{
         wordEl.textContent = w.word;
         phoneticEl.textContent = w.phonetic;
@@ -4396,7 +4586,7 @@ ${stage.reward}。
           "例句朗读"
         );
         $("modeHint").textContent =
-          "先写你理解的中文意思，再对照词书自行判断；程序不会因同义表达擅自判错。";
+          "先选认识、模糊或不认识；认识和模糊都会用四个中文选项确认，不需要输入。";
       }
 
       meaningEl.classList.add("hidden");
@@ -4743,9 +4933,11 @@ ${stage.reward}。
 
     function chooseKnowledgeMode(type){
       if(answerLocked || !currentItem) return;
-      if(type === "unknown") showUnknownAnswer();
-      if(type === "fuzzy") showFuzzyOptions();
-      if(type === "known") showKnownInput();
+      if(type === "unknown"){
+        showUnknownAnswer();
+        return;
+      }
+      showKnowledgeOptions(type);
     }
 
     function hideModeButtons(){
@@ -4773,30 +4965,43 @@ ${stage.reward}。
       const correct = direction === "zh-en"
         ? currentItem.word.word
         : compactMeaning(currentItem.word);
+      const targetPos = posFromMeaning(currentItem.word.meaning || currentItem.word.primaryMeaning || "");
+      const candidates = activeWords
+        .filter(word => wordKey(word.word) !== wordKey(currentItem.word.word))
+        .map(word => ({
+          word,
+          value:direction === "zh-en" ? word.word : compactMeaning(word),
+          pos:posFromMeaning(word.meaning || word.primaryMeaning || "")
+        }))
+        .filter(item => item.value && item.value !== correct);
 
-      const distractors = shuffle(activeWords)
-        .filter(w => wordKey(w.word) !== wordKey(currentItem.word.word))
-        .map(w => direction === "zh-en" ? w.word : compactMeaning(w))
-        .filter(Boolean)
+      const samePos = targetPos
+        ? shuffle(candidates.filter(item => item.pos === targetPos))
+        : [];
+      const fallback = shuffle(candidates.filter(item => !samePos.includes(item)));
+      const distractors = [...samePos, ...fallback]
+        .map(item => item.value)
         .filter((value, index, array) => array.indexOf(value) === index)
-        .slice(0, 3);
+        .slice(0,3);
 
-      return {
-        correct,
-        options:shuffle([correct, ...distractors])
-      };
+      return {correct, options:shuffle([correct, ...distractors])};
     }
 
-    function showFuzzyOptions(){
+    function showKnowledgeOptions(rating){
       hideModeButtons();
+      pendingKnowledgeRating = rating;
       const built = buildAnswerOptions();
       const options = built.options;
       const correct = built.correct;
       const box = document.createElement("div");
       box.className = "quiz-box";
-      box.innerHTML = `<div class="quiz-title">${
-        currentDirection() === "zh-en" ? "选出正确英文" : "选出正确释义"
-      }</div><div class="option-grid"></div><div id="fuzzyResult" class="quiz-result"></div>`;
+      box.innerHTML = `
+        <div class="quiz-title">${rating === "known" ? "你觉得认识，再确认一次" : "你觉得有点模糊，选出最接近的答案"}</div>
+        <div class="lookup-subline" style="margin-bottom:10px">${
+          currentDirection() === "zh-en" ? "选择正确英文" : "选择正确中文释义"
+        } · 本地判题，不调用 API</div>
+        <div class="option-grid"></div>
+        <div id="knowledgeChoiceResult" class="quiz-result"></div>`;
       const grid = box.querySelector(".option-grid");
 
       options.forEach(option => {
@@ -4812,11 +5017,33 @@ ${stage.reward}。
             else if(btn === button) btn.classList.add("wrong");
             btn.disabled = true;
           });
+
           revealCurrentAnswer();
-          finalizeAnswer("fuzzy", true);
-          box.querySelector("#fuzzyResult").innerHTML =
-            `${correctChoice ? "选对了，但模糊词仍会进错题本。" : "选错了，正确答案已经标绿。"}`
-            + '<button class="primary" style="margin-top:12px;width:100%" onclick="advanceAfterAnswer()">下一词</button>';
+          let result = "unknown";
+          let addWrong = true;
+          if(correctChoice && rating === "known"){
+            result = "known";
+            addWrong = false;
+          }else if(correctChoice && rating === "fuzzy"){
+            result = "fuzzy";
+            addWrong = true;
+          }
+          lastAnswerContext = {
+            word:currentItem.word.word,
+            prompt:currentDirection() === "zh-en" ? compactMeaning(currentItem.word) : currentItem.word.word,
+            answer:option,
+            correct,
+            result
+          };
+          finalizeAnswer(result, addWrong);
+
+          const message = correctChoice
+            ? rating === "known"
+              ? "选对了，按“认识”记录。3 天后会再确认一次。"
+              : "选对了，但你自己标记为模糊，所以仍会进入错题本，明天优先复习。"
+            : `选错了，正确答案已标绿。无论刚才选的是认识还是模糊，本次都会按“不会”记录。`;
+          box.querySelector("#knowledgeChoiceResult").innerHTML =
+            `${message}<button class="primary" style="margin-top:12px;width:100%" onclick="advanceAfterAnswer()">下一词</button>`;
         };
         grid.appendChild(button);
       });
