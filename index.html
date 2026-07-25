@@ -959,6 +959,29 @@
       display:flex;align-items:center;gap:8px;margin-top:5px;
       color:var(--muted);font-size:13px;font-weight:700;
     }
+    .lookup-pronunciation-grid{
+      display:grid;gap:7px;margin-top:8px;
+    }
+    .lookup-pronunciation-row{
+      display:grid;grid-template-columns:auto minmax(0,1fr) auto;
+      gap:8px;align-items:center;padding:8px 10px;border-radius:13px;
+      background:#fff7fa;color:var(--ink);font-size:12px;
+    }
+    .lookup-pronunciation-label{
+      min-width:28px;font-weight:900;color:var(--pink-deep);
+    }
+    .lookup-pronunciation-ipa{
+      overflow-wrap:anywhere;font-weight:750;
+    }
+    .lookup-pronunciation-source{
+      margin-top:6px;color:var(--muted);font-size:10px;line-height:1.5;
+    }
+    .phonetic-loading{
+      color:var(--muted);font-weight:650;
+    }
+    .study-phonetic-pair{
+      line-height:1.7;
+    }
     .lookup-study-record{
       display:grid;grid-template-columns:repeat(4,1fr);gap:6px;
     }
@@ -1502,7 +1525,7 @@
 
       <div class="card settings-card">
         <div class="section-title" style="margin:0 0 10px">
-          <span>复习与出题规则</span><span class="tiny">四选一学习卡版</span>
+          <span>复习与出题规则</span><span class="tiny">英美音标补全版</span>
         </div>
         <p id="reviewRuleHint" class="hint">
           每日任务内不会重复出同一个词；认识和模糊都用四选一确认，不再输入中文；不认识和模糊会进入错题本，次日开始复习；
@@ -2315,6 +2338,7 @@
 
     const STORAGE_KEY = "cetRoomStateV2";
     const BACKUP_KEY = "cetRoomStateV31EmergencyBackup";
+    const PHONETIC_CACHE_KEY = "cetPhoneticCacheV1";
     const LEGACY_KEY = "cetRoomState";
     const $ = id => document.getElementById(id);
     const pick = arr => arr[Math.floor(Math.random() * arr.length)];
@@ -2351,7 +2375,8 @@
     let pendingKnowledgeRating = "";
     let lookupState = {
       surface:"", lemma:"", context:"", source:"",
-      entry:null, family:null, pos:"", meaning:"", grammarHint:""
+      entry:null, family:null, pos:"", meaning:"", grammarHint:"",
+      phonetics:{uk:"",us:""}, phoneticSource:"", phoneticLoading:false
     };
     const autoOrganizePending = new Set();
     const copyHistory = {};
@@ -2595,9 +2620,11 @@
 
       return {
         ...existing,
-        us:existing.us || incoming.us,
-        uk:existing.uk || incoming.uk,
-        phonetic:existing.phonetic || incoming.phonetic,
+        us:existing.us || existing.usphone || existing.usPhone || incoming.us || incoming.usphone || incoming.usPhone,
+        uk:existing.uk || existing.ukphone || existing.ukPhone || incoming.uk || incoming.ukphone || incoming.ukPhone,
+        usphone:existing.usphone || incoming.usphone,
+        ukphone:existing.ukphone || incoming.ukphone,
+        phonetic:existing.phonetic || existing.phone || incoming.phonetic || incoming.phone,
         meaning:existing.meaning || incoming.meaning,
         example:existing.example || incoming.example,
         translations:uniqueObjects(
@@ -2613,6 +2640,65 @@
           item => `${String(item.sentence || "").trim().toLowerCase()}|${String(item.translation || "").trim()}`
         )
       };
+    }
+
+    function normalizePhoneticText(value){
+      if(Array.isArray(value)) value = value.find(Boolean) || "";
+      let raw = String(value || "").trim();
+      if(!raw) return "";
+      raw = raw
+        .replace(/^\/+|\/+$/g, "")
+        .replace(/'/g, "ˈ")
+        .replace(/,/g, "ˌ")
+        .replace(/:/g, "ː")
+        .replace(/\s*;\s*/g, "；")
+        .replace(/\s+/g, " ")
+        .trim();
+      return raw ? `/${raw}/` : "";
+    }
+
+    function firstPhoneticFromArray(item, accent){
+      const list = Array.isArray(item?.phonetics) ? item.phonetics : [];
+      const wanted = accent === "uk" ? /(^|[-_])(uk|gb)([-_.]|$)/i : /(^|[-_])(us|usa)([-_.]|$)/i;
+      const matched = list.find(entry => {
+        const haystack = `${entry?.audio || ""} ${entry?.sourceUrl || ""} ${entry?.accent || ""}`;
+        return entry?.text && wanted.test(haystack);
+      });
+      return normalizePhoneticText(matched?.text || "");
+    }
+
+    function rawPhoneticFor(item, accent){
+      const keys = accent === "uk"
+        ? ["uk","ukphone","ukPhone","british","britishPhonetic"]
+        : ["us","usphone","usPhone","american","americanPhonetic"];
+      for(const key of keys){
+        const normalized = normalizePhoneticText(item?.[key]);
+        if(normalized) return normalized;
+      }
+      return firstPhoneticFromArray(item, accent);
+    }
+
+    function phoneticPairFromEntry(entry){
+      const uk = normalizePhoneticText(
+        entry?.ukPhonetic || entry?.uk || entry?.ukphone || entry?.ukPhone
+      );
+      const us = normalizePhoneticText(
+        entry?.usPhonetic || entry?.us || entry?.usphone || entry?.usPhone
+      );
+      const common = normalizePhoneticText(entry?.phonetic || entry?.phone);
+      return {
+        uk:uk || common || us,
+        us:us || common || uk
+      };
+    }
+
+    function phoneticPairText(entry){
+      const pair = phoneticPairFromEntry(entry);
+      if(pair.uk && pair.us && pair.uk !== pair.us){
+        return `英 ${pair.uk} · 美 ${pair.us}`;
+      }
+      const one = pair.uk || pair.us;
+      return one ? `${one} · 英美通用显示` : "音标暂未收录";
     }
 
     function normalizeVocabularyEntry(item){
@@ -2675,13 +2761,16 @@
         ? `${translations[0].type ? translations[0].type + ". " : ""}${translations[0].translation}`
         : meaning;
 
-      const phoneticRaw = item.us || item.uk || item.phonetic || "";
+      const ukPhonetic = rawPhoneticFor(item, "uk");
+      const usPhonetic = rawPhoneticFor(item, "us");
+      const commonPhonetic = normalizePhoneticText(item.phonetic || item.phone);
+      const primaryPhonetic = usPhonetic || ukPhonetic || commonPhonetic;
 
       return {
         word:item.word || "unknown",
-        phonetic:phoneticRaw
-          ? (String(phoneticRaw).startsWith("/") ? phoneticRaw : `/${phoneticRaw}/`)
-          : "暂无音标",
+        ukPhonetic:ukPhonetic || commonPhonetic || usPhonetic,
+        usPhonetic:usPhonetic || commonPhonetic || ukPhonetic,
+        phonetic:primaryPhonetic || "暂无音标",
         meaning,
         primaryMeaning,
         translations,
@@ -3171,6 +3260,167 @@
       }).join("");
     }
 
+    function getPhoneticCache(){
+      try{
+        const parsed = JSON.parse(localStorage.getItem(PHONETIC_CACHE_KEY) || "{}");
+        return parsed && typeof parsed === "object" ? parsed : {};
+      }catch(_){
+        return {};
+      }
+    }
+
+    function savePhoneticCache(cache){
+      const entries = Object.entries(cache || {});
+      const trimmed = entries.length > 800
+        ? Object.fromEntries(entries.slice(-800))
+        : cache;
+      localStorage.setItem(PHONETIC_CACHE_KEY, JSON.stringify(trimmed));
+    }
+
+    function speakWithAccent(value, accent = "en-US", slow = false){
+      if(!("speechSynthesis" in window)){
+        toast("当前浏览器不支持朗读");
+        return;
+      }
+      const clean = ttsReadableText(value);
+      if(!clean) return;
+
+      const synth = window.speechSynthesis;
+      try{ synth.cancel(); synth.resume(); }catch(_){}
+      const utterance = new SpeechSynthesisUtterance(clean);
+      utterance.lang = accent;
+      utterance.rate = slow ? Math.max(.52, speechRate - .18) : speechRate;
+      utterance.pitch = 1;
+      utterance.volume = 1;
+
+      const voices = synth.getVoices() || [];
+      const voice = [...voices]
+        .filter(item => String(item.lang || "").toLowerCase().startsWith(accent.toLowerCase().slice(0,2)))
+        .sort((a,b) => rankVoice(b, accent) - rankVoice(a, accent))[0];
+      if(voice) utterance.voice = voice;
+      synth.speak(utterance);
+    }
+
+    function externalPhoneticPair(payload){
+      const entries = Array.isArray(payload) ? payload : [];
+      const phonetics = entries.flatMap(entry =>
+        Array.isArray(entry?.phonetics) ? entry.phonetics : []
+      );
+
+      const withText = phonetics.filter(item => normalizePhoneticText(item?.text));
+      const ukItem = withText.find(item =>
+        /(^|[-_])(uk|gb)([-_.]|$)/i.test(`${item.audio || ""} ${item.sourceUrl || ""}`)
+      );
+      const usItem = withText.find(item =>
+        /(^|[-_])(us|usa)([-_.]|$)/i.test(`${item.audio || ""} ${item.sourceUrl || ""}`)
+      );
+      const common = normalizePhoneticText(
+        withText[0]?.text || entries.find(entry => entry?.phonetic)?.phonetic || ""
+      );
+
+      return {
+        uk:normalizePhoneticText(ukItem?.text) || common,
+        us:normalizePhoneticText(usItem?.text) || common
+      };
+    }
+
+    async function fetchFreePhonetics(word){
+      const clean = cleanLookupToken(word);
+      if(!clean) return {uk:"",us:""};
+
+      const response = await fetch(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(clean)}`
+      );
+      if(!response.ok) throw new Error(`dictionary ${response.status}`);
+      return externalPhoneticPair(await response.json());
+    }
+
+    async function hydrateLookupPhonetics(){
+      const local = phoneticPairFromEntry(lookupState.entry);
+      if(local.uk || local.us){
+        lookupState.phonetics = local;
+        lookupState.phoneticSource = "当前词书本地音标";
+        lookupState.phoneticLoading = false;
+        renderWordLookup();
+        return;
+      }
+
+      const cache = getPhoneticCache();
+      const candidates = [...new Set([
+        cleanLookupToken(lookupState.surface),
+        cleanLookupToken(lookupState.lemma)
+      ].filter(Boolean))];
+
+      for(const candidate of candidates){
+        if(cache[candidate]?.uk || cache[candidate]?.us){
+          lookupState.phonetics = cache[candidate];
+          lookupState.phoneticSource = "本机音标缓存 · 0 AI Token";
+          lookupState.phoneticLoading = false;
+          renderWordLookup();
+          return;
+        }
+      }
+
+      lookupState.phoneticLoading = true;
+      lookupState.phoneticSource = "本地未命中，正在免费补查（不使用模型 API）";
+      renderWordLookup();
+
+      for(const candidate of candidates){
+        try{
+          const pair = await fetchFreePhonetics(candidate);
+          if(pair.uk || pair.us){
+            cache[candidate] = {...pair, updatedAt:Date.now()};
+            savePhoneticCache(cache);
+            lookupState.phonetics = pair;
+            lookupState.phoneticSource = "免费词典补充并已缓存 · 0 AI Token";
+            lookupState.phoneticLoading = false;
+            renderWordLookup();
+            return;
+          }
+        }catch(error){
+          console.warn("免费音标补查失败", candidate, error);
+        }
+      }
+
+      lookupState.phonetics = {uk:"",us:""};
+      lookupState.phoneticSource = "本地和免费词典都未找到；朗读仍可使用";
+      lookupState.phoneticLoading = false;
+      renderWordLookup();
+    }
+
+    function lookupPronunciationHTML(){
+      const pair = lookupState.phonetics || {uk:"",us:""};
+      if(lookupState.phoneticLoading && !pair.uk && !pair.us){
+        return `
+          <div class="lookup-pronunciation-grid">
+            <div class="lookup-pronunciation-row phonetic-loading">
+              正在查找 ${escapeHTML(lookupState.surface)} 的音标…
+            </div>
+          </div>
+          <div class="lookup-pronunciation-source">${escapeHTML(lookupState.phoneticSource)}</div>`;
+      }
+
+      const fallback = "暂未找到";
+      return `
+        <div class="lookup-pronunciation-grid">
+          <div class="lookup-pronunciation-row">
+            <span class="lookup-pronunciation-label">英</span>
+            <span class="lookup-pronunciation-ipa">${escapeHTML(pair.uk || fallback)}</span>
+            <button class="audio-mini-btn" type="button"
+                    data-word="${escapeHTML(lookupState.surface)}"
+                    onclick="speakWithAccent(this.dataset.word,'en-GB')">🔊</button>
+          </div>
+          <div class="lookup-pronunciation-row">
+            <span class="lookup-pronunciation-label">美</span>
+            <span class="lookup-pronunciation-ipa">${escapeHTML(pair.us || fallback)}</span>
+            <button class="audio-mini-btn" type="button"
+                    data-word="${escapeHTML(lookupState.surface)}"
+                    onclick="speakWithAccent(this.dataset.word,'en-US')">🔊</button>
+          </div>
+        </div>
+        <div class="lookup-pronunciation-source">${escapeHTML(lookupState.phoneticSource || "本地音标")}</div>`;
+    }
+
     function lookupCacheKey(){
       return `${cleanLookupToken(lookupState.surface)}|${String(lookupState.context || "").trim().toLowerCase()}`;
     }
@@ -3183,6 +3433,7 @@
       const family = findFamily(surface);
       const pos = inferLocalPOS(surface, found.entry, family);
 
+      const localPhonetics = phoneticPairFromEntry(found.entry);
       lookupState = {
         surface,
         lemma:found.lemma || cleanLookupToken(surface),
@@ -3192,11 +3443,17 @@
         family,
         pos,
         meaning:localMeaningFor(surface, found.entry, family),
-        grammarHint:inferGrammarHint(surface, context, pos)
+        grammarHint:inferGrammarHint(surface, context, pos),
+        phonetics:localPhonetics,
+        phoneticSource:(localPhonetics.uk || localPhonetics.us)
+          ? "当前词书本地音标"
+          : "等待补查",
+        phoneticLoading:false
       };
       renderWordLookup();
       $("lookupSheet").classList.add("show");
       document.body.style.overflow = "hidden";
+      hydrateLookupPhonetics();
     }
 
     function closeWordLookup(){
@@ -3238,7 +3495,7 @@
       const lookupProgress = lookupState.entry
         ? (getWordProgress(wordKey(lookupState.entry.word), false) || createWordProgress())
         : createWordProgress();
-      const entryPhonetic = lookupState.entry?.phonetic || "音标暂未收录";
+      const entryPhonetic = phoneticPairText(lookupState.entry);
       const sourceName = {
         example:"例句", phrase:"常用词组", pattern:"固定搭配",
         "pattern-example":"句型例句", "sense-phrase":"义项词组"
@@ -3250,10 +3507,7 @@
           <button class="audio-mini-btn" style="display:inline-grid;vertical-align:middle;margin-left:7px"
                   type="button" onclick="speakTextValue('${escapeHTML(lookupState.surface)}')">🔊</button>
         </div>
-        <div class="lookup-pronunciation">
-          <span>${escapeHTML(entryPhonetic)}</span>
-          <span>· iPhone 系统朗读</span>
-        </div>
+        ${lookupPronunciationHTML()}
         <div class="lookup-subline">来自${escapeHTML(sourceName)} · 点击的是当前实际词形</div>
 
         <div class="lookup-badges">
@@ -4566,7 +4820,7 @@ ${stage.reward}。
         $("modeHint").textContent = "答题后会显示完整例句、对应搭配和全部释义。";
       }else if(direction === "spelling"){
         wordEl.textContent = compactMeaning(w);
-        phoneticEl.textContent = `${w.phonetic} · ${w.word.length} 个字母`;
+        phoneticEl.textContent = `${phoneticPairText(w)} · ${w.word.length} 个字母`;
         meaningEl.textContent = `${w.word}  ${w.phonetic}`;
         exampleEl.textContent = "先拼写，提交后再显示完整释义、例句和搭配。";
         $("modeHint").textContent = "这一轮每题都要亲手拼写；提示首字母后答对也会进入错题本巩固。";
@@ -4578,7 +4832,8 @@ ${stage.reward}。
         $("modeHint").textContent = "先选认识、模糊或不认识；认识和模糊都会用四个英文选项确认，不需要输入。";
       }else{
         wordEl.textContent = w.word;
-        phoneticEl.textContent = w.phonetic;
+        phoneticEl.textContent = phoneticPairText(w);
+        phoneticEl.classList.add("study-phonetic-pair");
         meaningEl.textContent = w.meaning;
         exampleEl.innerHTML = exampleAudioHTML(
           w.example || "暂无例句",
