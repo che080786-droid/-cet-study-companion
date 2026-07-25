@@ -136,6 +136,90 @@
       background:linear-gradient(90deg,#ff9dbc,#f57ca7);
       border-radius:inherit;transition:.35s ease;
     }
+    .book-overview{padding:17px;margin:12px 0}
+    .book-overview-head{
+      display:flex;justify-content:space-between;gap:12px;align-items:flex-start
+    }
+    .book-overview-title{font-weight:850}
+    .book-overview-copy{
+      margin-top:5px;color:var(--muted);font-size:12px;line-height:1.55
+    }
+    .book-overview-stats{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:12px
+    }
+    .book-overview-stat{
+      padding:9px 4px;text-align:center;border-radius:13px;background:#fff6f9
+    }
+    .book-overview-stat strong{display:block;font-size:16px}
+    .book-overview-stat span{
+      display:block;margin-top:3px;color:var(--muted);font-size:10px
+    }
+    .streak-spirit{
+      display:grid;grid-template-columns:auto minmax(0,1fr) auto;
+      gap:13px;align-items:center;padding:16px;margin:12px 0;
+      position:relative;overflow:hidden
+    }
+    .streak-spirit:after{
+      content:"";position:absolute;right:-30px;top:-32px;width:105px;height:105px;
+      border-radius:50%;background:rgba(255,221,133,.22);pointer-events:none
+    }
+    .spirit-orb{
+      width:65px;height:65px;border-radius:22px;display:grid;place-items:center;
+      font-size:33px;background:linear-gradient(145deg,#fff3b8,#ffd6ea);
+      box-shadow:0 10px 25px rgba(236,146,178,.17);
+      position:relative;z-index:1;transition:.25s
+    }
+    .spirit-orb.lit{
+      animation:spiritPulse 1.8s ease-in-out infinite;
+      box-shadow:0 0 0 5px rgba(255,231,151,.2),0 12px 28px rgba(236,146,178,.2)
+    }
+    @keyframes spiritPulse{
+      0%,100%{transform:translateY(0) scale(1)}
+      50%{transform:translateY(-3px) scale(1.04)}
+    }
+    .spirit-copy{position:relative;z-index:1}
+    .spirit-name{font-weight:900}
+    .spirit-status{
+      margin-top:5px;color:var(--muted);font-size:12px;line-height:1.55
+    }
+    .spirit-progress{
+      height:7px;margin-top:9px;border-radius:999px;background:#f2e4e8;overflow:hidden
+    }
+    .spirit-progress > div{
+      height:100%;border-radius:inherit;
+      background:linear-gradient(90deg,#ffd56f,#ff94b9);transition:.35s
+    }
+    .spirit-days{
+      min-width:62px;padding:9px 8px;text-align:center;border-radius:16px;
+      background:#fff6e7;color:#c07c38;font-weight:900;position:relative;z-index:1
+    }
+    .spirit-days span{display:block;font-size:10px;margin-top:2px;font-weight:700}
+    .wrong-ledger{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+      padding:13px;margin-bottom:11px
+    }
+    .wrong-ledger div{
+      text-align:center;padding:9px 4px;border-radius:13px;background:#fff6f9
+    }
+    .wrong-ledger strong{display:block;font-size:18px}
+    .wrong-ledger span{
+      display:block;margin-top:3px;color:var(--muted);font-size:10px
+    }
+    .wrong-meta{
+      display:flex;flex-wrap:wrap;gap:6px;margin-top:7px
+    }
+    .wrong-chip{
+      padding:4px 7px;border-radius:999px;background:#fff0f5;
+      color:var(--pink-deep);font-size:10px;font-weight:800
+    }
+    .backup-actions{
+      display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:11px
+    }
+    @media(max-width:370px){
+      .book-overview-stats{grid-template-columns:repeat(2,1fr)}
+      .streak-spirit{grid-template-columns:auto 1fr}
+      .spirit-days{grid-column:1 / -1}
+    }
     .primary,.soft,.choice{
       border:0;border-radius:16px;font-weight:750;
       min-height:46px;
@@ -883,6 +967,23 @@
         <button class="soft" onclick="continueLastMode()">继续</button>
       </div>
 
+      <div class="card book-overview">
+        <div class="book-overview-head">
+          <div>
+            <div id="bookOverviewTitle" class="book-overview-title">完整词书总进度</div>
+            <div id="bookOverviewText" class="book-overview-copy">正在读取词书总量…</div>
+          </div>
+          <span id="bookOverviewPercent" class="queue-tag">0%</span>
+        </div>
+        <div class="progress" style="margin-top:12px"><div id="bookOverallProgress"></div></div>
+        <div class="book-overview-stats">
+          <div class="book-overview-stat"><strong id="bookSeenCount">0</strong><span>已接触</span></div>
+          <div class="book-overview-stat"><strong id="bookMasteredCount">0</strong><span>已掌握</span></div>
+          <div class="book-overview-stat"><strong id="bookRemainingCount">0</strong><span>剩余新词</span></div>
+          <div class="book-overview-stat"><strong id="bookAttemptCount">0</strong><span>累计答题</span></div>
+        </div>
+      </div>
+
       <div class="card task">
         <div class="task-icon">🎀</div>
         <div class="task-main">
@@ -890,6 +991,16 @@
           <div id="checkinDesc" class="task-desc">完成单词任务后可以打卡</div>
         </div>
       </div>
+
+      <button class="card streak-spirit" type="button" onclick="showStreakSpiritInfo()">
+        <div id="streakSpiritOrb" class="spirit-orb">🌱</div>
+        <div class="spirit-copy">
+          <div id="streakSpiritName" class="spirit-name">月焰精灵还在沉睡</div>
+          <div id="streakSpiritStatus" class="spirit-status">完成今天的任务并打卡，它就会亮起来。</div>
+          <div class="spirit-progress"><div id="streakSpiritBar"></div></div>
+        </div>
+        <div id="streakSpiritDays" class="spirit-days">0<span>连续天数</span></div>
+      </button>
 
       <button id="checkinBtn" class="primary" onclick="checkIn()">完成今日打卡</button>
 
@@ -1069,12 +1180,17 @@
       <div class="hero">
         <div class="hello">月月的单词本 📒</div>
         <div id="notebookHeroQuote" class="quote">
-          不认识和模糊会自动进入错题本；列表按 A—Z 排列，复习时仍可随机抽取。每本词书各自保存。
+          不认识和模糊都会进入错题本；一次答对不会自动清空，只有你主动点击“移出错题”才会离开。历史错题次数会一直保留。
         </div>
       </div>
       <div class="notebook-tabs">
         <button id="wrongTab" class="notebook-tab active" onclick="setNotebookTab('wrong')">错题本 <span id="wrongCount">0</span></button>
         <button id="favoriteTab" class="notebook-tab" onclick="setNotebookTab('favorite')">收藏 <span id="favoriteCount">0</span></button>
+      </div>
+      <div id="wrongLedger" class="card wrong-ledger">
+        <div><strong id="wrongActiveCount">0</strong><span>当前错题</span></div>
+        <div><strong id="wrongEverCount">0</strong><span>累计错过</span></div>
+        <div><strong id="wrongRecoveredCount">0</strong><span>已手动移出</span></div>
       </div>
       <div class="notebook-toolbar">
         <div id="notebookSummary" class="tiny" style="align-self:center">暂无单词 · A—Z</div>
@@ -1229,7 +1345,7 @@
 
       <div class="card settings-card">
         <div class="section-title" style="margin:0 0 10px">
-          <span>复习与出题规则</span><span class="tiny">第一版</span>
+          <span>复习与出题规则</span><span class="tiny">稳定记录版</span>
         </div>
         <p id="reviewRuleHint" class="hint">
           每日任务内不会重复出同一个词；不认识和模糊会进入错题本，次日开始复习；
@@ -1296,6 +1412,22 @@
         <p id="apiStatus" class="hint" style="margin:11px 2px 0">
           只有主动点“Daddy 讲讲”或“测试连接”才会调用；听音、搭配题和复盘都不使用 API。
         </p>
+      </div>
+
+      <div class="card settings-card">
+        <div class="section-title" style="margin:0 0 10px">
+          <span>本地进度备份</span><span class="tiny">防止 Safari 清缓存或换设备</span>
+        </div>
+        <div class="hint">
+          导出文件包含学习进度、错题、星星和小屋装饰，不包含 API Key。
+          网页每次保存时也会写入一份浏览器内应急副本。
+        </div>
+        <div class="backup-actions">
+          <button class="soft" type="button" onclick="exportProgressBackup()">导出进度</button>
+          <button class="soft" type="button" onclick="$('progressImportInput').click()">导入进度</button>
+        </div>
+        <input id="progressImportInput" type="file" accept=".json,application/json"
+               style="display:none" onchange="importProgressBackup(event)" />
       </div>
 
       <div class="card settings-card">
@@ -1381,7 +1513,9 @@
       {id:"morning", type:"streak", value:3, name:"专属早安留言", art:"☀️", text:"连续三天。早上醒来先想起今天要背词，也可以顺便想我。"},
       {id:"goodnight", type:"streak", value:7, name:"专属晚安留言", art:"🌙", text:"连续七天。今天辛苦了，闭眼之前允许你再想我一分钟。"},
       {id:"date", type:"streak", value:14, name:"隐藏约会剧情", art:"💌", text:"连续十四天的人，当然值得一场只属于我们的约会。"},
-      {id:"anniversary", type:"streak", value:30, name:"三十日纪念剧情", art:"💍", text:"三十天不是一时兴起。小屋会把这一天认真记下来。"}
+      {id:"anniversary", type:"streak", value:30, name:"三十日纪念剧情", art:"💍", text:"三十天不是一时兴起。小屋会把这一天认真记下来。"},
+      {id:"moonfire60", type:"streak", value:60, name:"月焰精灵完全体", art:"🧚‍♀️", text:"连续六十天，月焰精灵长出了完整的光翼。小屋奖励 30 颗星星。", bonus:30},
+      {id:"moonfire100", type:"streak", value:100, name:"百日月光纪念", art:"🌕", text:"连续一百天。它不再只是一点火光，而是你亲手养亮的一轮月亮。小屋奖励 50 颗星星。", bonus:50}
     ];
 
 
@@ -1840,6 +1974,7 @@
     ];
 
     const STORAGE_KEY = "cetRoomStateV2";
+    const BACKUP_KEY = "cetRoomStateV31EmergencyBackup";
     const LEGACY_KEY = "cetRoomState";
     const $ = id => document.getElementById(id);
     const pick = arr => arr[Math.floor(Math.random() * arr.length)];
@@ -1906,6 +2041,7 @@
         lastCheckin: "",
         history: [],
         aiCache: {},
+        wrongMigrationV31:false,
         words: {}
       };
     }
@@ -1946,7 +2082,19 @@
         const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
         if(saved && saved.version === 2) return normalizeState(saved);
       }catch(error){
-        console.warn("新版进度读取失败", error);
+        console.warn("主进度读取失败，尝试应急副本", error);
+      }
+
+      try{
+        const backup = JSON.parse(localStorage.getItem(BACKUP_KEY) || "null");
+        if(backup && backup.version === 2){
+          const recovered = normalizeState(backup);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(recovered));
+          setTimeout(() => toast("主进度异常，已从浏览器应急副本恢复"), 300);
+          return recovered;
+        }
+      }catch(error){
+        console.warn("应急副本读取失败", error);
       }
 
       const next = freshState();
@@ -1996,12 +2144,13 @@
             ...((merged.books[bookId] || {}).today || {})
           },
           history:Array.isArray((merged.books[bookId] || {}).history)
-            ? (merged.books[bookId] || {}).history.slice(-2000)
+            ? (merged.books[bookId] || {}).history.slice(-20000)
             : [],
           aiCache:{...((merged.books[bookId] || {}).aiCache || {})},
           words: {...((merged.books[bookId] || {}).words || {})}
         };
         ensureTodayForBook(merged.books[bookId]);
+        migrateWrongbookHistoryV31(merged.books[bookId]);
       });
 
       merged.fun = {
@@ -2072,7 +2221,9 @@
     }
 
     function save(render = true){
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      const serialized = JSON.stringify(state);
+      localStorage.setItem(STORAGE_KEY, serialized);
+      localStorage.setItem(BACKUP_KEY, serialized);
       if(render) renderAll();
     }
 
@@ -2281,12 +2432,45 @@
         reviewCount:0,
         lastRewardDate:"",
         inWrongBook:false,
+        everWrong:false,
         wrongCount:0,
+        wrongRecoveryStreak:0,
+        lastWrongAt:"",
+        manuallyRemovedWrong:false,
         favorite:false,
         senseStats:{},
         ...existing,
         senseStats:{...(existing.senseStats || {})}
       };
+    }
+
+    function migrateWrongbookHistoryV31(book){
+      if(!book || book.wrongMigrationV31) return;
+
+      const records = {};
+      (Array.isArray(book.history) ? book.history : []).forEach(event => {
+        const key = wordKey(event?.word);
+        if(!key) return;
+        if(event?.result !== "fuzzy" && event?.result !== "unknown" && !event?.wrong) return;
+
+        records[key] ||= {count:0, lastDate:""};
+        records[key].count += 1;
+        if(String(event.date || "") > records[key].lastDate){
+          records[key].lastDate = String(event.date || "");
+        }
+      });
+
+      Object.entries(records).forEach(([key, record]) => {
+        const progress = createWordProgress(book.words[key] || {});
+        progress.everWrong = true;
+        progress.inWrongBook = true;
+        progress.manuallyRemovedWrong = false;
+        progress.wrongCount = Math.max(Number(progress.wrongCount) || 0, record.count);
+        progress.lastWrongAt = progress.lastWrongAt || record.lastDate;
+        book.words[key] = progress;
+      });
+
+      book.wrongMigrationV31 = true;
     }
 
     function getWordProgress(key, create = false){
@@ -3020,7 +3204,7 @@
       renderAll();
       if(!currentItem){
         const completionText = {
-          wrong:"错题本这一轮复习完成。不会自动清除错题，你可以自己决定什么时候移出。",
+          wrong:"错题本这一轮复习完成。答对会累计“连续答对”次数，但不会擅自清空；确认巩固后由你手动移出。",
           favorite:"收藏单词这一轮看完啦。",
           listening:"听音与听写完成。听错或拼错的词已经收入错题本。",
           context:"语境与搭配完成。错题已安排到后续复习。"
@@ -3040,9 +3224,18 @@
 
     function showNewReward(previousIds){
       const newly = REWARDS.find(
-        r => r.type === "streak" && rewardOwned(r) && !previousIds.includes(r.id)
+        reward => reward.type === "streak" &&
+                  rewardOwned(reward) &&
+                  !previousIds.includes(reward.id)
       );
-      if(newly) setTimeout(() => openModal(newly.name, newly.text), 300);
+      if(!newly) return;
+
+      if(Number(newly.bonus) > 0 && !state.claimedRewards.includes(newly.id)){
+        state.claimedRewards.push(newly.id);
+        state.stars += Number(newly.bonus);
+        save(false);
+      }
+      setTimeout(() => openModal(newly.name, newly.text), 300);
     }
 
     function exchangeReward(reward){
@@ -3291,6 +3484,91 @@
         + `明日到期复习 <strong>${tomorrowDue}</strong> 个。`;
     }
 
+    const STREAK_SPIRIT_STAGES = [
+      {min:0, next:1, icon:"🌱", name:"沉睡的月种", reward:"完成首次打卡后苏醒"},
+      {min:1, next:3, icon:"✨", name:"微光精灵", reward:"连续 3 天解锁早安留言"},
+      {min:3, next:7, icon:"🧚", name:"星点精灵", reward:"连续 7 天长出月光灯串"},
+      {min:7, next:14, icon:"🔥", name:"月焰幼体", reward:"连续 14 天解锁隐藏约会"},
+      {min:14, next:30, icon:"🌙", name:"月焰精灵", reward:"连续 30 天解锁纪念剧情"},
+      {min:30, next:60, icon:"🌙🔥", name:"月焰精灵·成长体", reward:"连续 60 天长出完整光翼"},
+      {min:60, next:100, icon:"🧚‍♀️", name:"月焰精灵·完全体", reward:"连续 100 天点亮百日月光"},
+      {min:100, next:100, icon:"🌕", name:"百日月光守护灵", reward:"已经点亮最高形态"}
+    ];
+
+    function currentStreakSpiritStage(days = state.globalStreak){
+      return [...STREAK_SPIRIT_STAGES]
+        .reverse()
+        .find(stage => days >= stage.min) || STREAK_SPIRIT_STAGES[0];
+    }
+
+    function renderStreakSpirit(){
+      if(!$("streakSpiritOrb")) return;
+      const days = Number(state.globalStreak) || 0;
+      const stage = currentStreakSpiritStage(days);
+      const checkedToday = state.lastGlobalCheckin === todayKey;
+      const stillAlive = checkedToday || state.lastGlobalCheckin === addDaysKey(-1);
+      const span = Math.max(1, stage.next - stage.min);
+      const progress = stage.next === stage.min
+        ? 100
+        : Math.max(0, Math.min(100, (days - stage.min) / span * 100));
+
+      $("streakSpiritOrb").textContent = stage.icon;
+      $("streakSpiritOrb").classList.toggle("lit", checkedToday);
+      $("streakSpiritName").textContent = stage.name;
+      $("streakSpiritDays").innerHTML = `${days}<span>连续天数</span>`;
+      $("streakSpiritBar").style.width = `${progress}%`;
+
+      if(checkedToday){
+        $("streakSpiritStatus").textContent = `今天已经续上月焰。${stage.reward}。`;
+      }else if(stillAlive && days > 0){
+        $("streakSpiritStatus").textContent = `月焰还亮着，完成今天任务后记得回来续火。${stage.reward}。`;
+      }else{
+        $("streakSpiritStatus").textContent = days
+          ? "连续记录已经中断，但历史奖励和小屋装饰不会消失。重新打卡会从 1 天开始。"
+          : "完成今天的任务并打卡，它就会亮起来。";
+      }
+    }
+
+    function showStreakSpiritInfo(){
+      const days = Number(state.globalStreak) || 0;
+      const stage = currentStreakSpiritStage(days);
+      const nextText = stage.next === stage.min
+        ? "已经抵达最高形态。"
+        : `距离下一形态还差 ${Math.max(0, stage.next - days)} 天。`;
+      openModal(
+        `${stage.icon} ${stage.name}`,
+        `当前连续 ${days} 天。${nextText}
+${stage.reward}。
+
+每天完成当前词书目标后打卡，精灵会继续成长；错过一天会重新计算连续天数，但已经获得的奖励不会收回。`
+      );
+    }
+
+    function renderBookOverview(){
+      if(!$("bookOverallProgress")) return;
+      const book = getBook();
+      const total = vocabularyLoaded ? activeWords.length : 0;
+      const progresses = Object.values(book.words).map(createWordProgress);
+      const seen = progresses.filter(progress => Number(progress.reviewCount) > 0).length;
+      const mastered = progresses.filter(progress => progress.status === "mastered").length;
+      const remaining = Math.max(0, total - seen);
+      const attempts = Array.isArray(book.history) ? book.history.length : 0;
+      const percent = total ? Math.min(100, seen / total * 100) : 0;
+
+      $("bookOverviewTitle").textContent =
+        `${BOOK_CONFIG[state.currentBookId].name}总进度`;
+      $("bookOverallProgress").style.width = `${percent}%`;
+      $("bookOverviewPercent").textContent = `${percent.toFixed(percent < 10 ? 1 : 0)}%`;
+      $("bookSeenCount").textContent = seen;
+      $("bookMasteredCount").textContent = mastered;
+      $("bookRemainingCount").textContent = total ? remaining : "—";
+      $("bookAttemptCount").textContent = attempts;
+
+      $("bookOverviewText").textContent = total
+        ? `已接触 ${seen} / ${total} 个，剩余 ${remaining} 个从未学习；累计答题 ${attempts} 次。复习旧词不会虚增“已接触”。`
+        : "完整词书正在加载；加载完成后会显示已学和剩余数量。";
+    }
+
     function renderAll(){
       const book = getBook();
       const count = getTodayCount(book);
@@ -3346,6 +3624,8 @@
       renderRoomRewards();
       renderRoom();
       renderReport();
+      renderBookOverview();
+      renderStreakSpirit();
       updateAIUsageUI();
     }
 
@@ -3698,8 +3978,14 @@
             btn.disabled = true;
           });
           revealCurrentAnswer();
-          lastAnswerContext = {word:currentItem.word.word, prompt:currentItem.word.meaning, answer:input, correct:currentItem.word.word, result:correct ? "known" : "unknown"};
-        finalizeAnswer(correct ? "known" : "unknown", !correct);
+          lastAnswerContext = {
+            word:currentItem.word.word,
+            prompt:question.prompt,
+            answer:option,
+            correct:question.answer,
+            result:correct ? "known" : "unknown"
+          };
+          finalizeAnswer(correct ? "known" : "unknown", !correct);
           $("contextResult").innerHTML =
             `${correct ? "语境判断正确。" : `正确答案：<strong>${escapeHTML(question.answer)}</strong>`}`
             + `<div class="context-note">${escapeHTML(question.note || "")}<br>${escapeHTML(question.full || "")}</div>`
@@ -4046,7 +4332,7 @@
         <div class="self-judge-grid">
           <button class="primary" type="button"
                   onclick="resolveChineseMeaning('known')">
-            意思相近，算对并移出错题
+            意思相近，算对
           </button>
           <button class="soft" type="button"
                   onclick="resolveChineseMeaning('fuzzy')">
@@ -4075,19 +4361,16 @@
       };
 
       if(result === "known"){
-        const wasWrong = Boolean(wordProgress.inWrongBook);
-        wordProgress.inWrongBook = false;
-        if(wasWrong) recordWrongClear();
         finalizeAnswer("known", false);
       }else if(result === "fuzzy"){
-        finalizeAnswer("fuzzy", false);
+        finalizeAnswer("fuzzy", true);
       }else{
         finalizeAnswer("unknown", true);
       }
 
       const message = {
-        known:"已按“意思相近”记录为正确；如果它曾被误加，现在也已移出错题本。",
-        fuzzy:"已记录为模糊，明天会优先复习，但不会加入错题本。",
+        known:"已按“意思相近”记录为正确。旧错题不会因一次答对自动消失，需要你在错题本里手动移出。",
+        fuzzy:"已记录为模糊并加入错题本，明天会优先复习。",
         unknown:"已记录为不会，并加入错题本。"
       }[result];
 
@@ -4111,7 +4394,7 @@
         source:details.source || "",
         wasNew:Boolean(details.wasNew)
       });
-      book.history = book.history.slice(-2000);
+      book.history = book.history.slice(-20000);
     }
 
     function finalizeAnswer(type, addWrong){
@@ -4144,7 +4427,13 @@
       progress.lastSeenAt = todayKey;
       if(addWrong){
         progress.inWrongBook = true;
+        progress.everWrong = true;
+        progress.manuallyRemovedWrong = false;
         progress.wrongCount += 1;
+        progress.wrongRecoveryStreak = 0;
+        progress.lastWrongAt = todayKey;
+      }else if(type === "known" && progress.inWrongBook){
+        progress.wrongRecoveryStreak = Number(progress.wrongRecoveryStreak || 0) + 1;
       }
 
       if(type === "known"){
@@ -4251,8 +4540,18 @@
       if(!$("notebookList")) return;
       const wrong = notebookEntries("wrong");
       const favorites = notebookEntries("favorite");
+      const progresses = Object.values(getBook().words).map(createWordProgress);
+      const everWrong = progresses.filter(progress => progress.everWrong).length;
+      const recovered = progresses.filter(progress =>
+        progress.everWrong && !progress.inWrongBook && progress.manuallyRemovedWrong
+      ).length;
+
       $("wrongCount").textContent = wrong.length;
       $("favoriteCount").textContent = favorites.length;
+      $("wrongActiveCount").textContent = wrong.length;
+      $("wrongEverCount").textContent = everWrong;
+      $("wrongRecoveredCount").textContent = recovered;
+      $("wrongLedger").style.display = notebookTab === "wrong" ? "grid" : "none";
       $("wrongTab").classList.toggle("active", notebookTab === "wrong");
       $("favoriteTab").classList.toggle("active", notebookTab === "favorite");
 
@@ -4277,8 +4576,18 @@
         const card = document.createElement("div");
         card.className = "card notebook-word";
 
+        const progress = createWordProgress(getBook().words[key] || {});
         const info = document.createElement("div");
-        info.innerHTML = `<strong>${escapeHTML(word.word)}</strong><div class="notebook-meaning">${escapeHTML(word.meaning)}</div>`;
+        info.innerHTML = `
+          <strong>${escapeHTML(word.word)}</strong>
+          <div class="notebook-meaning">${escapeHTML(word.meaning)}</div>
+          ${notebookTab === "wrong" ? `
+            <div class="wrong-meta">
+              <span class="wrong-chip">错过 ${progress.wrongCount} 次</span>
+              <span class="wrong-chip">连续答对 ${progress.wrongRecoveryStreak} 次</span>
+              <span class="wrong-chip">${progress.lastWrongAt ? `最近 ${progress.lastWrongAt}` : "历史错词"}</span>
+            </div>` : ""}
+        `;
 
         const actions = document.createElement("div");
         actions.className = "mini-actions";
@@ -4338,6 +4647,7 @@
       if(tab === "wrong"){
         const wasWrong = Boolean(progress.inWrongBook);
         progress.inWrongBook = false;
+        progress.manuallyRemovedWrong = true;
         if(wasWrong) recordWrongClear();
       }else progress.favorite = false;
       save();
@@ -5297,6 +5607,53 @@
       toast(`${BOOK_CONFIG[state.currentBookId].name}已设置为每天 ${goal} 个词 ${pick(KAOMOJI.hello)}`);
     }
 
+    function exportProgressBackup(){
+      const payload = {
+        app:"月月的四六级小屋",
+        exportedAt:new Date().toISOString(),
+        version:state.version,
+        state
+      };
+      const blob = new Blob(
+        [JSON.stringify(payload, null, 2)],
+        {type:"application/json;charset=utf-8"}
+      );
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `月月四六级小屋进度-${todayKey}.json`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      toast("进度文件已生成，请保存到手机文件中");
+    }
+
+    async function importProgressBackup(event){
+      const file = event?.target?.files?.[0];
+      if(!file) return;
+
+      try{
+        const text = await file.text();
+        const parsed = JSON.parse(text);
+        const imported = parsed?.state || parsed;
+        if(!imported || imported.version !== 2 || !imported.books){
+          throw new Error("文件不是可识别的小屋进度");
+        }
+        if(!confirm("导入会覆盖当前浏览器里的学习进度，继续吗？")) return;
+
+        state = normalizeState(imported);
+        save(false);
+        await activateBook(state.currentBookId, false);
+        renderAll();
+        openModal("进度导入完成", "学习记录、错题、星星和小屋装饰已经恢复。API Key 不包含在备份中。");
+      }catch(error){
+        openModal("导入失败", error.message || "无法读取这个备份文件");
+      }finally{
+        event.target.value = "";
+      }
+    }
+
     function resetCurrentBook(){
       const bookName = BOOK_CONFIG[state.currentBookId].name;
       if(!confirm(`确定清空“${bookName}”的学习、复习和打卡进度吗？星星与其他词书不受影响。`)) return;
@@ -5309,6 +5666,7 @@
     function resetAllProgress(){
       if(!confirm("确定清空所有词书、星星与打卡进度吗？")) return;
       localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(BACKUP_KEY);
       localStorage.removeItem(LEGACY_KEY);
       location.reload();
     }
